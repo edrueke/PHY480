@@ -1,0 +1,215 @@
+#include <iostream>
+#include <cmath>
+#include <vector>
+
+#include "TGraph.h"
+#include "TCanvas.h"
+#include "TMultiGraph.h"
+#include "TLegend.h"
+#include "TStyle.h"
+
+using namespace std;
+
+/*To do:
+  1. What is meant by single and double precision?
+  2. Find mathematical expression for error due to loss of precision.
+  3. Find mathematical expression for error due to numerical approximation.
+  4. Compute errors using FindError() method.
+  5. Create vectors for derivatives with single/double precision.
+  6. Create functions to compute derivative by reference.
+  7. Write results to file.
+  8. Compute log10(h) with single and double precision.
+  9. Plot results of function for 8.
+*/
+
+inline void MyStyle(){
+
+  gStyle->SetPalette(1);
+  gStyle->SetHistLineWidth(3.0);
+  gStyle->SetTitleX(0.8);
+  gStyle->SetTitleY(0.87);
+  gStyle->SetLabelSize(0.04,"xyz");
+  gStyle->SetStatBorderSize(1.0);
+  gStyle->SetLabelOffset(0.01,"xyz");
+  gStyle->SetFrameBorderMode(0);
+  gStyle->SetFrameFillColor(0);
+  gStyle->SetCanvasBorderMode(0);
+  gStyle->SetCanvasColor(0);
+  gStyle->SetPadBorderMode(0);
+  gStyle->SetPadColor(0);
+  gStyle->SetStatColor(0);
+  gStyle->SetTitleXOffset(1.2);
+  gStyle->SetTitleYOffset(1.7);
+  gStyle->SetPadRightMargin(0.05);
+  gStyle->SetPadLeftMargin(0.12);
+  gStyle->SetMarkerSize(1);
+  gStyle->SetLineWidth(2);
+  gStyle->SetOptStat(0);
+}
+
+/*Find the total error due to the numerical approximations.*/
+int FindError(){
+
+  int x = 0;
+
+}
+
+/*Compute the derivative of arctangent using equation 1. */
+/*Arguments: double h is the step length
+ double x is the value at which we are computing the derivative*/
+double Derivf2c(double h, double x){
+
+  double val1 = atan(x+h);
+  double val2 = atan(x);
+  return (val1-val2)/h;
+  
+}
+
+/*Compute the derivative of arctangent using equation 1 (by ref)*/
+/*Arguments: double *h is the step length
+  double *x is the value at which we are computing the derivative*/
+/*double Derivf2cRef(double *h, double x){
+  
+  double val1 = atan(x+*h);
+  double val2 = atan(x);
+  return (val1-val2)/h;
+
+  }*/
+
+/*Compute the derivative of arctan using equation 2.*/
+/*Arguments: double h is the step length
+  double x is the value at which we are computing the derivative*/
+double Derivf3c(double h, double x){
+
+  double val1 = atan(x+h);
+  double val2 = atan(x-h);
+  return (val1-val2)/(2*h);
+
+}
+
+/*Compute the error epsilon*/
+/*Arguments: double calc is the calculated value of the derivative*/
+double ComputeEpsilon(double calc){
+
+  double exact = 0.333333333333333333333;
+  double ratio = (calc-exact)/exact;
+  double to_ret = log10(fabs(ratio));
+  return log10(fabs((calc-exact)/exact));
+
+}
+/*The main program calls the programs above to complete the warm up 
+  exercise*/
+int Warmup(){
+
+  MyStyle();
+
+  /*Compute the errors*/
+
+  /*Create a dynamic array with the various step lengths.*/
+  
+  int nsteps = 0;
+  double *steps;
+
+  cout<<"Input number of steps: ";/*Assumes a valid number is entered.*/
+  cin>>nsteps;
+  cout<<endl;
+
+  steps = new double[nsteps];
+
+  for(int n=0;n<nsteps;n++){
+    cout<<"Enter step size: ";
+    cin>>steps[n];
+  }
+
+  cout<<endl;
+
+  /*Order the steps*/
+  for(int n=0;n<nsteps;n++){
+    for(int i=0;i<n;i++){
+      if(steps[i]>steps[n]){
+	double hold = steps[i];
+	steps[i]=steps[n];
+	steps[n]=hold;
+	i=0;
+	n=0;
+      }
+    }
+  }
+
+  /*Compute the derivative for various step values using equation 1.*/
+
+  vector<double> f2c;
+
+  for(int n=0;n<nsteps;n++){
+    double deriv1 = Derivf2c(steps[n],sqrt(2));
+    //double deriv1Ref = Derivf2cRef(steps[n]*,sqrt(2));
+    cout<<"Derivative using equation 1 with step length "<<steps[n]<<" is "<<
+      deriv1<<endl;
+    f2c.push_back(deriv1);
+    //cout<<"Derivative using equation 1 with ref with step length "<<
+    //steps[n]<<" is "<<deriv1Ref<<endl<<endl;
+  }
+
+  cout<<endl;
+
+  /*Compute the derivative for various step values using equation 2. */
+  
+  vector<double> f3c;
+  for(int n=0;n<nsteps;n++){
+    double deriv2 = Derivf3c(steps[n],sqrt(2));
+    cout<<"Derivative using equation 2 with setp length "<<steps[n]<<" is "<<
+      deriv2<<endl;
+    f3c.push_back(deriv2);
+  }
+
+  cout<<endl;
+
+  /*Compute the epsilon errors (Step 3) and plot them against step size.*/
+
+  vector<double> epsilonsf2c;
+  vector<double> epsilonsf3c;
+
+  for(int n=0;n<nsteps;n++){
+    epsilonsf2c.push_back(ComputeEpsilon(f2c.at(n)));
+    epsilonsf3c.push_back(ComputeEpsilon(f3c.at(n)));
+    cout<<"f2c: "<<ComputeEpsilon(f2c.at(n))<<endl;
+    cout<<"f3c: "<<ComputeEpsilon(f3c.at(n))<<endl;
+
+  }
+
+  TGraph *g_f2cerrors = new TGraph(11);
+  TGraph *g_f3cerrors = new TGraph(11);
+
+  for(int n=0;n<nsteps;n++){
+    g_f2cerrors->SetPoint(n,steps[n],epsilonsf2c.at(n));
+    g_f3cerrors->SetPoint(n,steps[n],epsilonsf3c.at(n));
+  }
+
+  g_f2cerrors->SetLineColor(kRed);
+  g_f3cerrors->SetLineColor(kCyan);
+
+  TCanvas *c_errors = new TCanvas("c_errors","c_errors",800,720);
+  c_errors->SetBorderMode(0);
+
+  TLegend *leg = new TLegend(0.45,0.13,0.70,0.35);
+  leg->AddEntry(g_f2cerrors,"f2c","lp");
+  leg->AddEntry(g_f3cerrors,"f3c","lp");
+
+  TMultiGraph *m_errors = new TMultiGraph("m_errors","Epsilon Errors");
+  m_errors->SetTitle("Epsilon Errors;Step Size;Epsilon");
+
+  m_errors->Add(g_f2cerrors);
+  m_errors->Add(g_f3cerrors);
+
+  c_errors->cd();
+  m_errors->Draw("AL*");
+  leg->Draw("SAME");
+
+  c_errors->SaveAs("errors.pdf");
+
+  /*Delete allocated memory*/
+
+  delete[] steps;
+
+  return 0;
+}
