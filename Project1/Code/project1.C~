@@ -58,7 +58,7 @@ double *MakeVector(vector<double> thevec){
 
   double *to_ret;
   to_ret = new double[dim];
-  for(int i=0;i<dim;i++)
+  for(unsigned int i=0;i<dim;i++)
     to_ret[i]=thevec.at(i);
 
   return to_ret;
@@ -114,10 +114,9 @@ double* mat_vec_mult(double **matr1, double *vec1){
 }
 
 //What if there is an arbitrary 0 entry? 
-vector<vector<double> > one_forw_reduc(double **matr, double *vec){
+double one_forw_reduc(double matr[][dim], double vec[]){
   /*Takes in a matrix and a vector and performs one forward reduction, whose
-    matrix and vector it then returns a vector of the vectors to be made into
-    the matrix and vector.*/
+    matrix and vector it then returns.*/
   
   //Determine what row needs to be reduced.
   int i=0;
@@ -126,30 +125,12 @@ vector<vector<double> > one_forw_reduc(double **matr, double *vec){
   }
 
   //If the matrix is fully reduced (forward), then return the matrix.
-  vector<double> vec_to_ret, matr_to_ret;
-  vector<vector<double> > to_ret;
-  
-  if(i+1==dim){
-    for(int k=0;k<dim;k++){
-      vec_to_ret.push_back(vec[k]);
-      for(int j=0;j<dim;j++){
-	matr_to_ret.push_back(matr[k][j]);
-      }
-    }
-    to_ret.push_back(vec_to_ret);
-    to_ret.push_back(matr_to_ret);
-    return to_ret;
-  }
+  if(i+1==dim)
+    return matr,vec;
   
   //Else, reduce by the next row.
-  double **matr_ret;
-  double *vec_ret;
-  vec_ret = new double[dim];
-  matr_ret = new double*[dim];
-  for(int k=0;k<dim;k++){
-    matr_ret[k] = new double[dim];
-  }
-
+  double matr_ret[dim][dim];
+  double vec_ret[dim];
   for(int j=0;j<i;j++){
     vec_ret[j]=vec[j];
     for(int k=0;k<dim;k++){
@@ -164,34 +145,19 @@ vector<vector<double> > one_forw_reduc(double **matr, double *vec){
       if(matr[j][k]==0)
 	matr_ret[j][k]=0;
       else{
-	matr_ret[j][k]=matr[j][k]-vec[i]*fact;
+	matr_ret[j][k]=matr[j][k]-matr[i]*fact;
       }
     }
   }
 
-  //Create the appropriate return.
-  for(int k=0;k<dim;k++){
-    vec_to_ret.push_back(vec_ret[k]);
-    for(int j=0;j<dim;j++){
-      matr_to_ret.push_back(matr_ret[k][j]);
-    }
-    delete [] matr_ret[k];
-  }
-
-  to_ret.push_back(vec_to_ret);
-  to_ret.push_back(matr_to_ret);
-
-  delete [] matr_ret;
-  delete [] vec_ret;
-
-  return to_ret;
+  //Can I return this? Doubtful. Probably need to work solely with pointers.
+  return matr_ret,vec_ret;
 }
 
 //What if there is an arbitrary 0 entry? 
 vector<vector<double> > one_back_reduc(double **matr, double *vec){
   /*Takes in a matrix and a vector and performs one backward reduction, whose
-    matrix and vector it then returns a vector of the matrix and vector 
-    to be turned into the dynamic memory.*/
+    matrix and vector it then returns.*/
   
   //Determine what row needs to be reduced.
   int i=dim-1;
@@ -200,27 +166,16 @@ vector<vector<double> > one_back_reduc(double **matr, double *vec){
   }
 
   //If the matrix is fully reduced (forward), then return the matrix.
-  vector<double> vec_to_ret, matr_to_ret;
-  vector<vector<double> > to_ret;
-  if(i-1==0){
-    for(int k=0;k<dim;k++){
-      vec_to_ret.push_back(vec[k]);
-      for(int j=0;j<dim;j++){
-	matr_to_ret.push_back(matr[k][j]);
-      }
-    }
-    to_ret.push_back(vec_to_ret);
-    to_ret.push_back(matr_to_ret);
-    return to_ret;
-  }
-
+  if(i-1==0)
+    return matr,vec;
+  
   //Else, reduce by the next row.
   double **matr_ret;
   matr_ret = new double*[dim];
   double *vec_ret;
   vec_ret = new double[dim];
-  for(int k=0;k<dim;k++){
-    matr_ret[k]=new double[dim];
+  for(int i=0;i<dim;i++){
+    matr_ret[i]=new double[dim];
   }
 
   for(int j=dim-1;j>i;j--){
@@ -238,24 +193,20 @@ vector<vector<double> > one_back_reduc(double **matr, double *vec){
     }
   }
 
-  for(int k=0;k<dim;k++){
-    vec_to_ret.push_back(vec[k]);
+  vector<double> vec_to_ret,matr_to_ret;
+  for(int i=0;i<dim;i++){
+    vec_to_ret.push_back(vec[i]);
     for(int j=0;j<dim;j++){
-      matr_to_ret.push_back(matr_ret[k][j]);
+      matr_to_ret.push_back(matr_ret[i][j]);
     }
-    delete [] matr_ret[k];
   }
 
-  delete [] matr_ret;
-  delete [] vec_ret;
-
-  to_ret.push_back(vec_to_ret);
-  to_ret.push_back(matr_to_ret);
-
+  vector<vector<double> > to_ret;
+  to_ret.push_back(vec_to_ret, matr_to_ret);
   return to_ret;
 }
 
-double *gauss_elim(double **matr1,double *vec){
+double *gauss_elim(double **matr1,double vec){
   /*Takes in a matrix and a vector (the solution to Ax=b) and returns the 
     vector x which is the solution to this problem, found by Gaussian 
     elimination.*/
@@ -265,24 +216,22 @@ double *gauss_elim(double **matr1,double *vec){
   double *vec_ret = vec;
   for(int i=0;i<dim;i++){
     vector<vector<double> > returned = one_forw_reduc(matr_ret,vec_ret);
-    matr_ret = MakeMatr(returned.at(1));
+    matr_ret = MakeMatrix(returned.at(1));
     vec_ret = MakeVector(returned.at(0));
   }
 
   //Then perform backward elimination.
   for(int i=0;i<dim;i++){
-    vector<vector<double> > returned = one_back_reduc(matr_ret,vec_ret);
-    matr_ret = MakeMatr(returned.at(1));
-    vec_ret = MakeVector(returned.at(0));
+    //HERE NEED TO MAKE THE RETURN A VECTOR OF VECTOR OF DOUBLES AND MAKE THE MATRIX AND VECTOR FROM THAT AS IN ABOVE LOOP.
+    matr_ret, vec_ret = one_back_reduc(matr_ret,vec_ret);
   }
 
-  //HERE
   //Then compute the solution x
-//  double *x;
-//  x = new double[dim];
-//  for(int i=0;i<dim;i++){
-//    x[i]=vec_ret[i]/matr_ret[i];
-//  }
+  double *x;
+  x = new double[dim];
+  for(int i=0;i<dim;i++){
+    x[i]=vec_ret[i]/matr_ret[i];
+  }
 
   return vec_ret;
 }
@@ -428,8 +377,6 @@ void project1(){
   PrintMatr(L);
   cout<<"U:"<<endl;
   PrintMatr(U);
-  cout<<"Gauss elim:"<<endl;
-  PrintVector(gauss_elim(matr,vec));
 
   for(int i=0;i<dim;i++){
     delete [] matr[i];
