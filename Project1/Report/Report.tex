@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{setspace}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+
+\numberwithin{equation}{section}
+
+\title{Programming a Linear Algebra Solution to the Poisson Equation}
+\author{Elizabeth Drueke}
+
+\begin{document}
+\maketitle
+
+%\tableofcontents
+\begin{abstract}
+Poisson's equation comes into play frequently in physical situations.  In every field of physics, from mechanics to electromagnetism, we are forced to model physical systems subject to boundary conditions with this versatile equation.  In this report, we analyze not the applications of the Poisson equation, but how to apply it, specifically subject to the Dirichlet boundary conditions, using a C++ computer program. 
+\end{abstract}
+
+\section{Introduction}
+\label{sec:into}
+It is vital in physics to develop ways to deal with large quantities of data and to use that data to make close approximations of physical conditions.  In particular, we wish to develop computer programs which can both automate this process and complete it in a timely manner.  To this end, we investigate a linear algebra solution to the Poisson equation, given by 
+
+\begin{equation}
+\label{eq:poisson}
+-u''\left(x\right) = f\left(x\right),
+\end{equation}
+
+\noindent subject to the Dirichlet boundary conditions,
+
+\begin{equation}
+\label{eq:dirichlet}
+u\left(0\right)=u\left(1\right)=0.
+\end{equation}
+
+\section{Theory}
+The mathematics behind the solution to the Poisson equation presented here is mathematically rich in approximations.  From Eq.~\ref{eq:poisson}, we can see that we are required to compute the second derivative of $u\left(x\right)$.  To do this, we note that we can always approximate the first derivative as
+
+\begin{equation}
+\label{eq:deriv1}
+f'\left(x\right) \approx \frac{f\left(x+h\right)-f\left(x-h\right)}{2h},
+\end{equation}
+
+\noindent for $h<<1$ because the derivative is the slope of the line tangent to $f$ at that point.  This then implies that
+
+\begin{equation}
+\begin{align}
+f''\left(x\right)&\approx\frac{f'\left(x+h\right)-f'\left(x-h\right)}{2h} \\
+&\approx\frac{\frac{f\left(x+h+h\right)-f\left(x+h-h\right)}{2h} - \frac{f\left(x-h+h\right)-f\left(x-h-h\right)}{2h}}{2h} \\
+&\approx\frac{\frac{f\left(x+2h\right)-f\left(x\right)}{2h} - \frac{f\left(x\right)-f\left(x-2h\right)}{2h}}{2h} \\
+&\approx\frac{f\left(x+2h\right)-2f\left(x\right)+f\left(x-2h\right)}{\left(2h\right)^{2}}.
+\end{align}
+\end{equation}
+
+\noindent Letting $2h\rightarrow h$, we then have
+
+\begin{equation}
+\label{eq:deriv2}
+f''\left(x\right)\approx\frac{f\left(x+h\right)-2f\left(x\right)+f\left(x-h\right)}{h^{2}}.
+\end{equation}
+
+\noindent Eq.~\ref{eq:deriv2} is what we will use as our approximation to the second derivative throughout.  
+\indent Now, we have an expression which lends itself to the creation of vectors.  Letting $$h = \frac{1}{n+1}$$ for some $n\in\mathbb{N}$, we see that we can treat this as a step partition of the interval $\left[0,1\right]$, on which the Dirichlet conditions are valid.  Thus, we define each $x_{i}$ in the partition as $$x_{i}=ih,i=1,\ldots,n.$$  From these $x_{i}$ we can create a vector $\textbf{x}$.
+
+
+
+
+
+
+
+
+
+\end{document}
