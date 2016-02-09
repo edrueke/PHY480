@@ -66,13 +66,215 @@ f''\left(x\right)\approx\frac{f\left(x+h\right)-2f\left(x\right)+f\left(x-h\righ
 \end{equation}
 
 \noindent Eq.~\ref{eq:deriv2} is what we will use as our approximation to the second derivative throughout.  
-\indent Now, we have an expression which lends itself to the creation of vectors.  Letting $$h = \frac{1}{n+1}$$ for some $n\in\mathbb{N}$, we see that we can treat this as a step partition of the interval $\left[0,1\right]$, on which the Dirichlet conditions are valid.  Thus, we define each $x_{i}$ in the partition as $$x_{i}=ih,i=1,\ldots,n.$$  From these $x_{i}$ we can create a vector $\textbf{x}$.
+\indent Now, we have an expression which lends itself to the creation of vectors.  Letting $$h = \frac{1}{n+1}$$ for some $n\in\mathbb{N}$, we see that we can treat this as a step partition of the interval $\left[0,1\right]$, on which the Dirichlet conditions are valid.  Thus, we define each $x_{i}$ in the partition as $$x_{i}=ih,i=0,\ldots,n+1.$$  From these $x_{i}$ we can create a vector $\textbf{x}$ \footnote{Note that throughout we indicate vectors as bold, lowercase letters (eg. $\textbf{x}$), and matrices as uppercase letters (eg. $A$).}
+
+\begin{equation}
+\textbf{x} = \left(0,\frac{1}{n+1},\frac{2}{n+1},\ldots,\frac{n}{n+1},1\right)^{T}
+\end{equation}
+
+\noindent Then, let $\textbf{b}$ be a vector of the function $f\left(x\right)$ evaluated at the points in $\textbf{x}$.  That is,
+
+\begin{equation}
+\begin{align}
+\textbf{b} &= \left(f\left(0\right),f\left(\frac{1}{n+1}\right),f\left(\frac{2}{n+1}\right),\ldots,f\left(\frac{n}{n+1}\right),f\left(1\right)\right)^{T} \\
+&= \left(0,f\left(\frac{1}{n+1}\right),f\left(\frac{2}{n+1}\right),\ldots,f\left(\frac{n}{n+1}\right),0\right)^{T}.
+\end{align}
+\end{equation}
+
+\noindent Now, we see that Eq.~\ref{eq:deriv2} lends itself nicely to the introduction of a linear algebra problem.  In particular, we can define an $n\times n$ matrix $A$ such that
+
+\begin{equation}
+\label{eq:a}
+A = \frac{-1}{h^{2}} \left(
+\begin{array}{cccccc}
+2 & -1 & 0 & \cdots & \cdots & 0 \\
+-1 & 2 & -1 & 0 & \cdots & 0 \\
+0 & -1 & 2 & -1 & 0 & \vdots \\
+\vdots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+\vdots & \vdots & \vdots & \ddots & -1 & 2
+\end{array}
+\right)
+\end{equation}
+
+\noindent Then, we have that the Poisson Equation given by Eq.~\ref{eq:poisson} can be approximated as 
+
+\begin{equation}
+\label{eq:avb}
+A\textbf{v}=\textbf{b}
+\end{equation}
+
+\noindent for some $\textbf{v}$ which represents $f''\left(x\right)$ at various values of $x$.  And so we have a system of $n$ equations in $n$ unknowns.
+
+In general, there are two main ways in which we might solve  Eq.~\ref{eq:avb}, known as Gaussian elimination and LU Decomposition.  We will discuss these in general in Section~\ref{subsec:gausselim} and Section~\ref{subsec:ludecomp}, respectively, before discussing how we dealt with our particular matrix $A$ given by Eq.~\ref{eq:a} in Section~\ref{sec:algorithm}.
+
+\subsection{Gaussian Elimination}
+\label{subsec:gausselim}
+
+Gaussian elimination is the method of solving linear systems typically taught in a linear algebra class.  In particular, this method involves adding multiples of rows to other rows in order to eliminate (or set to zero) off-diagonal elements.  In most situations, it is necessary to employ both a forward and backward Gaussian elimination method in order to solve a full system.  In order to demonstrate this method, we will provide an example here.  The algorithm used will be more explicitly discussed in Section~\ref{sec:algorithm}.
+\\\indent Suppose we have a matrix 
+
+\begin{equation}
+A = \left(
+\begin{array}{ccc}
+a_{11} & a_{12} & a_{12} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33}
+\end{array}
+\right)
+\end{equation}
+
+\noindent and we wish to reduce it to row echelon form.  We might do this using Gaussian elimination.  To begin, we would use forward elimination to set the $a_{i1}$ components to zero for $i\neq1$.  Letting $R_{i}$ denote the $i^{th}$ row, we notice that letting 
+
+\begin{equation}
+\label{eq:rowops1}
+\begin{align}
+R_{2} & = R_{2} - \frac{a_{21}}{a_{11}}R_{1} \\
+R_{3} & = R_{3} - \frac{a_{31}}{a_{11}}R_{1}
+\end{align}
+\end{equation}
+
+\noindent ought to do the trick.  That is, we have 
+
+\begin{equation}
+A = \left(
+\begin{array}{ccc}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33}
+\end{array}
+\right) \rightarrow \left(
+\begin{array}{ccc}
+a_{11} & a_{12} & a_{12} \\
+0 & a_{22} - \frac{a_{21}a_{12}}{a_{11}} & a_{23} - \frac{a_{21}a_{13}}{a_{11}} \\
+0 & a_{32} - \frac{a_{31}a_{12}}{a_{11}} & a_{33} - \frac{a_{31}a_{13}}{a_{11}}
+\end{array}\right).
+\end{equation}
+
+\noindent Continuing in this manner, we will eventually have a matrix of the form 
+
+\begin{equation}
+A\prime = \left(
+\begin{array}{ccc}
+a_{11}\prime & a_{12}\prime & a_{13}\prime \\
+0 & a_{22}\prime & a_{23}\prime \\
+0 & 0 & a_{33}\prime
+\end{array}\right).
+\end{equation}
+
+At this point, we may begin the backward Gaussian elimination.  In the forward process, we were able to set all of the $a_{ij}=0$ for $i>j$.  In the backward process, we wish to do the same for the $a_{ij}$ with $i<j$.  In the end, we should have a pure diagonal matrix.
+\\\indent To begin the backward process, we note that we can set the $a_{i3}$ elements to zero by similar calculations as those performed in Eq.~\ref{eq:rowops1}.  In particular, we can let 
+
+\begin{equation}
+\label{eq:rowops2}
+\begin{align}
+R_{2} &= R_{2} - \frac{a_{23}}{a_{33}}R_{3} \\
+R_{1} &= R_{1} - \frac{a_{13}}{a_{33}}R_{3}
+\end{align}
+\end{equation}
+
+\noindent Doing this, we see 
+
+\begin{equation}
+\left(
+\begin{array}{ccc}
+a_{11}\prime & a_{12}\prime & a_{13}\prime \\
+0 & a_{22}\prime & a_{23}\prime \\
+0 & 0 & a_{33}\prime
+\end{array}\right) \rightarrow
+\left(\begin{array}{ccc}
+a_{11}\prime & a_{12}\prime & 0 \\
+0 & a_{22}\prime & 0 \\
+0 & 0 & a_{33}\prime 
+\end{array}\right).
+\end{equation}
+
+\noindent Continuing in this manner, we can see that we will eventually come across a pure diagonal matrix.  From here, having performed the row operations on the solution vector $\textbf{b}$ as well as the matrix $A$, we can find our solution $\textbf{x}$ by noting that 
+
+\begin{equation}
+x_{i} = \frac{\widetilde{b_{i}}}{\widetilde{a_{ii}}},
+\end{equation}
+
+\noindent where the $\sim$ indicates that this is the component of the Gaussian eliminated matrix/vector.  This procedure is easily generalized to an $n\times n$ matrix.
+\\\indent One downside to this method of solving the system of linear equations is that whatever row operations are performed on $A$ in Eq.~\ref{eq:avb} must also be performed on $\textbf{b}$.  This means that the process must be repeated every time the solution vector is changed.  This restriction can be a serious time constraint on any program written to implement Gaussian elimination in order to solve systems of linear equations.  The time limitations of such an algorithm are discussed in Section~\ref{sec:algorithm}.
+
+\subsection{LU Decomposition}
+\label{subsec:ludecomp}
+
+The second major linear system solving method is what is known as LU decomposition.  In this procedure, we decompose our $A$ matrix into a lower-triangular $L$ and an upper-triangular $U$ of the form
+
+\begin{equation}
+\label{eq:ludecomp1}
+\begin{array}{cccc}
+\left(
+\begin{array}{ccc}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33}
+\end{array}
+\right) &=&
+\left(
+\begin{array}{ccc}
+1 & 0 & 0 \\
+l_{21} & 1 & 0 \\
+l_{31} & l_{32} & 1
+\end{array}\right)&
+\left(\begin{array}{ccc}
+u_{11} & u_{12} & u_{13} \\
+0 & u_{22} & u_{23} \\
+0 & 0 & u_{33}
+\end{array}\right) \\
+A &=& L&U
+\end{array}
+\end{equation}
+
+\noindent In contrast with the Gaussian elimination method, this method does not need to be repeated for every choice of solution vector $\textbf{b}$.  Instead, once $L$ and $U$ have been computed, they can be used to determine the solution $\textbf{x}$ for any solution vector $\textbf{b}$.
+\\\indent As with the Gaussian elimination method, we present an example as an illustration of how the LU decomposition method works.  Assume we have some 
+
+\begin{equation}
+A = \left(\begin{array}{cccc}
+a_{11} & a_{12} & a_{13} & a_{14} \\
+a_{21} & a_{22} & a_{23} & a_{24} \\
+a_{31} & a_{32} & a_{33} & a_{34} \\
+a_{41} & a_{42} & a_{43} & a_{44}
+\end{array}\right).
+\end{equation}
+
+\noindent Based on the multiplication as shown in Eq.~\ref{eq:ludecomp1}, we can see that we can directly solve for the $l_{ij}$ and $u_{ij}$.  In particular, in order, we see\footnote{Here, the boldface text indicates the unknown variable in each equation.}
+
+\begin{equation}
+\begin{align}
+a_{11} =& {\bf u_{11}} &\Rightarrow \\
+a_{21} =& {\bf l_{21}} u_{11} &\Rightarrow \\
+a_{31} =& {\bf l_{31}}u_{11} &\Rightarrow \\
+a_{41} =& {\bf l_{41}}u_{11} &\Rightarrow \\
+a_{12} =& {\bf u_{12}} &\Rightarrow \\
+a_{22} =& {\bf l_{21}}u_{12}+u_{22} &\Rightarrow \\
+a_{32} =& l_{31}u_{12}+{\bf l_{32}}u_{22} &\Rightarrow \\
+a_{42} =& l_{41}u_{12}+{\bf l_{42}}u_{22} &\Rightarrow \\
+a_{13} =& {\bf u_{13}} &\Rightarrow \\
+a_{23} =& l_{21}u_{13}+{\bf u_{23}} &\Rightarrow \\
+a_{33} =& l_{31}u_{13}+l_{32}u_{23}+{\bf u_{33}} &\Rightarrow \\
+a_{43} =& l_{42}u_{23}+{\bf l_{43}}u_{33}+l_{41}u_{13} &\Rightarrow \\
+a_{14} =& {\bf u_{14}} &\Rightarrow \\
+a_{24} =& l_{21}u_{14}+{\bf u_{24}} &\Rightarrow \\
+a_{34} =& l_{31}u_{14}+l_{32}u_{24}+{\bf u_{34}} &\Rightarrow \\
+a_{44} =& l_{41}u_{14}+l_{42}u_{24}+l_{43}u_{34}+{\bf u_{44}}. &
+\end{align}
+\end{equation}
+
+\noindent This result generalizes $\textbf{more}$.
 
 
+\section{The Algorithm}
+\label{sec:algorithm}
 
+\section{Results and Benchmarks}
+\label{sec:results}
 
+\section{Conclusions}
+\label{sec:conclusions}
 
-
+Something about how the class isn't complete actually.
 
 
 
