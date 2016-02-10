@@ -51,6 +51,7 @@
 ./project1_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TStyle.h
 ./project1_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TAttAxis.h
 ./project1_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TArrayI.h
-./project1_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TArray.h
+./project1_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TArray.h classes.C
+./project1_C.so: classes.h
 ./project1_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/cintdictversion.h /msu/opt/cern/rootSL6/v5.34.12_64/include/RVersion.h
 project1_C__ROOTBUILDVERSION= 5.34/12

@@ -20,76 +20,140 @@ the Dirichlet boundary conditions u(0)=u(1)=0 for f(x)=100e**(-10*x).
 #include "TLegend.h"
 #include "TStyle.h"
 
+#include "classes.C"
+
 using namespace std;
 
 //dim is a global variable giving the dimension of the nxn matrices
-const int dim = 2;
+const int dim = 10;
 
-//double first_deriv(double &x, double &h){
-//  /*Takes in 
-//    and returns the first derivative*/
-//  
-//  return 0;
-//}
-//
-//double second_deriv(double &x, double &h){
-//  /*Takes in
-//    and returns the second derivative.*/
-//
-//  return 0;
-//}
+double function(double &x){
+  /*
+    Takes in an x-value and returns our test function at that point 
+    f(x) = 100e^{-10x}.
+  */
+
+  return 100*exp(-10*x);
+}
+
+vector<vector<double> > LU_decomp_special(){
+  /*
+    Computes the L and U decomposition of the matrix particular to this 
+    problem.
+  */
+
+  themat L = themat(dim);
+  themat U = themat(dim);
+  
+  for(int i=0;i<dim;i++){
+    for(int j=0;j<dim;j++){
+      if(i==j){
+	U.point[i][j]=(i+2.0)/(i+1.0);
+	L.point[i][j]=1;
+      }
+      else if((i-1)==j){
+	L.point[i][j]=(-1.0*j)/i;
+	U.point[i][j]=0;
+      }
+      else if(i+1==j){
+	L.point[i][j]=0;
+	U.point[i][j]=-1;
+      }
+      else{
+	L.point[i][j]=0;
+	U.point[i][j]=0;
+      }
+    }
+  }
+
+  for(int i=1;i<dim;i++){
+    if(i!=(dim-1))
+      L.point[i][i-1]=L[i+1][i];
+    else
+      L.point[i][i-1]=(-1.0*i)/(i+1);
+  }
+
+  vector<vector<double> > to_ret;
+  vector<double> L_ret, U_ret;
+
+  for(int i=0;i<dim;i++){
+    for(int j=0;j<dim;j++){
+      L_ret.push_back(L[i][j]);
+      U_ret.push_back(U[i][j]);
+    }
+  }
+
+  to_ret.push_back(L_ret);
+  to_ret.push_back(U_ret);
+
+  return to_ret;
+}
+
+thevec LU_decomp_solver_special(thevec &vec){
+  /*
+    Special solver for this particular problem.
+  */
+
+  thevec y = thevec(dim);
+
+  y.point[0]=vec[0];
+  for(int i=1;i<dim;i++){
+    y.point[i]=vec[i]+(i/(i+1.0))*y[i-1];
+  }
+
+  thevec to_ret = thevec(dim);
+  to_ret.point[dim-1]=1.0*dim*y[dim-1]/(dim+1);
+  for(int i=dim-2;i>-1;i--){
+    to_ret.point[i] = ((i+1.0)/(i+2))*(y[i]+to_ret[i+1]);
+  }
+
+  return to_ret;
+}
 
 void project1(){
   /*The main function of the script.*/
 
-  double *vec;
-  vec = new double[dim];
-
-  double **matr;
-  matr = new double*[dim];
-
+  //Define the matrix.
+  themat mat = themat(dim);
   for(int i=0;i<dim;i++){
-    matr[i] = new double[dim];
+    for(int j=0;j<dim;j++){
+      if(i==j)
+	mat.point[i][j]=2.0;
+      else if(i==j+1||i==j-1)
+	mat.point[i][j]=-1.0;
+      else
+	mat.point[i][j]=0;
+    }
   }
 
+  //Define the vector. NOTE THIS LETS x_i=0.
+  thevec vec = thevec(dim);
+  double h = 1.0/(dim);
   for(int i=0;i<dim;i++){
-    vec[i]=1;
-  }
-  matr[0][0]=1; matr[0][1]=1; matr[1][0]=2; matr[1][1]=-1;
-
-  PrintMatr(matr);
-  PrintVector(vec);
-
-  double** matr_product = mat_mat_mult(matr,matr);
-  PrintMatr(matr_product);
-  double* vec_product = mat_vec_mult(matr,vec);
-  PrintVector(vec_product);
-
-
-  vector<vector<double> > LU_decomposed = LU_decomp(matr);
-
-
-  double** L = MakeMatr(LU_decomposed.at(0));
-  double** U = MakeMatr(LU_decomposed.at(1));
-
-  cout<<"L:"<<endl;
-  PrintMatr(L);
-  cout<<"U:"<<endl;
-  PrintMatr(U);
-  cout<<"Gauss elim:"<<endl;
-  PrintVector(gauss_elim(matr,vec));
-
-  for(int i=0;i<dim;i++){
-    delete [] matr[i];
-    delete [] L[i];
-    delete [] U[i];
-    delete [] matr_product[i];
+    double xi = (i)*h;
+    vec.point[i]=function(xi);
   }
 
-  delete[] matr;
-  delete [] U;
-  delete [] L;
-  delete [] vec;
-  delete [] matr_product;
-  delete [] vec_product;
+  //Solve with full Gaussian elimination.
+  thevec gausselim = gauss_elim(mat,vec);
+
+  //Solve with full LU decomposition.
+//  vector<vector<double> > lu_vec_full = LU_decomp(mat);
+//  themat L_full = themat(lu_vec_full.at(0));
+//  themat U_full = themat(lu_vec_full.at(1));
+//  thevec ludecomp_full = LU_decomp_solver(L_full,U_full,vec);
+//
+  //Solve with special LU decomposition.
+  vector<vector<double> > lu_vec = LU_decomp_special();
+  themat L = themat(lu_vec.at(0));
+  themat U = themat(lu_vec.at(1));
+  thevec ludecomp = LU_decomp_solver_special(vec);
+
+  cout<<"A:"<<endl<<mat.print()<<endl;
+  cout<<"Gaussian elimination: "<<endl<<gausselim.print()<<endl;
+//  cout<<"L*U full:"<<endl<<(L_full*U_full).print()<<endl;
+//  cout<<"LU Decomposition: "<<endl<<ludecomp_full.print()<<endl;
+  cout<<"L*U special:"<<endl<<(L*U).print()<<endl;
+  cout<<"LU Decomposition Special: "<<endl<<ludecomp.print()<<endl;
+
 }

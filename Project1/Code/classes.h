@@ -20,13 +20,7 @@ project 1.
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TStyle.h"
-//
-//#ifndef __THEVEC_H_INCLUDED__
-//#define __THEVEC_H_INCLUDED__
-//
-//#ifndef __THEMAT_H_INCLUDED__
-//#define __THEMAT_H_INCLUDED__
-//
+
 using namespace std;
 
 //Vector class
@@ -86,14 +80,15 @@ themat operator*(const themat &mat1, const themat &mat2); //Matrix-matrix multip
 thevec operator*(const themat &mat, const thevec &vec); //Matrix-vector multiplication
 
 //Additional functions - Gaussian elimination
-vector<vector<double> > one_forw_reduc(themat matr, thevec vec);
-vector<vector<double> > one_back_reduc(themat matr, thevec vec);
+vector<vector<double> > one_forw_reduc(themat matr, thevec vec, int i);
+vector<vector<double> > one_back_reduc(themat matr, thevec vec, int i);
 thevec gauss_elim(themat matr1,thevec vec);
 
 //Additional functions - LU Decomposition
 
 vector<vector<double> > LU_decomp(themat matr);
- 
+thevec LU_decomp_solver(themat &L,themat &U,thevec &vec);
+
 //Additional functions - Convert to string
 
 string to_string(double);

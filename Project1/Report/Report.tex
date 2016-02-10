@@ -9,6 +9,7 @@
 \usepackage{mathrsfs}
 \usepackage[margin=1.0in]{geometry}
 \usepackage{enumitem}
+\usepackage{listings}
 
 \numberwithin{equation}{section}
 
@@ -40,6 +41,7 @@ u\left(0\right)=u\left(1\right)=0.
 \end{equation}
 
 \section{Theory}
+\label{sec:theory}
 The mathematics behind the solution to the Poisson equation presented here is mathematically rich in approximations.  From Eq.~\ref{eq:poisson}, we can see that we are required to compute the second derivative of $u\left(x\right)$.  To do this, we note that we can always approximate the first derivative as
 
 \begin{equation}
@@ -262,19 +264,157 @@ a_{44} =& l_{41}u_{14}+l_{42}u_{24}+l_{43}u_{34}+{\bf u_{44}}. &
 \end{align}
 \end{equation}
 
-\noindent This result generalizes $\textbf{more}$.
+\noindent This result generalizes to any $n\times n$ matrix.  In particular, an algorithm can be developed which will always give the $L$ and $U$ matrix from known values.  This algorithm, known as Doolittle's Algorithm, proceeds as follows:
 
+\begin{itemize}
+\item Starting with column $j=1$, compute the first element by 
+
+\begin{equation}
+u_{1j}=a_{1j}
+\end{equation}
+
+\item For $i=2,\ldots,j-1$, compute
+
+\begin{equation}
+u_{ij}=a_{ij}-\sum_{k=1}^{i-1}l_{ik}u_{kj}
+\end{equation}
+
+\item Calculate the diagonal element as
+
+\begin{equation}
+u_{jj}=a_{jj}-\sum_{k-1}^{j-1} l_{jk}u_{kj}
+\end{equation}
+
+\item Calculate the $l_{ij}$ for $i>j$ as
+
+\begin{equation}
+l_{ij}=\frac{1}{u_{jj}}\left(a_{ij}-\sum_{k=1}^{i-1} l_{jk}u_{kj}\right)
+\end{equation}
+
+\item Repeat with columns $j=2,3,\ldots$.
+\end{itemize}
+
+\noindent Of course, this algorithm does not actually compute the solution to a linear system like Eq.~\ref{eq:avb}.  To compute the solution, we must invoke another algorithm.  In particular, we note that
+
+\begin{equation}
+A\textbf{x}=\textbf{b}\Rightarrow LU\textbf{x}=\textbf{b}.
+\end{equation}
+
+\noindent So we should be able to assign an intermediate vector $\textbf{y}=U\textbf{x}$ which can be easilyt computed.  In the four-dimensional example, we would have the set of equations
+
+\begin{equation}
+\begin{align}
+u_{44}x_{4}&=y_{4} \\
+u_{33}x_{3}+u_{34}x_{4}&=y_{3} \\
+u_{22}x_{2}+u_{23}x_{3}+u_{24}x_{4}&=y_{2} \\
+u_{11}x_{1}+u_{12}x_{2}+u_{13}x_{3}+u_{14}x_{4}&= y_{1}
+\end{align}
+\end{equation}
+
+\noindent and
+
+\begin{equation}
+\begin{align}
+y_{1}&=b_{1} \\
+l_{21}y_{1}+y_{2}&=b_{2} \\
+l_{31}y_{1}+l_{32}y_{2}+y_{3}&=b_{3} \\
+l_{41}y_{1}+l_{42}y_{2}+l_{43}y_{3}+y_{4}&=b_{4} \\
+\end{align}
+\end{equation}
+
+\noindent Thus, there must be both an algorithm to decompose the matrix $A$ into an upper-triangular $U$ and a lower-triangular $L$ and another algorithm to actually compute the solution to Eq.~\ref{eq:avb} from that $L$ and $U$.
+\\\indent One nice thing about LU decomposition, aside from the fact that it will take less time than the standard Gaussian elimination method $\textbf{where?}$ is that it is very natural to compute the determinant of the matrix once it has been LU-decomposed.  In particular, we know that 
+
+\begin{equation}
+A=LU \Rightarrow \det\left(A\right)=\det\left(LU\right)=\det\left(L\right)\det\left(U\right),
+\end{equation}
+
+\noindent and the determinant of either an upper-triangular or lower-triangular matrix is simply the product of its diagonal elements.  Because $L$ has 1's along its diagonal, we can see that
+
+\begin{equation}
+\det\left(A\right)=\prod_{i=1}^{n}u_{ii}.
+\end{equation}
 
 \section{The Algorithm}
 \label{sec:algorithm}
 
+The meat of this project is developing an algorithm which can compute a reasonable approximation for $u\left(x\right)$ in Eq.~\ref{eq:poisson} given $f\left(x\right) = 100e^{-10x}$.  We work with the linear algebra solutions described in Section~\ref{sec:theory}.  To do this, we first define our matrix $A$ as in Eq.~\ref{eq:a} and a vector of solutions $\textbf{b}$ as in Eq.~\ref{eq:avb}.  Noting that, in fact, we know the solution for $u\left(x\right)$ at $x=0$ and $x=1$\footnote{These values are given by the Dirichlet boundary conditions.}, we do not include either the $x_{0}$ or $x_{n+1}$\footnote{In the notation of $x_{i}=ih,i=0,\ldots,n+1$ where $h=\frac{1}{n+1}$.} terms.  However, when we perform the fit to our plot at the end, these boundary conditions will be included for completeness.  To declare these objects, we create classes $\texttt{themat}$ and $\texttt{thevec}$ for matrices and vectors handled with dynamic memory. 
+\\\indent The classes and function definitions come in documents $\texttt{classes.h}$ and $\texttt{classes.C}$.  Every object of the $\texttt{thevec}$ class has associated with it an integer $\texttt{sz}$ which is the number of rows of the vector, and a pointer to a dynamic memory array $\texttt{point}$ in which we can place the values of the components of the vector.  This class comes equipped with several constructors, a destructor (which de-allocates any memory in use by the object), several overloaded operators (addition of two vectors, subtraction of two vectors, multiplication of two vectors (in the form of a dot product)), a component retrieval function ($\texttt{operator[]}$) which returns the value of the vector at a particular index, and a printing member function.  
+\\\indent The setup of the $\texttt{themat}$ class is very similar to that of the $\texttt{thevec}$ class.  The $\texttt{sz}$ component here is the $n$ which defines the matrix (ie. creates an $n\times n$ matrix) and the $\texttt{point}$ is a double pointer.  This class also comes with multiple constructors, several overloaded operators (including matrix-matrix and matrix-vector multiplication), a component-retrieval function, and a print function.  For ease of use, $\texttt{thevec}$ was declared as a friend function of $\texttt{themat}$.  
+\\\indent Once the vector and matrix objects are defined, it is just a matter of solving Eq.~\ref{eq:avb} using the matrix and vector specific to the problem.  However, because we are working with a specific kind of matrix, there are several things we can do to reduce the computing power needed to solve the problem.  The first is noting that we do not have to proceed with the full LU-decomposition in order to decompose our special matrix.  Looking at a $4\times4$ example, we see a pattern forming. 
+
+\begin{equation}
+\begin{array}{cccc}
+\left(\begin{array}{cccc}
+1 & 0 & 0 & 0 \\
+-\frac{1}{2} & 1 & 0 & 0 \\
+0 & -\frac{2}{3} & 1 & 0 \\
+0 & 0 & -\frac{3}{4} & 1 
+\end{array}\right) &
+\left(\begin{array}{cccc}
+2 & -1 & 0 & 0 \\
+0 & \frac{3}{2} & -1 & 0 \\
+0 & 0 & \frac{4}{3} & -1 \\
+0 & 0 & 0 & \frac{5}{4} 
+\end{array}\right) &=&
+\left(\begin{array}{cccc}
+2 & -1 & 0 & 0 \\
+-1 & 2 & -1 & 0 \\
+0 & -1 & 2 & -1 \\
+0 & 0 & -1 & 2
+\end{array}\right) \\
+L & U & = & A.
+\end{array}
+\end{equation}
+
+\noindent In general, then, we might suppose that the matrix elements $l_{ij}$ and $u_{ij}$ of $L$ and $U$ will take the form
+
+\begin{equation}
+\begin{array}{cc}
+l_{ii} = 1, & l_{i,i-1} = -\frac{i-1}{i-2}, \\
+u_{ii} = \frac{i+1}{i}, & u_{i,i+1}=-1
+\end{array}
+\end{equation}
+
+\noindent and all other $l_{ij}$ and $u_{ij}$ are 0.  Noticing this means that we are required to perform far fewer float operations in order to decompose the matrix.  
+\\\indent From there, it becomes simpler to solve the linear system as well.  Referring back to the $4\times4$ example, we can now solve for our intermediate $\textbf{y}$ and then our solution $\textbf{x}$ with the following equations:
+
+\begin{equation}
+\begin{array}{ccc}
+\begin{array}{c}
+y_{1}=b_{1} \\
+-\frac{1}{2}y_{1}+y_{2}=b_{2} \\
+-\frac{2}{3}y_{2}+y_{3}=b_{3} \\
+-\frac{3}{4}y_{3}+y_{4}=b_{4} \\
+-\frac{4}{5}y_{4}+y_{5}=b_{5}
+\end{array} & \rightarrow &
+\begin{array}{c}
+2x_{1}-x_{2}=y_{1} \\
+\frac{3}{2}x_{2}-x_{3}=y_{2} \\
+\frac{4}{3}x_{3}-x_{4}=y_{3} \\
+\frac{5}{4}x_{4}-x_{5}=y_{4} \\
+\frac{6}{5}x_{5}=y_{5}
+\end{array}
+\end{array}
+\end{equation}
+
+\noindent In fact, with the matrix as specific as it is, it isn't necessary even to pass the $L$ and $U$ matrices to the solving algorithm in order to solve the system.  Instead, the algorithm can be written as:
+
+\begin{1stlisting}
+\noindent \texttt{y[0]=b[0]; \\ for(int i=1;i<n;i++)\{ \\ \indent y[i]=b[i]+(i/(i+1))*y[i-1]; \\ \} \\ x[n-1] = n*y[n-1]/(n+1); \\ 
+for(int i=n-2;i>-1;i--)\{ \\ \indent x[i]=((i+1)/(i+2))*(y[i]+x[i+1]); \\ \}}
+\end{1stlisting}
+
+
 \section{Results and Benchmarks}
 \label{sec:results}
+
+Information on the speed of the various algorithms (graphs, explanation of what we expect, should fit with curve).  What solution does the algorithm come up with?  
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-Something about how the class isn't complete actually.
+Something about how the class isn't complete actually.  Errors.
 
 
 

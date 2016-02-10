@@ -318,7 +318,7 @@ themat::~themat(){
 //Additional functions - Gaussian elimination
 
 //What if there is an arbitrary 0 entry? 
-vector<vector<double> > one_forw_reduc(themat matr, thevec vec){
+vector<vector<double> > one_forw_reduc(themat matr, thevec vec, int i){
   /*
     Takes in a matrix and a vector and performs one forward reduction, whose
     matrix and vector it then returns a vector of the vectors to be made into
@@ -326,28 +326,12 @@ vector<vector<double> > one_forw_reduc(themat matr, thevec vec){
   */
   
   //Determine what row needs to be reduced.
-  int i=0;
   int dim = matr.sz;
-  while(i+1<dim and matr[i+1][i]==0){
-    i++;
-  }
-
+  
   //If the matrix is fully reduced (forward), then return the matrix.
   vector<double> vec_to_ret, matr_to_ret;
   vector<vector<double> > to_ret;
   
-  if(i+1==dim){
-    for(int k=0;k<dim;k++){
-      vec_to_ret.push_back(vec[k]);
-      for(int j=0;j<dim;j++){
-	matr_to_ret.push_back(matr[k][j]);
-      }
-    }
-    to_ret.push_back(vec_to_ret);
-    to_ret.push_back(matr_to_ret);
-    return to_ret;
-  }
-
   //Else, reduce by the next row.
   themat matr_ret = themat(dim);
   thevec vec_ret = thevec(dim);
@@ -367,7 +351,7 @@ vector<vector<double> > one_forw_reduc(themat matr, thevec vec){
       if(matr.point[j][k]==0)
 	matr_ret.point[j][k]=0;
       else{
-	matr_ret.point[j][k]=matr[j][k]-vec[i]*fact;
+	matr_ret.point[j][k]=matr[j][k]-matr[i][k]*fact;
       }
     }
   }
@@ -387,32 +371,19 @@ vector<vector<double> > one_forw_reduc(themat matr, thevec vec){
 }
 
 //What if there is an arbitrary 0 entry? 
-vector<vector<double> > one_back_reduc(themat matr, thevec vec){
-  /*Takes in a matrix and a vector and performs one backward reduction, whose
+vector<vector<double> > one_back_reduc(themat matr, thevec vec, int i){
+  /*
+    Takes in a matrix and a vector and performs one backward reduction, whose
     matrix and vector it then returns a vector of the matrix and vector 
-    to be turned into the dynamic memory.*/
+    to be turned into the dynamic memory.
+  */
   
   //Determine what row needs to be reduced.
   int dim = vec.sz;
-  int i=dim-1;
-  while(i-1>-1 and matr[i-1][i]==0){
-    i--;
-  }
 
   //If the matrix is fully reduced (forward), then return the matrix.
   vector<double> vec_to_ret, matr_to_ret;
   vector<vector<double> > to_ret;
-  if(i-1==-1){
-    for(int k=0;k<dim;k++){
-      vec_to_ret.push_back(vec[k]);
-      for(int j=0;j<dim;j++){
-	matr_to_ret.push_back(matr[k][j]);
-      }
-    }
-    to_ret.push_back(vec_to_ret);
-    to_ret.push_back(matr_to_ret);
-    return to_ret;
-  }
 
   //Else, reduce by the next row.
   themat matr_ret = themat(dim);
@@ -430,7 +401,7 @@ vector<vector<double> > one_back_reduc(themat matr, thevec vec){
     double fact = matr[j][i]/matr[i][i];
     vec_ret.point[j]=vec[j]-vec[i]*fact;
     for(int k=j+1;k<dim;k++){
-      matr_ret.point[j][k]=0;
+      matr_ret.point[j][k]=matr[j][k]-fact*matr[i][k];
     }
   }
 
@@ -448,10 +419,12 @@ vector<vector<double> > one_back_reduc(themat matr, thevec vec){
 }
 
 thevec gauss_elim(themat matr1,thevec vec){
-  /*Takes in a matrix and a vector (the solution to Ax=b) and returns the 
+  /*
+    Takes in a matrix and a vector (the solution to Ax=b) and returns the 
     vector x which is the solution to this problem, found by Gaussian 
-    elimination.*/
-
+    elimination.
+  */
+  
   //First to perform forward elimination.
   int dim = vec.sz;
   themat matr_ret = themat(dim);
@@ -459,30 +432,21 @@ thevec gauss_elim(themat matr1,thevec vec){
   thevec vec_ret = thevec(dim);
   vec_ret = vec;
   for(int i=0;i<dim;i++){
-    vector<vector<double> > returned = one_forw_reduc(matr_ret,vec_ret);
+    vector<vector<double> > returned = one_forw_reduc(matr_ret,vec_ret,i);
     matr_ret = themat(returned.at(1));
     vec_ret = thevec(returned.at(0));
   }
-
-  cout<<"Forward:"<<endl;
-  cout<<matr_ret.print()<<endl;
-  cout<<vec_ret.print()<<endl;
 
   //Then perform backward elimination.
   for(int i=0;i<dim;i++){
-    vector<vector<double> > returned = one_back_reduc(matr_ret,vec_ret);
+    vector<vector<double> > returned = one_back_reduc(matr_ret,vec_ret,dim-1-i);
     matr_ret = themat(returned.at(1));
     vec_ret = thevec(returned.at(0));
   }
-
-  cout<<"Backward:"<<endl;
-  cout<<matr_ret.print()<<endl;
-  cout<<vec_ret.print()<<endl;
-
   //Then compute the solution x
   thevec x = thevec(dim);
   for(int i=0;i<dim;i++){
-    x.point[i]=vec_ret[i]/matr_ret[i][i];
+    x.point[i]=1.0*vec_ret[i]/matr_ret[i][i];
   }
 
   return x;
@@ -490,6 +454,7 @@ thevec gauss_elim(themat matr1,thevec vec){
 
 //Additional functions - LU Decomposition
 
+//Broken
 vector<vector<double> > LU_decomp(themat matr){
   /*
     Takes in a matrix and returns the LU decomposition as a vector of vectors
@@ -512,35 +477,73 @@ vector<vector<double> > LU_decomp(themat matr){
     }
   }
 
+  for(int k=0;k<dim;k++){
+    
+    for(int m=k;m<dim;m++){
+      U.point[k][m]=matr[k][m];
+      for(int j=0;j<k-1;j++){
+	U.point[k][m]-=L[k][j]*U[j][m];
+      }
+    }
+
+    L.point[k][k]=1;
+    for(int i=k+1;i<dim;i++){
+      L.point[i][k]=matr[i][k];
+      for(int j=0;j<k-1;j++){
+	L.point[i][k]-=L[i][j]*U[j][k];
+      }
+      L.point[i][k]/=U[k][k];
+    }
+  }
+  //cout<<"A"<<endl;
+  //cout<<"U:"<<endl<<U.print()<<endl;
+  //cout<<"L:"<<endl<<L.print()<<endl;
+
   //By columns
-  for(int j=0;j<dim;j++){
+  /*for(int j=0;j<dim;j++){
     
     //U_1j = A_1j
     U.point[0][j]=matr[0][j];
-    
-    //For i = 1,..,j-1, U_ij = A_ij - sum(l_ik*u_kj,k,1,i-1)
-    for(int i=0;i<j-2;i++){
+    L.point[j][0]=matr[j][0]/U[0][0];
+
+    //For i = 2,..,j-1, U_ij = A_ij - sum(l_ik*u_kj,k,1,i-1)
+    for(int i=1;i<j-1;i++){
       U.point[i][j]=matr[i][j];
-      for(int k=0;k<i-2;k++){
+      for(int k=0;k<i-1;k++){
 	U.point[i][j]-=L[i][k]*U[k][j];
       }
     }
 
+    //cout<<"C"<<endl;
+    //cout<<"U:"<<endl<<U.print()<<endl;
+    //cout<<"L:"<<endl<<L.print()<<endl;
+    
     //Diagonal elements U_jj = A_jj - sum(L_jk*U_kj,k=1,j-1)
     U.point[j][j] = matr[j][j];
-    for(int k=0;k<j-2;k++){
-      U.point[j][j]-=L[j][k]-U[k][j];
+    for(int k=0;k<j-1;k++){
+      U.point[j][j]-=L[j][k]*U[k][j];
     }
         
+    //cout<<"D"<<endl;
+    //cout<<"U:"<<endl<<U.print()<<endl;
+    //cout<<"L:"<<endl<<L.print()<<endl;
+    
     //For i>j, L_ij = (1/U_jj)*(A_ij - sum(L_ik*U_kj,k,1,i-1)
-    for(int i=j;i<dim;i++){
-      L.point[i][j]=matr[i][j]/U[j][j];
-      for(int k=0;k<i-2;k++){
+    for(int i=j+1;i<dim;i++){
+      L.point[i][j]=matr[i][j];
+      for(int k=0;k<i-1;k++){
 	L.point[i][j]-=L[i][k]*U[k][j];
       }
+      L.point[i][j]/=U[j][j];
     }
-        
-  }
+    
+    //cout<<"E"<<endl;
+    //cout<<"U:"<<endl<<U.print()<<endl;
+    //cout<<"L:"<<endl<<L.print()<<endl;
+    
+    }*/
+  cout<<"L:"<<endl<<L.print()<<endl;
+  cout<<"U:"<<endl<<U.print()<<endl;
 
   vector<vector<double> > to_ret;
   vector<double> L_ret, U_ret;
@@ -558,10 +561,47 @@ vector<vector<double> > LU_decomp(themat matr){
   return to_ret;
 }
 
+thevec LU_decomp_solver(themat &L, themat &U, thevec &vec){
+  /*
+    Take in an upper- and lower-triangular matrix and compute the solution to
+    LUx = vec.
+  */
+
+  int dim = L.sz;
+
+  //Define the intermediate vector
+  thevec y = thevec(dim);
+
+  //Solve for y
+  for(int i=0;i<dim;i++){
+    y.point[i]=vec[i];
+    for(int j=0;j<i;j++){
+      y.point[i]-=1.0*L[i][j]*y[j];
+    }
+  }
+
+  //Solve for the solution
+  thevec to_ret = thevec(dim);
+  for(int i=dim-1;i>-1;i--){
+    to_ret.point[i]=y[i];
+    for(int j=i+1;j<dim;j++){
+      to_ret.point[i]-=1.0*U[i][j]*to_ret[j];
+    }
+    to_ret.point[i]/=U.point[i][i];
+  }
+
+  return to_ret;
+}
+
 //Additional functions - Convert to string
 
 string to_string(double d){
   
+  /*
+    Takes in a double and converts it to a string.  This function already 
+    exists in C++11, but I don't have that version.
+  */
+
   string to_ret;
   ostringstream convert;
   convert << d;
