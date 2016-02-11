@@ -21,12 +21,12 @@
 
 %\tableofcontents
 \begin{abstract}
-Poisson's equation comes into play frequently in physical situations.  In every field of physics, from mechanics to electromagnetism, we are forced to model physical systems subject to boundary conditions with this versatile equation.  In this report, we analyze not the applications of the Poisson equation, but how to apply it, specifically subject to the Dirichlet boundary conditions, using a C++ computer program. 
+Poisson's equation is vital in the study of the physical world.  In every subfield of physics, from mechanics to electromagnetism, we are able to model physical systems subject to boundary conditions with this versatile equation.  This means that developing computer programs which can quickly and accurately solve this system is of the utmost importance.  Here, we develop a code using C++ compiled within the ROOT framework which can create a numerical approximation to the solution of the Poisson equation, specifically subject to the Dirichlet boundary conditions.  In the process, we also explore dynamic memory allocation in C++ and the use of classes.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:into}
-It is vital in physics to develop ways to deal with large quantities of data and to use that data to make close approximations of physical conditions.  In particular, we wish to develop computer programs which can both automate this process and complete it in a timely manner.  To this end, we investigate a linear algebra solution to the Poisson equation, given by 
+It is important in physics to develop ways to deal with large quantities of data and to use that data to make close approximations of physical conditions.  In particular, we wish to develop computer programs which can both automate the process of numerical approximation and which can complete them in a timely manner.  One example of an equation which we will often need to solve when investigating physical situations is the Poisson equation, given by 
 
 \begin{equation}
 \label{eq:poisson}
@@ -40,9 +40,11 @@ It is vital in physics to develop ways to deal with large quantities of data and
 u\left(0\right)=u\left(1\right)=0.
 \end{equation}
 
+In this report, we will study various numerical approximations for solutions to the Poisson equation in great detail, particularly focusing on using linear algebra and the solution of linear systems to determine a close approximation to the solution $u\left(x\right)$.  We pay special attention to the number of floating point operations (FLOPS) and the time required for various approximation methods.
+
 \section{Theory}
 \label{sec:theory}
-The mathematics behind the solution to the Poisson equation presented here is mathematically rich in approximations.  From Eq.~\ref{eq:poisson}, we can see that we are required to compute the second derivative of $u\left(x\right)$.  To do this, we note that we can always approximate the first derivative as
+The mathematics behind the solution to the Poisson equation presented here is mathematically rich in approximations.  From Eq.~\ref{eq:poisson}, we can see that we are required to compute the function $u\left(x\right)$ from its second derivative.  To do this, we note that we can always approximate the first derivative as
 
 \begin{equation}
 \label{eq:deriv1}
@@ -51,14 +53,14 @@ f'\left(x\right) \approx \frac{f\left(x+h\right)-f\left(x-h\right)}{2h},
 
 \noindent for $h<<1$ because the derivative is the slope of the line tangent to $f$ at that point.  This then implies that
 
-\begin{equation}
-\begin{align}
-f''\left(x\right)&\approx\frac{f'\left(x+h\right)-f'\left(x-h\right)}{2h} \\
-&\approx\frac{\frac{f\left(x+h+h\right)-f\left(x+h-h\right)}{2h} - \frac{f\left(x-h+h\right)-f\left(x-h-h\right)}{2h}}{2h} \\
-&\approx\frac{\frac{f\left(x+2h\right)-f\left(x\right)}{2h} - \frac{f\left(x\right)-f\left(x-2h\right)}{2h}}{2h} \\
-&\approx\frac{f\left(x+2h\right)-2f\left(x\right)+f\left(x-2h\right)}{\left(2h\right)^{2}}.
-\end{align}
-\end{equation}
+%\begin{equation}
+%\begin{align}
+$$\begin{array}{ccc} f''\left(x\right)&\approx&\frac{f'\left(x+h\right)-f'\left(x-h\right)}{2h} \\
+&\approx&\frac{\frac{f\left(x+h+h\right)-f\left(x+h-h\right)}{2h} - \frac{f\left(x-h+h\right)-f\left(x-h-h\right)}{2h}}{2h} \\
+&\approx&\frac{\frac{f\left(x+2h\right)-f\left(x\right)}{2h} - \frac{f\left(x\right)-f\left(x-2h\right)}{2h}}{2h} \\
+&\approx&\frac{f\left(x+2h\right)-2f\left(x\right)+f\left(x-2h\right)}{\left(2h\right)^{2}}.\end{array}$$
+%\end{align}
+%\end{equation}
 
 \noindent Letting $2h\rightarrow h$, we then have
 
@@ -67,21 +69,22 @@ f''\left(x\right)&\approx\frac{f'\left(x+h\right)-f'\left(x-h\right)}{2h} \\
 f''\left(x\right)\approx\frac{f\left(x+h\right)-2f\left(x\right)+f\left(x-h\right)}{h^{2}}.
 \end{equation}
 
-\noindent Eq.~\ref{eq:deriv2} is what we will use as our approximation to the second derivative throughout.  
-\indent Now, we have an expression which lends itself to the creation of vectors.  Letting $$h = \frac{1}{n+1}$$ for some $n\in\mathbb{N}$, we see that we can treat this as a step partition of the interval $\left[0,1\right]$, on which the Dirichlet conditions are valid.  Thus, we define each $x_{i}$ in the partition as $$x_{i}=ih,i=0,\ldots,n+1.$$  From these $x_{i}$ we can create a vector $\textbf{x}$ \footnote{Note that throughout we indicate vectors as bold, lowercase letters (eg. $\textbf{x}$), and matrices as uppercase letters (eg. $A$).}
+\noindent Eq.~\ref{eq:deriv2} will serve as our approximation to the second derivative throughout the remainder of this discussion.  
+\\\indent Now, we have an expression which lends itself to the use of vectors.  Letting $$h = \frac{1}{n+1}$$ be the step size for some number of steps $n\in\mathbb{N}$, we see that we can treat this as a partition of the interval $\left[0,1\right]$, on which the Dirichlet conditions are valid.  Thus, we define each $x_{i}$ in the partition as $$x_{i}=ih,i=0,\ldots,n+1.$$  From these $x_{i}$ we can create a vector $\textbf{x}$ \footnote{Note that throughout we indicate vectors as bold, lowercase letters (eg. $\textbf{x}$), and matrices as uppercase letters (eg. $A$).}
 
-\begin{equation}
-\textbf{x} = \left(0,\frac{1}{n+1},\frac{2}{n+1},\ldots,\frac{n}{n+1},1\right)^{T}
-\end{equation}
+%\begin{equation}
+$$\textbf{x} = \left(0,\frac{1}{n+1},\frac{2}{n+1},\ldots,\frac{n}{n+1},1\right)^{T}.$$
+%\end{equation}
 
 \noindent Then, let $\textbf{b}$ be a vector of the function $f\left(x\right)$ evaluated at the points in $\textbf{x}$.  That is,
 
-\begin{equation}
-\begin{align}
-\textbf{b} &= \left(f\left(0\right),f\left(\frac{1}{n+1}\right),f\left(\frac{2}{n+1}\right),\ldots,f\left(\frac{n}{n+1}\right),f\left(1\right)\right)^{T} \\
-&= \left(0,f\left(\frac{1}{n+1}\right),f\left(\frac{2}{n+1}\right),\ldots,f\left(\frac{n}{n+1}\right),0\right)^{T}.
-\end{align}
-\end{equation}
+%\begin{equation}
+%\begin{align}
+$$\begin{array}{ccc}\textbf{b} &=& \left(f\left(0\right),f\left(\frac{1}{n+1}\right),f\left(\frac{2}{n+1}\right),\ldots,f\left(\frac{n}{n+1}\right),f\left(1\right)\right)^{T} \\
+&=& \left(0,f\left(\frac{1}{n+1}\right),f\left(\frac{2}{n+1}\right),\ldots,f\left(\frac{n}{n+1}\right),0\right)^{T}.
+\end{array}$$
+%\end{align}
+%\end{equation}
 
 \noindent Now, we see that Eq.~\ref{eq:deriv2} lends itself nicely to the introduction of a linear algebra problem.  In particular, we can define an $n\times n$ matrix $A$ such that
 
@@ -105,17 +108,17 @@ A = \frac{-1}{h^{2}} \left(
 A\textbf{v}=\textbf{b}
 \end{equation}
 
-\noindent for some $\textbf{v}$ which represents $f''\left(x\right)$ at various values of $x$.  And so we have a system of $n$ equations in $n$ unknowns.
-
-In general, there are two main ways in which we might solve  Eq.~\ref{eq:avb}, known as Gaussian elimination and LU Decomposition.  We will discuss these in general in Section~\ref{subsec:gausselim} and Section~\ref{subsec:ludecomp}, respectively, before discussing how we dealt with our particular matrix $A$ given by Eq.~\ref{eq:a} in Section~\ref{sec:algorithm}.
+\noindent for some $\textbf{v}$ which represents $u\left(x\right)$ at various values of $x$.  And so we have a system of $n$ equations in $n$ unknowns.  Once we have solved for the vector $\textbf{v}$, we can use a plotting tool to plot the points and extrapolate a fit to the function.
+\\\indent In general, there are two main ways in which we might solve  Eq.~\ref{eq:avb}, known as Gaussian elimination and LU Decomposition.  We will discuss these in general in Section~\ref{subsec:gausselim} and Section~\ref{subsec:ludecomp}, respectively, before discussing how we dealt with our particular matrix $A$ given by Eq.~\ref{eq:a} in Section~\ref{sec:algorithm}.
 
 \subsection{Gaussian Elimination}
 \label{subsec:gausselim}
 
-Gaussian elimination is the method of solving linear systems typically taught in a linear algebra class.  In particular, this method involves adding multiples of rows to other rows in order to eliminate (or set to zero) off-diagonal elements.  In most situations, it is necessary to employ both a forward and backward Gaussian elimination method in order to solve a full system.  In order to demonstrate this method, we will provide an example here.  The algorithm used will be more explicitly discussed in Section~\ref{sec:algorithm}.
-\\\indent Suppose we have a matrix 
+Gaussian elimination is the method of solving linear systems typically taught in an introductory linear algebra class. This method involves adding multiples of rows of the matrix $A$ in Eq.~\ref{eq:avb} to other rows in order to eliminate (or set to zero) off-diagonal elements.  In order to determine a solution, any row operation performed on matrix $A$ must be performed on our solution vector $\textbf{b}$ in parallel.  In most situations, it is necessary to employ both a forward and backward Gaussian elimination method in order to solve a full system.  To demonstrate this method, we look at a $3\times 3$ example.  The algorithm used within the code will be more explicitly discussed in Section~\ref{sec:algorithm}.
+\\\indent Suppose we have a matrix $A$ of the form
 
 \begin{equation}
+\label{eq:ainit}
 A = \left(
 \begin{array}{ccc}
 a_{11} & a_{12} & a_{12} \\
@@ -135,10 +138,10 @@ R_{3} & = R_{3} - \frac{a_{31}}{a_{11}}R_{1}
 \end{align}
 \end{equation}
 
-\noindent ought to do the trick.  That is, we have 
+\noindent should yield the desired outcome.  That is, we have 
 
-\begin{equation}
-A = \left(
+%\begin{equation}
+$$A = \left(
 \begin{array}{ccc}
 a_{11} & a_{12} & a_{13} \\
 a_{21} & a_{22} & a_{23} \\
@@ -149,8 +152,8 @@ a_{31} & a_{32} & a_{33}
 a_{11} & a_{12} & a_{12} \\
 0 & a_{22} - \frac{a_{21}a_{12}}{a_{11}} & a_{23} - \frac{a_{21}a_{13}}{a_{11}} \\
 0 & a_{32} - \frac{a_{31}a_{12}}{a_{11}} & a_{33} - \frac{a_{31}a_{13}}{a_{11}}
-\end{array}\right).
-\end{equation}
+\end{array}\right).$$
+%\end{equation}
 
 \noindent Continuing in this manner, we will eventually have a matrix of the form 
 
@@ -160,10 +163,11 @@ A\prime = \left(
 a_{11}\prime & a_{12}\prime & a_{13}\prime \\
 0 & a_{22}\prime & a_{23}\prime \\
 0 & 0 & a_{33}\prime
-\end{array}\right).
+\end{array}\right),
 \end{equation}
 
-At this point, we may begin the backward Gaussian elimination.  In the forward process, we were able to set all of the $a_{ij}=0$ for $i>j$.  In the backward process, we wish to do the same for the $a_{ij}$ with $i<j$.  In the end, we should have a pure diagonal matrix.
+\noindent where the $\prime$ indicates that the element has been modified from its original definition in Eq.~\ref{eq:ainit}.  
+\\\indent At this point, we may begin the backward Gaussian elimination process.  In the forward process, we were able to set all of the $a_{ij}=0$ for $i>j$.  In the backward process, we wish to do the same for the $a_{ij}$ with $i<j$.  In the end, we should have a pure diagonal matrix.
 \\\indent To begin the backward process, we note that we can set the $a_{i3}$ elements to zero by similar calculations as those performed in Eq.~\ref{eq:rowops1}.  In particular, we can let 
 
 \begin{equation}
@@ -176,8 +180,8 @@ R_{1} &= R_{1} - \frac{a_{13}}{a_{33}}R_{3}
 
 \noindent Doing this, we see 
 
-\begin{equation}
-\left(
+%\begin{equation}
+$$\left(
 \begin{array}{ccc}
 a_{11}\prime & a_{12}\prime & a_{13}\prime \\
 0 & a_{22}\prime & a_{23}\prime \\
@@ -187,8 +191,8 @@ a_{11}\prime & a_{12}\prime & a_{13}\prime \\
 a_{11}\prime & a_{12}\prime & 0 \\
 0 & a_{22}\prime & 0 \\
 0 & 0 & a_{33}\prime 
-\end{array}\right).
-\end{equation}
+\end{array}\right).$$
+%\end{equation}
 
 \noindent Continuing in this manner, we can see that we will eventually come across a pure diagonal matrix.  From here, having performed the row operations on the solution vector $\textbf{b}$ as well as the matrix $A$, we can find our solution $\textbf{x}$ by noting that 
 
@@ -196,8 +200,8 @@ a_{11}\prime & a_{12}\prime & 0 \\
 x_{i} = \frac{\widetilde{b_{i}}}{\widetilde{a_{ii}}},
 \end{equation}
 
-\noindent where the $\sim$ indicates that this is the component of the Gaussian eliminated matrix/vector.  This procedure is easily generalized to an $n\times n$ matrix.
-\\\indent One downside to this method of solving the system of linear equations is that whatever row operations are performed on $A$ in Eq.~\ref{eq:avb} must also be performed on $\textbf{b}$.  This means that the process must be repeated every time the solution vector is changed.  This restriction can be a serious time constraint on any program written to implement Gaussian elimination in order to solve systems of linear equations.  The time limitations of such an algorithm are discussed in Section~\ref{sec:algorithm}.
+\noindent where the $\sim$ indicates that this is the component of the fully Gaussian eliminated matrix/vector.  This procedure is easily generalized to an $n\times n$ matrix.
+\\\indent One downside to this method of solving the system of linear equations is that whatever row operations are performed on $A$ in Eq.~\ref{eq:avb} must also be performed on $\textbf{b}$.  This means that the process must be repeated every time the solution vector is changed.  This restriction can be a serious time constraint on any program written to implement Gaussian elimination in order to solve systems of linear equations.  The time limitations of such an algorithm are discussed in Section~\textbf{where}%\ref{sec:algorithm}.
 
 \subsection{LU Decomposition}
 \label{subsec:ludecomp}
@@ -229,10 +233,11 @@ A &=& L&U
 \end{array}
 \end{equation}
 
-\noindent In contrast with the Gaussian elimination method, this method does not need to be repeated for every choice of solution vector $\textbf{b}$.  Instead, once $L$ and $U$ have been computed, they can be used to determine the solution $\textbf{x}$ for any solution vector $\textbf{b}$.
+\noindent In contrast with the Gaussian elimination method, this method does not need to be repeated for every choice of solution vector $\textbf{b}$.  Instead, once $L$ and $U$ have been computed, they can be used to determine the solution $\textbf{v}$ for any solution vector $\textbf{b}$.
 \\\indent As with the Gaussian elimination method, we present an example as an illustration of how the LU decomposition method works.  Assume we have some 
 
 \begin{equation}
+\label{eq:ainit2}
 A = \left(\begin{array}{cccc}
 a_{11} & a_{12} & a_{13} & a_{14} \\
 a_{21} & a_{22} & a_{23} & a_{24} \\
@@ -264,7 +269,7 @@ a_{44} =& l_{41}u_{14}+l_{42}u_{24}+l_{43}u_{34}+{\bf u_{44}}. &
 \end{align}
 \end{equation}
 
-\noindent This result generalizes to any $n\times n$ matrix.  In particular, an algorithm can be developed which will always give the $L$ and $U$ matrix from known values.  This algorithm, known as Doolittle's Algorithm, proceeds as follows:
+\noindent This result generalizes to any $n\times n$ matrix.  In particular, an algorithm can be developed which will always give the $L$ and $U$ matrix from known values.  This algorithm, known as Doolittle's Algorithm \textbf{need citation}, proceeds as follows:
 
 \begin{itemize}
 \item Starting with column $j=1$, compute the first element by 
@@ -288,46 +293,47 @@ u_{jj}=a_{jj}-\sum_{k-1}^{j-1} l_{jk}u_{kj}
 \item Calculate the $l_{ij}$ for $i>j$ as
 
 \begin{equation}
-l_{ij}=\frac{1}{u_{jj}}\left(a_{ij}-\sum_{k=1}^{i-1} l_{jk}u_{kj}\right)
+l_{ij}=\frac{1}{u_{jj}}\left(a_{ij}-\sum_{k=1}^{j-1} l_{jk}u_{kj}\right)
 \end{equation}
 
-\item Repeat with columns $j=2,3,\ldots$.
+\item Repeat with columns $j=2,3,\ldots,n$.
 \end{itemize}
 
-\noindent Of course, this algorithm does not actually compute the solution to a linear system like Eq.~\ref{eq:avb}.  To compute the solution, we must invoke another algorithm.  In particular, we note that
+\noindent Of course, this algorithm does not actually compute the solution to the linear system presented in Eq.~\ref{eq:avb}.  To compute the solution $\textbf{b}$, we must invoke another algorithm.  To begin, we note that
 
 \begin{equation}
+\label{eq:axbluxb}
 A\textbf{x}=\textbf{b}\Rightarrow LU\textbf{x}=\textbf{b}.
 \end{equation}
 
-\noindent So we should be able to assign an intermediate vector $\textbf{y}=U\textbf{x}$ which can be easilyt computed.  In the four-dimensional example, we would have the set of equations
+\noindent This implies that we should be able to define an intermediate vector $\textbf{y}=U\textbf{x}$ which can be easily computed.  In the four-dimensional example, we would have the set of equations
 
-\begin{equation}
-\begin{align}
-u_{44}x_{4}&=y_{4} \\
-u_{33}x_{3}+u_{34}x_{4}&=y_{3} \\
-u_{22}x_{2}+u_{23}x_{3}+u_{24}x_{4}&=y_{2} \\
-u_{11}x_{1}+u_{12}x_{2}+u_{13}x_{3}+u_{14}x_{4}&= y_{1}
-\end{align}
-\end{equation}
+%\begin{equation}
+%\begin{align}
+$$\begin{array}{rcc} u_{44}x_{4}&=&y_{4} \\
+u_{33}x_{3}+u_{34}x_{4}&=&y_{3} \\
+u_{22}x_{2}+u_{23}x_{3}+u_{24}x_{4}&=&y_{2} \\
+u_{11}x_{1}+u_{12}x_{2}+u_{13}x_{3}+u_{14}x_{4}&=& y_{1} \end{array}$$
+%\end{align}
+%\end{equation}
 
 \noindent and
 
-\begin{equation}
-\begin{align}
-y_{1}&=b_{1} \\
-l_{21}y_{1}+y_{2}&=b_{2} \\
-l_{31}y_{1}+l_{32}y_{2}+y_{3}&=b_{3} \\
-l_{41}y_{1}+l_{42}y_{2}+l_{43}y_{3}+y_{4}&=b_{4} \\
-\end{align}
-\end{equation}
+%\begin{equation}
+%\begin{align}
+$$\begin{array}{rcc}y_{1}&=&b_{1} \\
+l_{21}y_{1}+y_{2}&=&b_{2} \\
+l_{31}y_{1}+l_{32}y_{2}+y_{3}&=&b_{3} \\
+l_{41}y_{1}+l_{42}y_{2}+l_{43}y_{3}+y_{4}&=&b_{4}.\end{array}$$
+%\end{align}
+%\end{equation}
 
 \noindent Thus, there must be both an algorithm to decompose the matrix $A$ into an upper-triangular $U$ and a lower-triangular $L$ and another algorithm to actually compute the solution to Eq.~\ref{eq:avb} from that $L$ and $U$.
-\\\indent One nice thing about LU decomposition, aside from the fact that it will take less time than the standard Gaussian elimination method $\textbf{where?}$ is that it is very natural to compute the determinant of the matrix once it has been LU-decomposed.  In particular, we know that 
+\\\indent One benefit to using LU decomposition over Gaussian elimination, aside from the fact that it will take less time than the standard Gaussian elimination method $\textbf{where?}$ is that it is very natural to compute the determinant of the matrix once it has been LU-decomposed.  This is because, we have 
 
-\begin{equation}
-A=LU \Rightarrow \det\left(A\right)=\det\left(LU\right)=\det\left(L\right)\det\left(U\right),
-\end{equation}
+%\begin{equation}
+$$A=LU \Rightarrow \det\left(A\right)=\det\left(LU\right)=\det\left(L\right)\det\left(U\right),$$
+%\end{equation}
 
 \noindent and the determinant of either an upper-triangular or lower-triangular matrix is simply the product of its diagonal elements.  Because $L$ has 1's along its diagonal, we can see that
 
@@ -338,7 +344,7 @@ A=LU \Rightarrow \det\left(A\right)=\det\left(LU\right)=\det\left(L\right)\det\l
 \section{The Algorithm}
 \label{sec:algorithm}
 
-The meat of this project is developing an algorithm which can compute a reasonable approximation for $u\left(x\right)$ in Eq.~\ref{eq:poisson} given $f\left(x\right) = 100e^{-10x}$.  We work with the linear algebra solutions described in Section~\ref{sec:theory}.  To do this, we first define our matrix $A$ as in Eq.~\ref{eq:a} and a vector of solutions $\textbf{b}$ as in Eq.~\ref{eq:avb}.  Noting that, in fact, we know the solution for $u\left(x\right)$ at $x=0$ and $x=1$\footnote{These values are given by the Dirichlet boundary conditions.}, we do not include either the $x_{0}$ or $x_{n+1}$\footnote{In the notation of $x_{i}=ih,i=0,\ldots,n+1$ where $h=\frac{1}{n+1}$.} terms.  However, when we perform the fit to our plot at the end, these boundary conditions will be included for completeness.  To declare these objects, we create classes $\texttt{themat}$ and $\texttt{thevec}$ for matrices and vectors handled with dynamic memory. 
+The meat of this project is the development of an algorithm which can compute a fair approximation for $u\left(x\right)$ in Eq.~\ref{eq:poisson}.  In order to check our solutions, we take our function $f$ to be given by $f\left(x\right) = 100e^{-10x}$.  We work with the linear algebra solutions described in Section~\ref{sec:theory}.  To do this, we first define our matrix $A$ as in Eq.~\ref{eq:a} and a vector of solutions $\textbf{b}$ as in Eq.~\ref{eq:avb}.  Noting that, in fact, we know the solution for $u\left(x\right)$ at $x=0$ and $x=1$\footnote{These values are given by the Dirichlet boundary conditions.}, we do not include either the $x_{0}$ or $x_{n+1}$\footnote{In the notation of $x_{i}=ih,i=0,\ldots,n+1$ where $h=\frac{1}{n+1}$.} terms.  However, when we perform the fit to our plot at the end, these boundary conditions will be included for completeness.  To declare these objects, we create classes $\texttt{themat}$ and $\texttt{thevec}$ for matrices and vectors handled with dynamic memory. 
 \\\indent The classes and function definitions come in documents $\texttt{classes.h}$ and $\texttt{classes.C}$.  Every object of the $\texttt{thevec}$ class has associated with it an integer $\texttt{sz}$ which is the number of rows of the vector, and a pointer to a dynamic memory array $\texttt{point}$ in which we can place the values of the components of the vector.  This class comes equipped with several constructors, a destructor (which de-allocates any memory in use by the object), several overloaded operators (addition of two vectors, subtraction of two vectors, multiplication of two vectors (in the form of a dot product)), a component retrieval function ($\texttt{operator[]}$) which returns the value of the vector at a particular index, and a printing member function.  
 \\\indent The setup of the $\texttt{themat}$ class is very similar to that of the $\texttt{thevec}$ class.  The $\texttt{sz}$ component here is the $n$ which defines the matrix (ie. creates an $n\times n$ matrix) and the $\texttt{point}$ is a double pointer.  This class also comes with multiple constructors, several overloaded operators (including matrix-matrix and matrix-vector multiplication), a component-retrieval function, and a print function.  For ease of use, $\texttt{thevec}$ was declared as a friend function of $\texttt{themat}$.  
 \\\indent Once the vector and matrix objects are defined, it is just a matter of solving Eq.~\ref{eq:avb} using the matrix and vector specific to the problem.  However, because we are working with a specific kind of matrix, there are several things we can do to reduce the computing power needed to solve the problem.  The first is noting that we do not have to proceed with the full LU-decomposition in order to decompose our special matrix.  Looking at a $4\times4$ example, we see a pattern forming. 
@@ -380,6 +386,7 @@ u_{ii} = \frac{i+1}{i}, & u_{i,i+1}=-1
 \\\indent From there, it becomes simpler to solve the linear system as well.  Referring back to the $4\times4$ example, we can now solve for our intermediate $\textbf{y}$ and then our solution $\textbf{x}$ with the following equations:
 
 \begin{equation}
+\label{eq:easylusolver}
 \begin{array}{ccc}
 \begin{array}{c}
 y_{1}=b_{1} \\
@@ -405,6 +412,7 @@ y_{1}=b_{1} \\
 for(int i=n-2;i>-1;i--)\{ \\ \indent x[i]=((i+1)/(i+2))*(y[i]+x[i+1]); \\ \}}
 \end{1stlisting}
 
+However, writing the program in this way will actually increase the number of floating point operations required to solve the problem, because the fractional factors will have already been computed in the LU decomposition step.  This implies that there are actually three ways to solve this problem.  The first is to use the algorithm listed in Eq.~\ref{eq:easylusolver}.  The second is to do the simple LU decomposition and run those through the standard LU solving algorithm, and the third is to create a special LU solving algorithm which will not go through the trouble of looping through all of the elements of the matrices to solve the system.  The time required for these algorithms is explained in Section~\ref{sec:results}. \textbf{In the end,  we decided to go with the \emph{blank} option as it had the lowest time constraints.}
 
 \section{Results and Benchmarks}
 \label{sec:results}

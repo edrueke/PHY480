@@ -454,7 +454,6 @@ thevec gauss_elim(themat matr1,thevec vec){
 
 //Additional functions - LU Decomposition
 
-//Broken
 vector<vector<double> > LU_decomp(themat matr){
   /*
     Takes in a matrix and returns the LU decomposition as a vector of vectors
@@ -477,73 +476,36 @@ vector<vector<double> > LU_decomp(themat matr){
     }
   }
 
-  for(int k=0;k<dim;k++){
-    
-    for(int m=k;m<dim;m++){
-      U.point[k][m]=matr[k][m];
-      for(int j=0;j<k-1;j++){
-	U.point[k][m]-=L[k][j]*U[j][m];
-      }
-    }
-
-    L.point[k][k]=1;
-    for(int i=k+1;i<dim;i++){
-      L.point[i][k]=matr[i][k];
-      for(int j=0;j<k-1;j++){
-	L.point[i][k]-=L[i][j]*U[j][k];
-      }
-      L.point[i][k]/=U[k][k];
-    }
-  }
-  //cout<<"A"<<endl;
-  //cout<<"U:"<<endl<<U.print()<<endl;
-  //cout<<"L:"<<endl<<L.print()<<endl;
-
   //By columns
-  /*for(int j=0;j<dim;j++){
+  for(int j=0;j<dim;j++){
     
     //U_1j = A_1j
-    U.point[0][j]=matr[0][j];
-    L.point[j][0]=matr[j][0]/U[0][0];
+    U.point[0][j]=1.0*matr[0][j];
 
     //For i = 2,..,j-1, U_ij = A_ij - sum(l_ik*u_kj,k,1,i-1)
-    for(int i=1;i<j-1;i++){
-      U.point[i][j]=matr[i][j];
-      for(int k=0;k<i-1;k++){
-	U.point[i][j]-=L[i][k]*U[k][j];
+    for(int i=1;i<j;i++){
+      U.point[i][j]=1.0*matr[i][j];
+      for(int k=0;k<i;k++){
+	U.point[i][j]-=1.0*L[i][k]*U[k][j];
       }
     }
 
-    //cout<<"C"<<endl;
-    //cout<<"U:"<<endl<<U.print()<<endl;
-    //cout<<"L:"<<endl<<L.print()<<endl;
-    
     //Diagonal elements U_jj = A_jj - sum(L_jk*U_kj,k=1,j-1)
-    U.point[j][j] = matr[j][j];
-    for(int k=0;k<j-1;k++){
-      U.point[j][j]-=L[j][k]*U[k][j];
+    U.point[j][j] = 1.0*matr[j][j];
+    for(int k=0;k<j;k++){
+      U.point[j][j]-=1.0*L[j][k]*U[k][j];
     }
         
-    //cout<<"D"<<endl;
-    //cout<<"U:"<<endl<<U.print()<<endl;
-    //cout<<"L:"<<endl<<L.print()<<endl;
-    
-    //For i>j, L_ij = (1/U_jj)*(A_ij - sum(L_ik*U_kj,k,1,i-1)
+    //For i>j, L_ij = (1/U_jj)*(A_ij - sum(L_ik*U_kj,k,1,j-1)
     for(int i=j+1;i<dim;i++){
-      L.point[i][j]=matr[i][j];
-      for(int k=0;k<i-1;k++){
-	L.point[i][j]-=L[i][k]*U[k][j];
+      L.point[i][j]=1.0*matr[i][j];
+      for(int k=0;k<j;k++){
+	L.point[i][j]-=1.0*L[i][k]*U[k][j];
       }
-      L.point[i][j]/=U[j][j];
+      L.point[i][j]/=1.0*U[j][j];
     }
     
-    //cout<<"E"<<endl;
-    //cout<<"U:"<<endl<<U.print()<<endl;
-    //cout<<"L:"<<endl<<L.print()<<endl;
-    
-    }*/
-  cout<<"L:"<<endl<<L.print()<<endl;
-  cout<<"U:"<<endl<<U.print()<<endl;
+  }
 
   vector<vector<double> > to_ret;
   vector<double> L_ret, U_ret;
