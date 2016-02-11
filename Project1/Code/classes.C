@@ -66,6 +66,19 @@ string thevec::print(){
   return toret;
 }
 
+thevec operator*(const thevec &vec1,double fact){
+  /*
+    Scalar multiplication.
+  */
+
+  thevec to_ret = thevec(vec1.sz);
+  for(int i=0;i<vec1.sz;i++){
+    to_ret.point[i]=vec1.point[i]*fact;
+  }
+
+  return to_ret;
+}
+
 thevec operator+(const thevec &vec1, const thevec &vec2){
   /*
     Addition of two vectors of the same size
@@ -205,6 +218,22 @@ string themat::print(){
     }
     to_ret+="\n";
   }
+  return to_ret;
+}
+
+themat operator*(const themat &mat, double fact){
+  /*
+    Scalar multiplication.
+  */
+
+  int size = mat.sz;
+  themat to_ret = themat(size);
+  for(int i=0;i<size;i++){
+    for(int j=0;j<size;j++){
+      to_ret.point[i][j]=mat.point[i][j]*fact;
+    }
+  }
+
   return to_ret;
 }
 
@@ -572,3 +601,89 @@ string to_string(double d){
   return to_ret;
 }
 
+//Project 1 - Specific Functions
+
+double function(double &x){
+  /*
+    Takes in an x-value and returns our test function at that point 
+    f(x) = 100e^{-10x}.
+  */
+
+  return 100*exp(-10*x);
+}
+
+vector<vector<double> > LU_decomp_special(int sz){
+  /*
+    Computes the L and U decomposition of the matrix particular to this 
+    problem.
+  */
+
+  themat L = themat(sz);
+  themat U = themat(sz);
+  
+  for(int i=0;i<sz;i++){
+    for(int j=0;j<sz;j++){
+      if(i==j){
+	U.point[i][j]=(i+2.0)/(i+1.0);
+	L.point[i][j]=1;
+      }
+      else if((i-1)==j){
+	L.point[i][j]=(-1.0*j)/i;
+	U.point[i][j]=0;
+      }
+      else if(i+1==j){
+	L.point[i][j]=0;
+	U.point[i][j]=-1;
+      }
+      else{
+	L.point[i][j]=0;
+	U.point[i][j]=0;
+      }
+    }
+  }
+
+  for(int i=1;i<sz;i++){
+    if(i!=(sz-1))
+      L.point[i][i-1]=L[i+1][i];
+    else
+      L.point[i][i-1]=(-1.0*i)/(i+1);
+  }
+
+  vector<vector<double> > to_ret;
+  vector<double> L_ret, U_ret;
+
+  for(int i=0;i<sz;i++){
+    for(int j=0;j<sz;j++){
+      L_ret.push_back(L[i][j]);
+      U_ret.push_back(U[i][j]);
+    }
+  }
+
+  to_ret.push_back(L_ret);
+  to_ret.push_back(U_ret);
+
+  return to_ret;
+}
+
+thevec LU_decomp_solver_special(thevec &vec){
+  /*
+    Special solver for this particular problem.
+  */
+
+  int sz = vec.sz;
+
+  thevec y = thevec(sz);
+
+  y.point[0]=vec[0];
+  for(int i=1;i<sz;i++){
+    y.point[i]=vec[i]+(i/(i+1.0))*y[i-1];
+  }
+
+  thevec to_ret = thevec(sz);
+  to_ret.point[sz-1]=1.0*sz*y[sz-1]/(sz+1);
+  for(int i=sz-2;i>-1;i--){
+    to_ret.point[i] = ((i+1.0)/(i+2))*(y[i]+to_ret[i+1]);
+  }
+
+  return to_ret;
+}

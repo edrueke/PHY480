@@ -40,14 +40,15 @@ class thevec{
   friend thevec operator+(const thevec &vec1,const thevec &vec2); //Addition
   friend thevec operator-(const thevec &vec1,const thevec &vec2); //Subtraction
   friend double operator*(const thevec &vec1,const thevec &vec2); //Dot product
+  friend thevec operator*(const thevec &vec1,double fact); //Scalar Multiplication
   double operator[](int i); //Component retrieval
   thevec &operator=(const thevec &vec); //Equality
-  //scalar multiplication?
 };
 
 thevec operator+(const thevec &vec1,const thevec &vec2);
 thevec operator-(const thevec &vec1,const thevec &vec2); 
 double operator*(const thevec &vec1,const thevec &vec2); 
+thevec operator*(const thevec &vec1,double fact);
 
 //Matrix class
 class themat{
@@ -67,9 +68,9 @@ class themat{
   friend themat operator-(const themat &mat1, const themat &mat2); //Subtraction
   friend themat operator*(const themat &mat1, const themat &mat2); //Matrix-matrix multiplication
   friend thevec operator*(const themat &mat, const thevec &vec); //Matrix-vector multiplication
+  friend themat operator*(const themat &mat, double fact); //Scalar Multiplication
   thevec operator[](int i); //Component retrieval
   themat &operator=(const themat &mat); //Equality
-  //scalar multiplication?
 
   friend class thevec;
 };
@@ -78,6 +79,7 @@ themat operator+(const themat &mat1, const themat &mat2); //Addition
 themat operator-(const themat &mat1, const themat &mat2); //Subtraction
 themat operator*(const themat &mat1, const themat &mat2); //Matrix-matrix multiplication
 thevec operator*(const themat &mat, const thevec &vec); //Matrix-vector multiplication
+themat operator*(const themat &mat, double fact); //Scalar multiplication
 
 //Additional functions - Gaussian elimination
 vector<vector<double> > one_forw_reduc(themat matr, thevec vec, int i);
@@ -92,3 +94,9 @@ thevec LU_decomp_solver(themat &L,themat &U,thevec &vec);
 //Additional functions - Convert to string
 
 string to_string(double);
+
+//Project 1 - Specific Functions
+
+double function(double &x);
+vector<vector<double> > LU_decomp_special(int sz);
+thevec LU_decomp_solver_special(thevec &vec);
