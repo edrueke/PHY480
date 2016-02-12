@@ -61,8 +61,13 @@ string thevec::print(){
 
   string toret = "";
   for(int i=0;i<sz;i++){
-    toret+=(to_string(point[i])+",");
+    if(i==sz-1)
+      toret+=(to_string(point[i]));
+    else
+      toret+=(to_string(point[i])+",");
   }
+  
+  toret+="\n";
   return toret;
 }
 
@@ -214,7 +219,10 @@ string themat::print(){
 
   for(int i=0;i<sz;i++){
     for(int j=0;j<sz;j++){
-      to_ret+=(to_string(point[i][j])+",");
+      if(j==sz-1)
+	to_ret+=(to_string(point[i][j]));
+      else
+	to_ret+=(to_string(point[i][j])+",");
     }
     to_ret+="\n";
   }
@@ -605,11 +613,20 @@ string to_string(double d){
 
 double function(double &x){
   /*
-    Takes in an x-value and returns our test function at that point 
+    Takes in an x-value and returns our test function at that point. 
     f(x) = 100e^{-10x}.
   */
 
   return 100*exp(-10*x);
+}
+
+double sol_function(double &x){
+  /*
+    Takes in an x-value and returns the solution to the test function at that
+    point. f(x) = e^{-10x}.
+  */
+
+  return exp(-10*x);
 }
 
 vector<vector<double> > LU_decomp_special(int sz){
@@ -665,9 +682,12 @@ vector<vector<double> > LU_decomp_special(int sz){
   return to_ret;
 }
 
-thevec LU_decomp_solver_special(thevec &vec){
+thevec LU_decomp_solver_special(thevec &vec, themat &L, themat &U){
   /*
     Special solver for this particular problem.
+
+    Takes in the solution vector and the L and U decomposition of the special
+    Poisson equation matrix.
   */
 
   int sz = vec.sz;
@@ -676,13 +696,13 @@ thevec LU_decomp_solver_special(thevec &vec){
 
   y.point[0]=vec[0];
   for(int i=1;i<sz;i++){
-    y.point[i]=vec[i]+(i/(i+1.0))*y[i-1];
+    y.point[i]=vec[i]-L[i][i-1]*y[i-1];
   }
 
   thevec to_ret = thevec(sz);
-  to_ret.point[sz-1]=1.0*sz*y[sz-1]/(sz+1);
+  to_ret.point[sz-1]=y[sz-1]/U[sz-1][sz-1];
   for(int i=sz-2;i>-1;i--){
-    to_ret.point[i] = ((i+1.0)/(i+2))*(y[i]+to_ret[i+1]);
+    to_ret.point[i] = (y[i]+to_ret[i+1])/U[i][i];
   }
 
   return to_ret;

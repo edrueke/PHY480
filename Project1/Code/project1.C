@@ -21,13 +21,11 @@ the Dirichlet boundary conditions u(0)=u(1)=0 for f(x)=100e**(-10*x).
 #include "TStyle.h"
 #include "time.h"
 #include "TMultiGraph.h"
+#include "TColor.h"
 
 #include "classes.C"
 
 using namespace std;
-
-//dim is a global variable giving the dimension of the nxn matrices
-const int dim = 10;
 
 void check_timing(){
   /*
@@ -104,7 +102,7 @@ void check_timing(){
     vector<vector<double> > lu_vec = LU_decomp_special(dm);
     themat L = themat(lu_vec.at(0));
     themat U = themat(lu_vec.at(1));
-    thevec ludecomp = LU_decomp_solver_special(vec);
+    thevec ludecomp = LU_decomp_solver_special(vec,L,U);
     finish_luspec = clock();
 
     g_ludecompspec->SetPoint(ct,dm,1.0*(finish_lufull-start_lufull)/CLOCKS_PER_SEC);
@@ -153,14 +151,13 @@ void check_timing(){
 
 }
 
-void project1(){
-  /*The main function of the script.*/
-
-  //Check the timing and create the timing plot
-  //check_timing();
+TGraph* make_sol_plots(int dim, TF1* func){
+  /*
+    Makes graphs of the solutions with the correct function solution.
+  */
 
   //Define the matrix. We defined it to be dim-1 in size because we know the 
-  //boundary conditions.  This way we are solving for i=1,..,n, dim is n+1 and
+  //boundary conditions. This way we are solving for i=1,..,n, dim is n+1 and
   //we can include the boundary conditions at i=0 and i=dim at the end.
   themat mat = themat(dim-1);
   for(int i=0;i<dim-1;i++){
@@ -173,7 +170,7 @@ void project1(){
 	mat.point[i][j]=0;
     }
   }
-
+  
   //Define the vector. 
   thevec vec = thevec(dim-1);
   double h = 1.0/(dim);
@@ -181,16 +178,16 @@ void project1(){
     double xi = (i+1)*h;
     vec.point[i]=function(xi);
   }
-
+  
   //Solve with special LU decomposition.
   vector<vector<double> > lu_vec = LU_decomp_special(dim-1);
   themat L = themat(lu_vec.at(0));
   themat U = themat(lu_vec.at(1));
-  thevec solution = LU_decomp_solver_special(vec);
-
+  thevec solution = LU_decomp_solver_special(vec,L,U);
+  
   //Multiply by h^2 because we haven't taken that into account yet.
   solution=solution*(pow(h,2));
-
+  
   //Plot the result
   TGraph *g_solution = new TGraph(dim+1);
   
@@ -199,21 +196,110 @@ void project1(){
     if(i==0)
       g_solution->SetPoint(i,0,0);
     else if(i==dim+1)
-      g_solution->SetPoint(i,1,0);
-    
+      g_solution->SetPoint(i,1,0);  
     //Solution vector
     else
       g_solution->SetPoint(i,i*h,solution[i-1]);
   }
+  
+  /*TLegend *leg = new TLegend(0.50,0.13,0.55,0.28);
+  leg->SetFillColor(0);
+  leg->SetLineColor(0);
+  leg->SetShadowColor(0);
+  leg->SetTextSize(0.04);
+  
+  g_solution->SetLineColor(kBlack);
+  func->SetLineColor(kRed);
+  func->SetLineStyle(10);
+  
+  string leg_entry = "n = "+to_string(dim+1);
+  leg->AddEntry(g_solution,leg_entry.c_str(),"L");
+  leg->AddEntry(func,"Accepted","L");
 
   TCanvas *c_solution = new TCanvas("c_solution","c_solution",800,720);
   c_solution->SetBorderMode(0);
+  
+  c_solution->cd();
+  func->Draw();
+  g_solution->Draw("SAME AC*");
+  leg->Draw("SAME");
+
+  string name1 = "plots/solution_plot"+to_string(dim+1)+".png";
+  string name2 = "plots/solution_plot"+to_string(dim+1)+".root";
+  c_solution->SaveAs(name1.c_str());
+  c_solution->SaveAs(name2.c_str());*/
+
+  return g_solution;
+}
+
+void project1(){
+  /*
+    The main function of the script.
+  */
+
+  //Check the timing and create the timing plot
+  //check_timing();
+
+  //Define the dimensions to test
+  vector<int> dims;
+  dims.push_back(2); dims.push_back(3); dims.push_back(5);
+  dims.push_back(10); dims.push_back(50); dims.push_back(100); 
+  dims.push_back(500); dims.push_back(1000);
+  //dims.push_back(10000); dims.push_back(100000); 
+
+  //Define various colors
+  vector<int> colors;
+  for(int i=2;i<20;i++){
+    colors.push_back(i);
+  }
+
+  //Define the accepted solution
+  TF1 *func = new TF1("func","x/exp(10)-x-exp(-10*x)+1",0,1);
+
+  //Define a multigraph to hold all calculated solutions
+  TMultiGraph *m_sol = new TMultiGraph("m_sol","Solutions for Various Numbers of Steps");
+  m_sol->SetTitle("Solutions for Various Numbers of Steps;x_{i};u(x)");
+
+  //Define a legend 
+  TLegend *leg = new TLegend(0.67,0.55,0.8,0.85);
+  leg->SetFillColor(0);
+  leg->SetLineColor(0);
+  leg->SetShadowColor(0);
+  leg->SetTextSize(0.04);
+
+  func->SetLineColor(1);
+  leg->AddEntry(func,"Accepted");
+
+  //Make a graph for each number of steps listed in dims.
+  for(unsigned int my_ct=0;my_ct<dims.size();my_ct++){
+    
+    int dim = dims.at(my_ct);
+    TGraph* hold = make_sol_plots(dim,func);
+    hold->SetLineStyle(my_ct%10+1);
+    hold->SetLineColor(colors.at(my_ct));
+    hold->SetFillColor(0);
+    hold->SetMarkerColor(colors.at(my_ct));
+    string name = "n = "+to_string(dim+1);
+    leg->AddEntry(hold,name.c_str());
+    m_sol->Add(hold);
+
+  }
+  
+
+  //Plot the graphs with the legend
+  TCanvas *c_solution = new TCanvas("c_solution","c_solution",800,720);
+  c_solution->SetBorderMode(0);
+  
+  func->SetLineColor(1);
+  func->SetLineStyle(10);
 
   c_solution->cd();
-  g_solution->Draw("AC*");
+  m_sol->Draw("AC");
+  func->Draw("SAME");
+  leg->Draw("SAME");
   
-  c_solution->SaveAs("solution_plot.png");
-  c_solution->SaveAs("solution_plot.root");
-
+  c_solution->SaveAs("plots/solution_plot.png");
+  c_solution->SaveAs("plots/solution_plot.root");
+  
 
 }

@@ -98,5 +98,6 @@ string to_string(double);
 //Project 1 - Specific Functions
 
 double function(double &x);
+double sol_function(double &x);
 vector<vector<double> > LU_decomp_special(int sz);
-thevec LU_decomp_solver_special(thevec &vec);
+thevec LU_decomp_solver_special(thevec &vec, themat &L, themat &U);
