@@ -94,6 +94,7 @@ thevec LU_decomp_solver(themat &L,themat &U,thevec &vec);
 //Additional functions - Convert to string
 
 string to_string(double);
+double error_calc(double,double);
 
 //Project 1 - Specific Functions
 

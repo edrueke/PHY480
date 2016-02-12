@@ -245,7 +245,8 @@ void check_timing_short(){
   leg->AddEntry(g_ludecompfull,"Full LU Decomposition","L");
   leg->AddEntry(g_ludecompspec,"Special LU Decomposition","L");
 
-  TMultiGraph *m_time = new TMultiGraph("m_time","Timing for Various Algorithms");
+  TMultiGraph *m_time = new TMultiGraph("m_time",
+					"Timing for Various Algorithms");
   m_time->SetTitle("Timing for Various Algorithms;Dimension of Matrix;Time (s)");
   m_time->Add(g_ludecompfull);
   m_time->Add(g_ludecompspec);
@@ -258,14 +259,15 @@ void check_timing_short(){
   m_time->Draw("AC*");
   leg->Draw("SAME");
   
+  //Save the plots
   c_time->SaveAs("plots/time_plot_short.png");
   c_time->SaveAs("plots/time_plot_short.root");
 
 }
 
-TGraph* make_sol_plots(int dim, TF1* func){
+TGraph* make_sol_plots(int dim){
   /*
-    Makes graphs of the solutions with the correct function solution.
+    Returns graphs of the solutions for plotting in the main function.
   */
 
   //Define the matrix. We defined it to be dim-1 in size because we know the 
@@ -314,51 +316,146 @@ TGraph* make_sol_plots(int dim, TF1* func){
       g_solution->SetPoint(i,i*h,solution[i-1]);
   }
   
-  /*TLegend *leg = new TLegend(0.50,0.13,0.55,0.28);
-  leg->SetFillColor(0);
-  leg->SetLineColor(0);
-  leg->SetShadowColor(0);
-  leg->SetTextSize(0.04);
-  
-  g_solution->SetLineColor(kBlack);
-  func->SetLineColor(kRed);
-  func->SetLineStyle(10);
-  
-  string leg_entry = "n = "+to_string(dim+1);
-  leg->AddEntry(g_solution,leg_entry.c_str(),"L");
-  leg->AddEntry(func,"Accepted","L");
-
-  TCanvas *c_solution = new TCanvas("c_solution","c_solution",800,720);
-  c_solution->SetBorderMode(0);
-  
-  c_solution->cd();
-  func->Draw();
-  g_solution->Draw("SAME AC*");
-  leg->Draw("SAME");
-
-  string name1 = "plots/solution_plot"+to_string(dim+1)+".png";
-  string name2 = "plots/solution_plot"+to_string(dim+1)+".root";
-  c_solution->SaveAs(name1.c_str());
-  c_solution->SaveAs(name2.c_str());*/
-
   return g_solution;
+}
+
+void error_calculations(){
+  /*
+    Compute the errors for the various algorithms.
+  */
+  
+  //Create a textfile to put errors into.
+  ofstream myfile;
+  myfile.open("plots/errors.txt");
+  myfile<<"Maximum errors per step size"<<endl<<endl;
+  myfile<<"Function Type | Number of Steps | Maximum Error"<<endl<<endl;
+  
+  //The dimensions to work with.
+  vector<int> dims;
+  dims.push_back(2); dims.push_back(3); dims.push_back(5);
+  dims.push_back(11); dims.push_back(51); dims.push_back(101); 
+  dims.push_back(501); dims.push_back(1001);
+  dims.push_back(10001); dims.push_back(100001); 
+  
+  //Define vectors for the errors.
+  vector<double> gauss_error, lu_error, spec_error;
+  
+  //Loop over the dimensions.
+  for(unsigned int k=0;k<dims.size();k++){
+    
+    int dim = dims.at(k);
+    cout<<"dim = "<<dim<<endl;
+
+    //Define the matrix and the vector to work with.
+    themat mat = themat(dim-1);
+    for(int i=0;i<dim-1;i++){
+      for(int j=0;j<dim-1;j++){
+	if(i==j)
+	  mat.point[i][j]=2.0;
+	else if(i==j+1||i==j-1)
+	  mat.point[i][j]=-1.0;
+	else
+	  mat.point[i][j]=0;
+      }
+    }
+    
+    //Define the vector. 
+    thevec vec = thevec(dim-1);
+    double h = 1.0/(dim);
+    for(int i=0;i<dim-1;i++){
+      double xi = (i+1)*h;
+      vec.point[i]=function(xi);
+    }
+
+    //Compute a vector of the calculated solution.
+    thevec calc = thevec(dim-1);
+    for(int i=0;i<dim-1;i++){
+      double xi=(i+1)*h;
+      calc.point[i]=sol_function(xi);
+    }
+
+    //Compute errors for special decomp - store in file
+    vector<vector<double> > lu_vec = LU_decomp_special(dim-1);
+    themat L = themat(lu_vec.at(0));
+    themat U = themat(lu_vec.at(1));
+    thevec solution = LU_decomp_solver_special(vec,L,U);
+    
+    //Multiply by h^2 because we haven't taken that into account yet.
+    solution=solution*(pow(h,2));
+    
+    double maxerror_spec=0;
+    for(int i=0;i<dim-1;i++){
+      double err = error_calc(solution[i],calc[i]);
+      if(fabs(err)>fabs(maxerror_spec) && i!=0 && i!=dim-2)
+	maxerror_spec=err;
+    }
+
+    myfile<<"Special LU | "<<dim-1<<" | "<<maxerror_spec<<endl;
+
+    //Compute errors for full LU decomp - store in file
+    //Note that the time dependence of the LU decomposition makes computation
+    //at dim>500 unreasonable.
+    if(dim<=500){
+      vector<vector<double> > lu_vec_full = LU_decomp(mat);
+      themat L_full = themat(lu_vec_full.at(0));
+      themat U_full = themat(lu_vec_full.at(1));
+      thevec ludecomp_full = LU_decomp_solver(L_full,U_full,vec);
+
+      //Multiply by h^2 because we haven't done that yet
+      ludecomp_full=ludecomp_full*(pow(h,2));
+
+      double maxerror_lufull = 0;
+      for(int i=0;i<dim-1;i++){
+	double err_lu = error_calc(ludecomp_full[i],calc[i]);
+	if(fabs(err_lu)>fabs(maxerror_lufull) && i!=0 && i!=dim-2)
+	  maxerror_lufull = err_lu;
+      }
+      myfile<<"Full LU | "<<dim-1<<" | "<<maxerror_lufull<<endl;
+
+    }
+
+    //Compute errors for the full gaussian elimination - store in file
+    //Note that the time dependence of the gaussian elimination makes 
+    //computation at dim>200 unreasonable.
+    if(dim<=200){
+      thevec gausselim = gauss_elim(mat,vec);
+      gausselim=gausselim*pow(h,2);
+
+      double maxerror_gau=0;
+      for(int i=0;i<dim-1;i++){
+	double err_g = error_calc(gausselim[i],calc[i]);
+	if(abs(err_g)>abs(maxerror_gau) && i!=0 && i!=dim-2)
+	  maxerror_gau = err_g;
+      }
+      myfile<<"Full Gauss | "<<dim-1<<" | "<<maxerror_gau<<endl;
+
+    }
+  }
+
+  //Close the errors text file.
+  myfile.close();
 }
 
 void project1(){
   /*
-    The main function of the script.
+    The main function of the script.  Solves the problem and calls functions
+    above to compute the time dependence and the error.  Plots solutions.
   */
 
   //Check the timing and create the timing plot
-  //check_timing_all();
-  //check_timing_short();
+  cout<<"All timing"<<endl;
+  check_timing_all();
+  cout<<"Short timing"<<endl;
+  check_timing_short();
+  cout<<"Errors"<<endl;
+  error_calculations();
+  cout<<"Solutions:"<<endl;
 
   //Define the dimensions to test
   vector<int> dims;
   dims.push_back(2); dims.push_back(3); dims.push_back(5);
   dims.push_back(10); dims.push_back(50); dims.push_back(100); 
   dims.push_back(500); dims.push_back(1000);
-  dims.push_back(10000); dims.push_back(100000); 
 
   //Define various colors
   vector<int> colors;
@@ -383,34 +480,14 @@ void project1(){
   func->SetLineColor(1);
   leg->AddEntry(func,"Accepted");
 
-  //Work with errors.
-  vector<double> errors;
-
   //Make a graph for each number of steps listed in dims.
   for(unsigned int my_ct=0;my_ct<dims.size();my_ct++){
     
-    //Hold the maximum error.
-    double max_error = 0;
-
     int dim = dims.at(my_ct);
     cout<<"dim = "<<dim<<endl;
 
     //Make the tgraph
-    TGraph* hold = make_sol_plots(dim,func);
-
-    //Calculate errors.
-    int n_points = hold->GetN();
-    double x[n_points]; double y[n_points];
-    for(int i=0;i<n_points;i++){
-      hold->GetPoint(i,x[i],y[i]);
-      double ans = sol_function(x[i]);
-      double err = log10(fabs((y[i]-ans)/ans));
-      //cout<<"i = "<<i<<"; x = "<<x[i]<<"; y = "<<y[i]<<"; sol = "<<ans<<"; err = "<<err<<endl;
-      if(fabs(err)>fabs(max_error) && i!=0 && i!=n_points-1)
-	max_error=err;
-    }
-
-    errors.push_back(max_error);
+    TGraph* hold = make_sol_plots(dim);
 
     //Style the tgraph
     hold->SetLineStyle(my_ct%10+1);
@@ -437,18 +514,8 @@ void project1(){
   func->Draw("SAME");
   leg->Draw("SAME");
   
+  //Save the plots
   c_solution->SaveAs("plots/solution_plot.png");
   c_solution->SaveAs("plots/solution_plot.root");
   
-  //Write out the errors to a file
-  ofstream myfile;
-  myfile.open("plots/errors.txt");
-  myfile<<"Maximum errors per step size"<<endl<<endl;
-  myfile<<"Number of Steps | Maximum Error"<<endl<<endl;
-
-  for(unsigned int i=0;i<errors.size();i++){
-    myfile<<dims.at(i)+1<<" | "<<errors.at(i)<<endl;
-  }
-
-  myfile.close();
 }

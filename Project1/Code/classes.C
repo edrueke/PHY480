@@ -609,6 +609,14 @@ string to_string(double d){
   return to_ret;
 }
 
+double error_calc(double comp,double exp){
+  /*
+    Calculate the expected errors.
+  */
+
+  return log10(fabs((comp-exp)/exp));
+}
+
 //Project 1 - Specific Functions
 
 double function(double &x){

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  12 FEB 2016 07:40
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  12 FEB 2016 17:21
 entering extended mode
 **C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/Report.tex
 (C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/Report.tex
@@ -515,7 +515,7 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.127 \end{align}
+l.136 \end{align}
                  
 ? 
 [3]
@@ -527,7 +527,7 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.168 \end{align}
+l.179 \end{align}
                  
 ? 
 [4]
@@ -539,17 +539,18 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.257 \end{align}
+l.271 \end{align}
                  
 ? 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 263.
+[5]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 278.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 263.
- [5] [6] [7]
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 278.
+ [6] [7] [8]
 
 ! LaTeX Error: Environment 1stlisting undefined.
 
@@ -557,16 +558,16 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.393 \begin{1stlisting}
+l.415 \begin{1stlisting}
                         
 ? 
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 395
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 417
 .
-LaTeX Font Info:    No file OMScmtt.fd. on input line 395.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 417.
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 395.
+(Font)              for symbol `textbraceleft' on input line 417.
 
 
 ! LaTeX Error: \begin{document} ended by \end{1stlisting}.
@@ -575,7 +576,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.396 \end{1stlisting}
+l.418 \end{1stlisting}
                       
 ? 
 
@@ -585,7 +586,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.400 \begin{1stlisting}
+l.424 \begin{1stlisting}
                         
 ? 
 
@@ -595,7 +596,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.402 \end{1stlisting}
+l.426 \end{1stlisting}
                       
 ? 
 
@@ -605,10 +606,9 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.406 \begin{1stlisting}
+l.432 \begin{1stlisting}
                         
 ? 
-[8]
 
 ! LaTeX Error: \begin{document} ended by \end{1stlisting}.
 
@@ -616,9 +616,10 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.408 \end{1stlisting}
+l.434 \end{1stlisting}
                       
 ? 
+[9]
 
 ! LaTeX Error: There's no line here to end.
 
@@ -626,7 +627,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.420 \\\indent
+l.447 \\\indent
                 Our final special LU decomposition solver is, as mentioned a...
 
 ? 
@@ -637,11 +638,22 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.427 \\\indent
-                The algorithms written for the full Gaussian elimination and...
-
+l.452 \\\indent
+               \indent\indent\texttt{for(int i=0;i<n;i++)\{ }
 ? 
-[9] [10]
+! Undefined control sequence.
+l.461 \\ \indent\indent\indent\indent\textt
+                                           {\}}
+? 
+! Undefined control sequence.
+l.465 \\\indent\indent\indent\indent\textt
+                                          {\}}
+? 
+! Undefined control sequence.
+l.470 \\\indent\indent\indent\textt
+                                   {\}}
+? 
+[10]
 
 ! LaTeX Error: There's no line here to end.
 
@@ -649,23 +661,120 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.460 \\\indent
+l.481 \\\indent
+               \indent\indent\texttt{y[0]=b[0];}
+? 
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.491 \\\indent
+                The algorithms written for the full Gaussian elimination and...
+
+? 
+[11] [12]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.524 \\\indent
                 The results for various numbers of steps are plotted in Figu...
 
 ? 
-<plots/solution_plot.png, id=53, 798.985pt x 694.595pt>
+<plots/solution_plot.png, id=59, 798.985pt x 694.595pt>
 File: plots/solution_plot.png Graphic file (type png)
 
 <use plots/solution_plot.png>
-Package pdftex.def Info: plots/solution_plot.png used on input line 472.
+Package pdftex.def Info: plots/solution_plot.png used on input line 536.
 (pdftex.def)             Requested size: 258.36668pt x 224.60664pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[11] [12 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/plots/solu
-tion_plot.png>] [13]
-(C:\Users\Elizabeth\Documents\GitHub\PHY480\Project1\Report\Report.aux)
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.561 \\\indent
+                We were also able to perform a cursory analysis of the real-...
+
+? 
+
+! LaTeX Error: Environment subfigure undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.565 \begin{subfigure}
+                       
+? 
+<plots/time_plot.png, id=60, 798.985pt x 694.595pt>
+File: plots/time_plot.png Graphic file (type png)
+ <use plots/time_plot.png>
+Package pdftex.def Info: plots/time_plot.png used on input line 567.
+(pdftex.def)             Requested size: 211.38832pt x 183.77003pt.
+
+
+! LaTeX Error: \begin{center} on input line 564 ended by \end{subfigure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.568 \end{subfigure}
+                     
+? 
+
+! LaTeX Error: Environment subfigure undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.569 \begin{subfigure}
+                       
+? 
+<plots/time_plot_short.png, id=61, 798.985pt x 694.595pt>
+File: plots/time_plot_short.png Graphic file (type png)
+
+<use plots/time_plot_short.png>
+Package pdftex.def Info: plots/time_plot_short.png used on input line 571.
+(pdftex.def)             Requested size: 211.38832pt x 183.77003pt.
+
+
+! LaTeX Error: \begin{center} on input line 564 ended by \end{subfigure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.572 \end{subfigure}
+                     
+? 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[13] [14 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/plots/solu
+tion_plot.png>] [15 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report
+/plots/time_plot.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Repo
+rt/plots/time_plot_short.png>]
+Overfull \hbox (2.88545pt too wide) in paragraph at lines 592--593
+\OT1/cmr/m/it/12 Knowl-edge En-gine\OT1/cmr/m/n/12 . N.p., n.d. Web. 12 Feb. 20
+16. $\OML/cmm/m/it/12 <$\OT1/cmr/m/n/12 http://www.wolframalpha.com/$\OML/cmm/m
+/it/12 >$\OT1/cmr/m/n/12 . 
+ []
+
+[16] (C:\Users\Elizabeth\Documents\GitHub\PHY480\Project1\Report\Report.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -674,13 +783,13 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 4422 strings out of 494045
- 59894 string characters out of 3148375
- 132036 words of memory out of 3000000
- 7641 multiletter control sequences out of 15000+200000
- 16863 words of font info for 68 fonts, out of 3000000 for 9000
+ 4443 strings out of 494045
+ 60278 string characters out of 3148375
+ 135064 words of memory out of 3000000
+ 7659 multiletter control sequences out of 15000+200000
+ 17210 words of font info for 69 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 27i,12n,32p,1329b,268s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,12n,32p,1343b,281s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Program Files/MiKTe
@@ -697,11 +806,12 @@ ts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/p
 ublic/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsf
 onts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmsy6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb
-><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb><C:/Pro
-gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Report.pdf (13 pages, 270888 bytes).
+><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Pro
+gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb><C:/Program Fil
+es/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Report.pdf (16 pages, 318495 bytes).
 PDF statistics:
- 126 PDF objects out of 1000 (max. 8388607)
+ 141 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
