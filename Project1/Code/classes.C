@@ -626,7 +626,7 @@ double sol_function(double &x){
     point. f(x) = e^{-10x}.
   */
 
-  return exp(-10*x);
+  return x/exp(10)-x-exp(-10*x)+1;
 }
 
 vector<vector<double> > LU_decomp_special(int sz){

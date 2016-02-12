@@ -5,8 +5,8 @@ February 12, 2016
 
 Project 1
 
-This script tests the various functions and classes and sets benchmarks for 
-reproducibility.
+This script tests the various functions and classes. It was the first script
+developed in the Project 1 collection.
 */
 
 #include <iostream>

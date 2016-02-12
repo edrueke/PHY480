@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  11 FEB 2016 21:44
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  12 FEB 2016 07:40
 entering extended mode
 **C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/Report.tex
 (C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/Report.tex
@@ -425,7 +425,11 @@ File: listings.cfg 2015/06/04 1.6 listings configuration
 ))
 Package: listings 2015/06/04 1.6 (Carsten Heinz)
 
-(C:\Users\Elizabeth\Documents\GitHub\PHY480\Project1\Report\Report.aux)
+(C:\Users\Elizabeth\Documents\GitHub\PHY480\Project1\Report\Report.aux
+
+LaTeX Warning: Label `eq:ludecomp1' multiply defined.
+
+)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
 LaTeX Font Info:    ... okay on input line 19.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
@@ -438,8 +442,7 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
 LaTeX Font Info:    ... okay on input line 19.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
 LaTeX Font Info:    ... okay on input line 19.
-
-("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+ ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count113
 \scratchdimen=\dimen127
@@ -524,7 +527,7 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.165 \end{align}
+l.168 \end{align}
                  
 ? 
 [4]
@@ -536,16 +539,16 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.254 \end{align}
+l.257 \end{align}
                  
 ? 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 260.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 263.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 260.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 263.
  [5] [6] [7]
 
 ! LaTeX Error: Environment 1stlisting undefined.
@@ -554,16 +557,16 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.385 \begin{1stlisting}
+l.393 \begin{1stlisting}
                         
 ? 
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 387
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 395
 .
-LaTeX Font Info:    No file OMScmtt.fd. on input line 387.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 395.
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 387.
+(Font)              for symbol `textbraceleft' on input line 395.
 
 
 ! LaTeX Error: \begin{document} ended by \end{1stlisting}.
@@ -572,7 +575,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.388 \end{1stlisting}
+l.396 \end{1stlisting}
                       
 ? 
 
@@ -582,7 +585,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.392 \begin{1stlisting}
+l.400 \begin{1stlisting}
                         
 ? 
 
@@ -592,7 +595,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.394 \end{1stlisting}
+l.402 \end{1stlisting}
                       
 ? 
 
@@ -602,7 +605,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.398 \begin{1stlisting}
+l.406 \begin{1stlisting}
                         
 ? 
 [8]
@@ -613,7 +616,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.400 \end{1stlisting}
+l.408 \end{1stlisting}
                       
 ? 
 
@@ -624,23 +627,60 @@ Type  H <return>  for immediate help.
  ...                                              
                                                   
 l.420 \\\indent
-                The results for various numbers of steps are plotted in \tex...
+                Our final special LU decomposition solver is, as mentioned a...
 
 ? 
-[9] [10] (C:\Users\Elizabeth\Documents\GitHub\PHY480\Project1\Report\Report.aux
-)
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.427 \\\indent
+                The algorithms written for the full Gaussian elimination and...
+
+? 
+[9] [10]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.460 \\\indent
+                The results for various numbers of steps are plotted in Figu...
+
+? 
+<plots/solution_plot.png, id=53, 798.985pt x 694.595pt>
+File: plots/solution_plot.png Graphic file (type png)
+
+<use plots/solution_plot.png>
+Package pdftex.def Info: plots/solution_plot.png used on input line 472.
+(pdftex.def)             Requested size: 258.36668pt x 224.60664pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[11] [12 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project1/Report/plots/solu
+tion_plot.png>] [13]
+(C:\Users\Elizabeth\Documents\GitHub\PHY480\Project1\Report\Report.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 4404 strings out of 494045
- 59620 string characters out of 3148375
- 131923 words of memory out of 3000000
- 7626 multiletter control sequences out of 15000+200000
+ 4422 strings out of 494045
+ 59894 string characters out of 3148375
+ 132036 words of memory out of 3000000
+ 7641 multiletter control sequences out of 15000+200000
  16863 words of font info for 68 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 27i,12n,32p,1329b,219s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,12n,32p,1329b,268s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Program Files/MiKTe
@@ -659,9 +699,9 @@ onts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmsy6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 ><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb><C:/Pro
 gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Report.pdf (10 pages, 242136 bytes).
+Output written on Report.pdf (13 pages, 270888 bytes).
 PDF statistics:
- 115 PDF objects out of 1000 (max. 8388607)
+ 126 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

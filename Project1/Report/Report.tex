@@ -129,7 +129,9 @@ R_{3} & = R_{3} - \frac{a_{31}}{a_{11}}R_{1}
 
 \noindent should yield the desired outcome.  That is, we have 
 
-$$A = \left(
+\begin{equation}
+\label{eq:gaussflops}
+A = \left(
 \begin{array}{ccc}
 a_{11} & a_{12} & a_{13} \\
 a_{21} & a_{22} & a_{23} \\
@@ -140,7 +142,8 @@ a_{31} & a_{32} & a_{33}
 a_{11} & a_{12} & a_{12} \\
 0 & a_{22} - \frac{a_{21}a_{12}}{a_{11}} & a_{23} - \frac{a_{21}a_{13}}{a_{11}} \\
 0 & a_{32} - \frac{a_{31}a_{12}}{a_{11}} & a_{33} - \frac{a_{31}a_{13}}{a_{11}}
-\end{array}\right).$$
+\end{array}\right).
+\end{equation}
 
 \noindent Continuing in this manner, we will eventually have a matrix of the form 
 
@@ -260,24 +263,28 @@ a_{44} =& l_{41}u_{14}+l_{42}u_{24}+l_{43}u_{34}+{\bf u_{44}}. &
 \item Starting with column $j=1$, compute the first element by 
 
 \begin{equation}
+\label{eq:ludecomp1}
 u_{1j}=a_{1j}
 \end{equation}
 
 \item For $i=2,\ldots,j-1$, compute
 
 \begin{equation}
+\label{eq:ludecomp2}
 u_{ij}=a_{ij}-\sum_{k=1}^{i-1}l_{ik}u_{kj}
 \end{equation}
 
 \item Calculate the diagonal element as
 
 \begin{equation}
+\label{eq:ludecomp3}
 u_{jj}=a_{jj}-\sum_{k-1}^{j-1} l_{jk}u_{kj}
 \end{equation}
 
 \item Calculate the $l_{ij}$ for $i>j$ as
 
 \begin{equation}
+\label{eq:ludecomp4}
 l_{ij}=\frac{1}{u_{jj}}\left(a_{ij}-\sum_{k=1}^{j-1} l_{jk}u_{kj}\right)
 \end{equation}
 
@@ -351,6 +358,7 @@ L & U & = & A.
 \noindent In general, then, we might suppose that the matrix elements $l_{ij}$ and $u_{ij}$ of $L$ and $U$ will take the form
 
 \begin{equation}
+\label{eq:luspecalg}
 \begin{array}{cc}
 l_{ii} = 1, & l_{i,i-1} = -\frac{i-1}{i-2}, \\
 u_{ii} = \frac{i+1}{i}, & u_{i,i+1}=-1
@@ -400,11 +408,43 @@ for(int i=n-2;i>-1;i--)\{ \\\indent \indent v[i]=((i+1)/(i+2))*(y[i]+v[i+1]); \\
 \end{1stlisting}
 
 \noindent In this way, we are able to reasonably minimize the number of FLOPs required for the calculation.  A full analysis of the expected and observed time dependences of these algorithms is presented in Section~\ref{subsec:timedependence} and Section~\ref{sec:results}.
+\\\indent In the end, our algorithm was fairly straightforward.  The full code to run the algorithm, complete with time and error analysis and a full solution for our particular test function, is contained in $\texttt{project1.C}$.  The brunt of the coding in this document involves the graphing utilities required to output the graphs in this paper, but the general layout of the code here is as follows:
 
-\subsection{Time Dependences}
+\begin{itemize}
+\item Determine the difference in the timing between the various linear solving algorithms using functions $\texttt{check\_timing\_all()}$ and $\texttt{check\_timing\_short()}$, which are included in this file.
+\item Create a vector of the various numbers of steps we wish to compute a solution for and loop through it, calculating the solution within the function $\texttt{make\_sol\_plots\_()}$, which is within this file and calls the special LU decomposition solvers, $\texttt{LU\_decomp\_special()}$ and $\texttt{LU\_decomp\_solver\_special()}$, which are declared in $\texttt{classes.h}$ and defined in $\texttt{classes.C}$.  
+\item Also within this loop, calculate and store the maximum errors.
+\item Create the solution plots.
+\end{itemize}
+
+\\\indent Our final special LU decomposition solver is, as mentioned above, implemented in two different functions, $\texttt{LU\_decomp\_special()}$ and $\texttt{LU\_decomp\_solver\_special()}$, which are declared in $\texttt{classes.h}$ and defined in $\texttt{classes.C}$.  The algorithm in for these functions is as follows:
+
+\begin{itemize}
+\item For $\texttt{LU\_decomp\_special()}$:
+\item For $\texttt{LU\_decomp\_solver\_special()}$:
+\end{itemize}
+
+\\\indent The algorithms written for the full Gaussian elimination and LU decomposition are based on the information in Sections~\ref{subsec:gausselim} and~\ref{subsec:ludecomp}.  Their composition is unenlightening and will not be explained in full detail here.
+
+\subsection{Time Dependence}
 \label{subsec:timedependence}
 
-As mentioned in Section~\ref{sec:algorithm}, we wish to develop an algorithm which is not only able to solve numerically the Poisson equation, but which can also do so within a reasonable time frame and with limited computer memory usage. \textbf{need more here - what are the expected time dependences?}.
+As mentioned in Section~\ref{sec:algorithm}, we wish to develop an algorithm which is not only able to solve numerically the Poisson equation, but which can also do so within a reasonable time frame and with limited computer memory usage. The amount of time required to run the algorithm is directly related to the number of FLOPs within that algorithm.  Here, we claim, based on counting the FLOPs in each argument, that the Gaussian elimination method will be the slowest of the three algorithms, while the special LU decomposition algorithm will be the quickest.
+\\\indent Looking at the Gaussian elimination method, particularly at Eq.~\ref{eq:gaussflops}, we see that, for every step in the elimination process of the matrix, for every row we will have to compute a factor (eg. $\frac{a_{21}}{a_{11}}$ or $\frac{a_{31}}{a_{11}}$ as shown in Eq.~\ref{eq:gaussflops}), which will give us $n-1$ factors, and then one multiplication and one subtraction per element which will be $2\left(n-1\right)\left(n-1\right)$ FLOPs.  For the elimination process performed on the solution vector, we see that we will already have the factor required computed from the matrix step, and so we will only need to perform a subtraction and multiplication for each row of the solution vector, which yields $2\left(n-1\right)$ FLOPs.  Thus, to highest order, we expect the number of operations to go as $2\sum_{i=1}^{n-1}\left(n-i\right)\left(n-i\right)$.  Letting $j=n-i$, we see that we have the number of FLOPs going as 
+
+$$2\sum_{i=1}^{n-1}j^{2} = \frac{2}{3}n\left(n+1\right)\left(2n+1\right),$$
+
+\noindent and so we expect the leading term of the number of FLOPs to go as $\sim\frac{2}{3}n^{3}$.  Secondary terms go as $\sim n^{2}$ so we can consider them negligible.
+\\\indent For the case of LU decomposition, we must look separately at the number of FLOPs required to decompose the matrix into an upper-triangular $U$ and a lower-tirangular $L$, and at the algorithm required to compute the solution vector from those decomposed matrices.  For the decomposition process, as shown in Eq.~\ref{eq:ludecomp1}-~\ref{eq:ludecomp4}, we see immediately that we get the $u_{1j}$ components for free from the original matrix.  Then for each column $j$, we have $j-2$ multiplication and subtraction steps to determine the $u_{ij}$ for a total of $2\left(j-2\right)\left(j-1\right)$.  Then, to compute the $u_{jj}$ components we have to multiply and subtract an additional $j-1$ times, and so our total becomes $2\left(j-1\right)\left(j-1\right)$.  Finally, for the $l_{ij}$ computations, we have $j-1$ multiplication and subtraction operations, and then one final division.  For every full column loop in our algorithm then, we should have $2j\left(j-1\right)$ FLOPs.  For $n$ columns, then, we should have 
+
+$$2\sum_{j=1}^{n}j\left(j-1\right) = \frac{2}{3}n\left(n^{2}-1\right)$$
+
+\noindent\textbf{need citation Wolfram}, which is the same as the dependence for Gaussian elimination.  However, for the actual solver, we have that there are $\sum_{i=1}^{n}2i$ FLOPs required to determine the intermediate vector $y$ and the same number to determine the solution vector from that intermediate vector.  So the total number of flops required to solve any system after the initial $\sim\frac{2}{3}n^{3}$ dependence is only 
+
+$$2\sum_{i=1}^{n}2i = 2n\left(n+1\right)$$
+
+\noindent\textbf{need citation Wolfram} which goes as $\sim2n^{2}$.  From this, we can see that, particularly for problems involving multiple linear systems, LU decomposition will be faster than Gaussian elimination, which will go as $\sim n^{3}$ for all iterations.
+\\\indent With our special matrix, however, we can cut this dependence down even further.  In particular, to complete the decomposition as in Eq.~\ref{eq:luspecalg}, we see that we will only need $n-1$ FLOPs for the $L$ matrix and $n$ flops for the $U$ matrix.  So the full decomposition will have a mere $2n-1$ flops.  The special solver, as we've defined it, will only require $n-1$ multiplication and subtraction steps each to determine the intermediate vector, and an additional $n-1$ multiplication and subtraction steps for the final solution calculation.  This means that, overall, our special LU decomposition and solver combined will require only $2n-1+4\left(n-1\right) = 6n-5$ FLOPs, which is significantly fewer than either the full LU decomposition or the full Gaussian elimination methods.  It is for this reason that, in our final code, the special LU decomposition algorithm was used for the calculations.
 
 \section{Results and Benchmarks}
 \label{sec:results}
@@ -417,21 +457,53 @@ Before entering a discussion of the full results of the program developed, it is
 u\left(x\right)=\frac{x}{e^{10}}-x-e^{-10x}+1
 \end{equation}
 
-\\\indent The results for various numbers of steps are plotted in \textbf{need figure}.  From the image, it appears that increasing the number of steps improves the validity of the result.  In particular, we are able to compute the relative error $\epsilon_{i}$ between the expected value $u_{exp}$ of the function at point $x_{i}$ and the result computed by our special LU decomposition algorithm $u_{comp}$ as 
+\\\indent The results for various numbers of steps are plotted in Figure~\ref{fig:result}.  From the image, it appears that increasing the number of steps greatly improves the validity of the result.  In fact, by the $n=51$ case, the calculated solution appears to follow the expected solution almost exactly.  In particular, we can determine how close our approximation is by computing the relative error $\epsilon_{i}$ between the expected value $u_{exp}$ of the function at point $x_{i}$ and the result computed by our special LU decomposition algorithm $u_{comp}$ as 
 
 \begin{equation}
 \label{eq:relerror}
-\epsilon_{i} = \log_{10}\left(|\frac{u_{comp}-u_{exp}}{u_{exp}}|\right).
+\epsilon_{i} = \log_{10}\left(\left|\frac{u_{comp}-u_{exp}}{u_{exp}}\right|\right).
 \end{equation}
 
-\noindent The maximum value of $\epsilon_{i}$ for each step value investigated is listed in Table \textbf{need table (and maybe plot?)}.  This confirms our suspicions that the error decreases with increasing number of steps.
-\\\textbf{time required}
+\noindent The maximum value of $\epsilon_{i}$ for each step value investigated is listed in Table~\ref{tab:errors}.  This confirms our suspicions that the error decreases with increasing number of steps.
+
+\begin{figure}[h]
+\label{fig:result}
+\begin{center}
+\includegraphics[width=0.55\textwidth]{plots/solution_plot}
+\caption{The results of the special LU decomposition algorithm plotted with the accepted solution (Eq.~\ref{eq:expectsol}).}
+\end{center}
+\end{figure}
+
+\begin{table}[!h!tbp]
+\label{tab:errors}
+\begin{center}
+\begin{tabular}{c|c}
+\hline
+Number of Steps & Maximum Error \\
+\hline
+3 & -0.0813 \\
+4 & -0.2413 \\
+6 & -0.5592 \\
+11 & -1.1006 \\
+51 & -4.4771 \\
+1001 & -5.0792 \\
+\hline
+\end{tabular}
+\caption{The maximum errors as computed in Eq.~\ref{eq:relerror} by the number of steps.}
+\end{center}
+\end{table}
+
+\textbf{regular intervals - 10,100,1000; also errors from multiple algorithms}
+\\\indent We were also able to perform a cursory analysis of the real-time differences between the various algorithms.  The results of this analysis are shown in \textbf{need plot}.  From these figures, we can see that our initial hypotheses were correct and the special LU decomposition solver's step dependence is far lower than those of the full LU decomposition and the full Gaussian decomposition.
+
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-Something about how the class isn't complete actually.  Errors.
-
+In all, our Poisson equation solver appears to run with reasonable efficiency and accuracy.  We can see from Table~\ref{tab:errors} that the relative error of the numerical approximation by our special LU decomposition solver decreases with decreasing step size.  This is expected because, if we think about the limit definition of the derivative (as mentioned in Eq.~\ref{eq:deriv1}, the derivative is taken as $h\rightarrow0$.  By increasing the number of steps, we are decreasing the step size ($h$-value) and are therefore more closely approximating the derivative.  We were also able to confirm that our special LU decomposition solver was faster than the full LU decomposition solver or the full Gaussian elimination solver, which were both developed for this project.  
+\\\indent These successes does not, however, imply that the program developed for the solution to this Poisson equation problem is perfect.  One major issue was the time required by even the special LU decomposition solver to compute a $10000\times10000$ matrix.  Our goal for this project was to develop a code which could run with the highest efficiency, which suggests more time should be spent trying to perfect the algorithm and limit its FLOP dependence even more than is currently attainable.
+\\\indent It should also be noted that the classes developed within the context of this project do leave much to be desired.  They have not been fully tested outside of being able to handle our special matrix in a non-special way.  This means, for example, that given a matrix with a 0 on the diagonal, our full Gaussian elimination algorithm may find itself dividing by 0.  There are also several functions, like the $\texttt{print()}$ function in both classes, which could afford some edits in order to perfect them.  In the case of $\texttt{print()}$ it would be nice to format the output so that the matrices and vectors print in a more reasonable form.
+\\\textbf{Better conclusion statement?}
 
 
 \end{document}
