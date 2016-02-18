@@ -43,12 +43,21 @@ class thevec{
   friend thevec operator*(const thevec &vec1,double fact); //Scalar Multiplication
   double operator[](int i); //Component retrieval
   thevec &operator=(const thevec &vec); //Equality
+
+  //New to Project 2
+  double two_norm(); //2-norm
+  friend bool operator!=(const thevec &vec1,const thevec &vec2); //Comparison
+  friend bool operator==(const thevec &vec1,const thevec &vec2); //Comparison
 };
 
 thevec operator+(const thevec &vec1,const thevec &vec2);
 thevec operator-(const thevec &vec1,const thevec &vec2); 
 double operator*(const thevec &vec1,const thevec &vec2); 
 thevec operator*(const thevec &vec1,double fact);
+
+//New to Project 2
+bool operator!=(const thevec &vec1,const thevec &vec2); //Comparison
+bool operator==(const thevec &vec1,const thevec &vec2); //Comparison
 
 //Matrix class
 class themat{
@@ -72,6 +81,12 @@ class themat{
   thevec operator[](int i); //Component retrieval
   themat &operator=(const themat &mat); //Equality
 
+  //New to project 2
+  themat transpose(); //Transpose of matrix
+  double frob_norm(); //Frobenius norm
+  friend bool operator!=(const themat &mat1, const themat &mat2); //Comparison
+  friend bool operator==(const themat &mat1, const themat &mat2); //Comparison
+
   friend class thevec;
 };
 
@@ -80,6 +95,10 @@ themat operator-(const themat &mat1, const themat &mat2); //Subtraction
 themat operator*(const themat &mat1, const themat &mat2); //Matrix-matrix multiplication
 thevec operator*(const themat &mat, const thevec &vec); //Matrix-vector multiplication
 themat operator*(const themat &mat, double fact); //Scalar multiplication
+
+//New to project 2
+bool operator!=(const themat &mat1, const themat &mat2); //Comparison
+bool operator==(const themat &mat1, const themat &mat2); //Comparison
 
 //Additional functions - Gaussian elimination
 vector<vector<double> > one_forw_reduc(themat matr, thevec vec, int i);
@@ -102,3 +121,7 @@ double function(double &x);
 double sol_function(double &x);
 vector<vector<double> > LU_decomp_special(int sz);
 thevec LU_decomp_solver_special(thevec &vec, themat &L, themat &U);
+
+//New to Project 2
+themat Jacobi_Method(themat &mat,double eps);
+themat Jacobi_Method_step(themat &mat,double eps);

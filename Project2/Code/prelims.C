@@ -23,8 +23,10 @@ void prelims(){
 
   //Define the p_min, p_max, and n_steps
   double p_min=0.0; double p_max=10.0;
-  int n_step = 10.0;
+  int n_step = 3.0;
   double h = (p_max-p_min)/n_step;
+
+  themat my_mat = themat(n_step-1);
 
   for(int i=0;i<p_max+1;i++){
     
@@ -40,9 +42,7 @@ void prelims(){
     //Off-diagonal matrix element e_i = -1/h^2
     double e_i = -1/(h*h);
 
-    //Define the matrix
-    themat my_mat = themat(n_step-1);
-    
+    //Define the matrix    
     for(int j=0;j<my_mat.sz;j++){
       for(int k=0;k<my_mat.sz;k++){
 	if(j==k)
@@ -55,7 +55,21 @@ void prelims(){
     }
   }
 
-    
+  //Diagonalize the matrix
+
+  thevec vec = thevec(2);
+  themat matr = themat(2);
+
+  //Fill the matrix and vector with values.
+  for(int i=0;i<2;i++){
+    vec.point[i]=1;
+  }
+  matr.point[0][0]=1; matr.point[0][1]=1; 
+  matr.point[1][0]=2; matr.point[1][1]=-1;
+
+  themat diag = Jacobi_Method(matr,1e-8);
+  cout<<"Matrix: "<<endl<<matr.print()<<endl<<"Diag:"<<endl<<diag.print()<<endl;
+  
 
 
 }

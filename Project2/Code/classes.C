@@ -715,3 +715,187 @@ thevec LU_decomp_solver_special(thevec &vec, themat &L, themat &U){
 
   return to_ret;
 }
+
+//New to project 2
+
+double thevec::two_norm(){
+  /*
+    Calculate the two-norm ||x||_2 = sqrt(sum(x_i*x_i.i.1.n)).
+  */
+
+  //thevec v = *this;
+  double dot = (*this)*(*this);
+  return sqrt(dot);
+}
+
+themat themat::transpose(){
+  /*
+    Returns the transpose of the matrix
+  */
+
+  themat to_ret = themat(sz);
+
+  for(int i=0;i<sz;i++){
+    for(int j=0;j<sz;j++){
+      to_ret.point[i][j]=point[j][i];
+    }
+  }
+
+  return to_ret;
+}
+
+double themat::frob_norm(){
+  /*
+    Returns the frobenius norm of the matrix 
+    ||A||_f = sqrt(sum(|a_ij|^2,i&j,1,n))
+  */
+
+  double to_ret=0;
+
+  for(int i=0;i<sz;i++){
+    for(int j=0;j<sz;j++){
+      to_ret+=pow(point[i][j],2);
+    }
+  }
+
+  return sqrt(to_ret);
+}
+
+themat Jacobi_Method_step(themat &mat,double eps){
+  /*
+    Return the matrix mat diagonalized according to the Jacobi method.
+    eps is the tolerance allowed.
+  */
+
+  //First determine the maximum off-diagonal element and it's row and column
+  //location
+  int row=0; int column=0; double max=0;
+
+  for(int i=0;i<mat.sz;i++){
+    for(int j=0;j<mat.sz;j++){
+      double ele = pow(mat[i][j],2);
+      if(i!=j && ele>max){
+	row = i;
+	column = j;
+	max = ele;
+      }
+    }
+  }
+
+  if(max < eps){
+    cout<<"returned; max =  "<<max<<endl;
+    return mat;
+  }
+
+  cout<<"row = "<<row<<"; column = "<<column<<"; max = "<<max<<endl;
+ 
+  //Compute tau, tan, cos, sin
+  double tau = (mat[column][column]-mat[row][row])/(2*mat[row][column]);
+  
+  double tan = 0;
+  double tan1 = -tau+sqrt(1+tau*tau);
+  double tan2 = -tau-sqrt(1+tau*tau);
+  if(tan1 > tan2)
+    tan = tan2;
+  else
+    tan = tan1;
+
+  double cos = 1/sqrt(1+tan*tan);
+  double sin = tan*cos;
+
+  cout<<"tau = "<<tau<<"; tan = "<<tan<<"; cos = "<<cos<<"; sin = "<<sin<<endl;
+
+  //Compute the matrix S for the similarity transformation.
+  themat S = themat(mat.sz);
+  for(int i=0;i<mat.sz;i++){
+    for(int j=0;j<mat.sz;j++){
+      if((i==row && j==row)||(i==column && j==column))
+	S.point[i][j]=cos;
+      else if(i==row && j==column){
+	if(i<j)
+	  S.point[i][j]=sin;
+	else{
+	  //HERE
+	  S.point[i][j]=-1.0*sin;
+	  cout<<"entered"<<endl;
+	}
+      }
+      else if(i==column && j==row){
+	if(i<j)
+	  S.point[i][j]=-sin;
+	else
+	  S.point[i][j]=sin;
+      }
+      else if(i==j)
+	S.point[i][j]=1;
+      else
+	S.point[i][j]=0;
+    }
+  }
+
+  cout<<"S = "<<endl<<S.print()<<endl;
+
+  //Compute the transformed matrix
+  themat B = S.transpose()*mat*S;
+
+  return B;
+}
+
+themat Jacobi_Method(themat &mat,double eps){
+  /*
+    Recursively call the Jacobi_method to fully complete the calculation.
+  */
+
+  themat ret = Jacobi_Method_step(mat,eps);
+  while(ret!=Jacobi_Method_step(ret,eps))
+    ret = Jacobi_Method_step(ret,eps);
+
+  return ret;
+}
+
+bool operator==(const thevec &vec1,const thevec &vec2){
+  /*
+    Determine whether or not two vectors are not equal to each other.
+  */
+  
+  bool to_ret = true;
+  for(int i=0;i<vec1.sz;i++){
+    if(vec1.point[i]!=vec2.point[i])
+      to_ret = false;
+  }
+
+  return to_ret;
+}
+
+bool operator!=(const thevec &vec1,const thevec &vec2){
+  /*
+    Determine whether or not two vectors are equal to each other.
+  */
+
+  return !(vec1==vec2);
+}
+
+bool operator==(const themat &mat1,const themat &mat2){
+  /*
+    Determine whether or not two matrices are not equal to each other.
+  */
+
+  bool to_ret = true;
+  
+  for(int i=0;i<mat1.sz;i++){
+    for(int j=0;j<mat2.sz;j++){
+      if(mat1.point[i][j]!=mat2.point[i][j])
+	to_ret = false;
+    }
+  }
+
+  return to_ret;
+}
+
+bool operator!=(const themat &mat1,const themat &mat2){
+  /*
+    Determine whether or not two matrices are equal to each other.
+  */
+
+  return !(mat1==mat2);
+}
