@@ -6,10 +6,12 @@ March 4, 2016
 Project 2
 
 This was the initial file created to test the classes and attempt to determine
-a solution to the problem presented in project 2.
+a solution to the problem presented in project 2. It defines benchmarks which 
+should be met by the code.
 */
 
 #include <iostream>
+#include <fstream>
 
 #include "classes.C"
 
@@ -21,55 +23,79 @@ void prelims(){
     problem.
   */
 
-  //Define the p_min, p_max, and n_steps
-  double p_min=0.0; double p_max=10.0;
-  int n_step = 3.0;
-  double h = (p_max-p_min)/n_step;
-
-  themat my_mat = themat(n_step-1);
-
-  for(int i=0;i<p_max+1;i++){
-    
-    //p_i = p_min+i*h, i = 0,1,...,n
-    double p_i = p_min+i*h;
-
-    //Let v_i=p_i^2
-    double V_i = pow(p_i,2);
-
-    //Diagonal matrix element d_i = 2/h^2+v_i
-    double d_i = 2/(h*h)+V_i;
-
-    //Off-diagonal matrix element e_i = -1/h^2
-    double e_i = -1/(h*h);
-
-    //Define the matrix    
-    for(int j=0;j<my_mat.sz;j++){
-      for(int k=0;k<my_mat.sz;k++){
-	if(j==k)
-	  my_mat.point[j][k]=d_i;
-	else if(j==k-1 || j==k+1)
-	  my_mat.point[j][k]=e_i;
-	else
-	  my_mat.point[j][k]=0;
-      }
+  //Define an output file.
+  ofstream myfile;
+  myfile.open("plots/benchmarks.txt");
+  myfile<<"Check the Jacobi Rotation Algorithm"<<endl;
+  
+  //Define and diagonalize matrix 1
+  themat mat1 = themat(2);
+  for(int i=0;i<2;i++){
+    for(int j=0;j<2;j++){
+      if(i==j)
+	mat1.point[i][j]=1;
+      else
+	mat1.point[i][j]=2;
     }
   }
-
-  //Diagonalize the matrix
-
-  thevec vec = thevec(2);
-  themat matr = themat(2);
-
-  //Fill the matrix and vector with values.
-  for(int i=0;i<2;i++){
-    vec.point[i]=1;
-  }
-  matr.point[0][0]=1; matr.point[0][1]=1; 
-  matr.point[1][0]=2; matr.point[1][1]=-1;
-
-  themat diag = Jacobi_Method(matr,1e-8);
-  cout<<"Matrix: "<<endl<<matr.print()<<endl<<"Diag:"<<endl<<diag.print()<<endl;
   
+  themat diag1 = Jacobi_Method(mat1,1e-8);
+  myfile<<endl<<"Matrix 1:"<<endl<<mat1.print()<<endl;
+  myfile<<"Expected Eigenvalues: "<<3<<", "<<-1<<endl<<endl;
+  myfile<<"Diagonalized:"<<endl<<diag1.print();
 
+  //Define and diagonalize matrix 2
+  themat mat2 = themat(3);
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      if(i==j)
+	mat2.point[i][j]=1;
+      else
+	mat2.point[i][j]=2;
+    }
+  }
+  
+  themat diag2 = Jacobi_Method(mat2,1e-8);
+  myfile<<endl<<"Matrix 1:"<<endl<<mat2.print()<<endl;
+  myfile<<"Expected Eigenvalues: "<<5<<", "<<-1<<", "<<-1<<endl<<endl;
+  myfile<<"Diagonalized:"<<endl<<diag2.print();
 
+  //Define and diagonalize matrix 3
+  themat mat3 = themat(10);
+  for(int i=0;i<10;i++){
+    for(int j=0;j<10;j++){
+      if(i==j)
+	mat3.point[i][j]=1;
+      else
+	mat3.point[i][j]=2;
+    }
+  }
+  
+  themat diag3 = Jacobi_Method(mat3,1e-8);
+  myfile<<endl<<"Matrix 1:"<<endl<<mat3.print()<<endl;
+  myfile<<"Expected Eigenvalues: "<<19<<" and nine "<<-1<<"'s"<<endl<<endl;
+  myfile<<"Diagonalized:"<<endl<<diag3.print();
+
+  //Define and diagonalize matrix 4
+  themat mat4 = themat(10);
+  for(int i=0;i<10;i++){
+    for(int j=0;j<10;j++){
+      if(i==j)
+	mat4.point[i][j]=1;
+      else if(i<j)
+	mat4.point[i][j]=2.0/(i+1);
+      else
+	mat4.point[i][j]=2.0/(j+1);
+    }
+  }
+  
+  themat diag4 = Jacobi_Method(mat4,1e-8);
+  myfile<<endl<<"Matrix 1:"<<endl<<mat4.print()<<endl;
+  myfile<<"Expected Eigenvalues: 9.8166, -3.36209, 0.777778, 0.742703, 0.694927, 0.617823, 0.579657, -0.420483, 0.4059, 0.147189" <<endl<<endl;
+  myfile<<"Diagonalized:"<<endl<<diag4.print();
+  myfile<<"Eigenvalues:"<<endl;
+  for(int i=0;i<diag4.sz;i++)
+    myfile<<"     "<<diag4[i][i];
+
+  myfile.close();
 }

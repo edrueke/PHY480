@@ -13,6 +13,7 @@ project 2 (much the same as project 1).
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <stdlib.h>
 
 #include "classes.h"
 
@@ -772,9 +773,9 @@ themat Jacobi_Method_step(themat &mat,double eps){
   int row=0; int column=0; double max=0;
 
   for(int i=0;i<mat.sz;i++){
-    for(int j=0;j<mat.sz;j++){
+    for(int j=i+1;j<mat.sz;j++){
       double ele = pow(mat[i][j],2);
-      if(i!=j && ele>max){
+      if(ele>max){
 	row = i;
 	column = j;
 	max = ele;
@@ -783,48 +784,30 @@ themat Jacobi_Method_step(themat &mat,double eps){
   }
 
   if(max < eps){
-    cout<<"returned; max =  "<<max<<endl;
+    cout<<"norm = "<<max<<"; eps = "<<eps<<endl;
     return mat;
   }
 
-  cout<<"row = "<<row<<"; column = "<<column<<"; max = "<<max<<endl;
- 
   //Compute tau, tan, cos, sin
-  double tau = (mat[column][column]-mat[row][row])/(2*mat[row][column]);
+  double tau = (mat[column][column]-mat[row][row])/(2.0*mat[row][column]);
   
   double tan = 0;
-  double tan1 = -tau+sqrt(1+tau*tau);
-  double tan2 = -tau-sqrt(1+tau*tau);
-  if(tan1 > tan2)
-    tan = tan2;
+  if(tau>=0)
+    tan = 1.0/(tau+sqrt(1.0+tau*tau));
   else
-    tan = tan1;
+    tan = -1.0/(-tau+sqrt(1.0+tau*tau));
 
   double cos = 1/sqrt(1+tan*tan);
   double sin = tan*cos;
 
-  cout<<"tau = "<<tau<<"; tan = "<<tan<<"; cos = "<<cos<<"; sin = "<<sin<<endl;
-
   //Compute the matrix S for the similarity transformation.
   themat S = themat(mat.sz);
   for(int i=0;i<mat.sz;i++){
-    for(int j=0;j<mat.sz;j++){
+    for(int j=i;j<mat.sz;j++){
       if((i==row && j==row)||(i==column && j==column))
-	S.point[i][j]=cos;
-      else if(i==row && j==column){
-	if(i<j)
-	  S.point[i][j]=sin;
-	else{
-	  //HERE
+	S.point[i][j]=cos*1.0;
+      else if((i==row && j==column)||(i==column && j==row)){
 	  S.point[i][j]=-1.0*sin;
-	  cout<<"entered"<<endl;
-	}
-      }
-      else if(i==column && j==row){
-	if(i<j)
-	  S.point[i][j]=-sin;
-	else
-	  S.point[i][j]=sin;
       }
       else if(i==j)
 	S.point[i][j]=1;
@@ -832,13 +815,40 @@ themat Jacobi_Method_step(themat &mat,double eps){
 	S.point[i][j]=0;
     }
   }
-
-  cout<<"S = "<<endl<<S.print()<<endl;
+  for(int i=0;i<S.sz;i++){
+    for(int j=0;j<i;j++){
+      if(S[j][i]==0)
+	S.point[i][j]=1.0*S[j][i];
+      else
+	S.point[i][j]=-1.0*S[j][i];
+    }
+  }
 
   //Compute the transformed matrix
-  themat B = S.transpose()*mat*S;
+  themat B = S*mat*S.transpose();
 
-  return B;
+  /*themat B = mat;
+  int k, l;
+  k=row;
+  l=column;
+  double a_kk, a_ll, a_ik, a_il;
+  a_kk = B[k][k];
+  a_ll = B[l][l];
+  B.point[k][k]=cos*cos*a_kk-2.0*cos*sin*B[k][l]+sin*sin*a_ll;
+  B.point[l][l]=sin*sin*a_kk+2.0*cos*sin*B[k][l]+cos*cos*a_ll;
+  B.point[k][l]=0;
+  B.point[l][k]=0;
+  for(int i=0;i<B.sz-1;i++){
+    if(i!=k && i!= l){
+      a_ik = B[i][k];
+      a_il = B[i][l];
+      B.point[i][k]=cos*a_ik-sin*a_il;
+      B.point[k][i]=B[i][k];
+      B.point[i][l]=cos*a_il+sin*a_ik;
+      B.point[l][i]=B[i][l];
+    }
+    }*/
+  return B;  
 }
 
 themat Jacobi_Method(themat &mat,double eps){
@@ -847,12 +857,109 @@ themat Jacobi_Method(themat &mat,double eps){
   */
 
   themat ret = Jacobi_Method_step(mat,eps);
-  while(ret!=Jacobi_Method_step(ret,eps))
+  while(ret!=Jacobi_Method_step(ret,eps)){
+    cout<<ret.print()<<endl;
     ret = Jacobi_Method_step(ret,eps);
+  }
 
   return ret;
 }
 
+themat Jacobi_Method(themat &mat,double eps, TGraph * theg, int *pt){
+  /*
+    Recursively call the Jacobi_method to fully complete the calculation.
+  */
+
+  themat ret = Jacobi_Method_step(mat,eps);
+  int n_turns = 0;
+  while(ret!=Jacobi_Method_step(ret,eps)){
+    //cout<<ret.print()<<endl;
+    ret = Jacobi_Method_step(ret,eps);
+    n_turns++;
+  }
+
+  if(theg){
+    theg->SetPoint(*pt,ret.sz,n_turns);
+    (*pt)++;
+  }
+
+  return ret;
+}
+
+static float sqrarg;
+#define SQR(a) ((sqrarg = (a)) == 0.0 ? 0.0 : sqrarg * sqrarg)
+#define SIGN(a,b) ((b)<0 ? -fabs(a) : fabs(a))
+
+double pythag(double a, double b)
+{
+  /*
+    pythag from lib.cpp from the lecture notes
+  */
+
+  double absa,absb;
+  absa=fabs(a);
+  absb=fabs(b);
+  if (absa > absb) return absa*sqrt(1.0+SQR(absb/absa));
+  else return (absb == 0.0 ? 0.0 : absb*sqrt(1.0+SQR(absa/absb)));
+}
+
+void tqli(double *d, double *e, int n, double **z)
+{
+  /*
+    tqli from the lib.cpp file.
+  */
+   register int   m,l,iter,i,k;
+   double         s,r,p,g,f,dd,c,b;
+
+   for(i = 1; i < n; i++) e[i-1] = e[i];
+   e[n-1] = 0.0;//EDIT: e[n]->e[n-1]
+   for(l = 0; l < n; l++) {
+      iter = 0;
+      do {
+         for(m = l; m < n-1; m++) {
+            dd = fabs(d[m]) + fabs(d[m+1]);
+            if((double)(fabs(e[m])+dd) == dd) break;
+         }
+         if(m != l) {
+            if(iter++ == 30) {
+               printf("\n\nToo many iterations in tqli.\n");
+               exit(1);
+            }
+            g = (d[l+1] - d[l])/(2.0 * e[l]);
+            r = pythag(g,1.0);
+            g = d[m]-d[l]+e[l]/(g+SIGN(r,g));
+            s = c = 1.0;
+            p = 0.0;
+            for(i = m-1; i >= l; i--) {
+               f      = s * e[i];
+               b      = c*e[i];
+               e[i+1] = (r=pythag(f,g));
+               if(r == 0.0) {
+                  d[i+1] -= p;
+                  e[m]    = 0.0;
+                  break;
+               }
+               s      = f/r;
+               c      = g/r;
+               g      = d[i+1] - p;
+               r      = (d[i] - g) * s + 2.0 * c * b;
+               d[i+1] = g + (p = s * r);
+               g      = c * r - b;
+               for(k = 0; k < n; k++) {
+                  f         = z[k][i+1];
+                  z[k][i+1] = s * z[k][i] + c * f;
+                  z[k][i]   = c * z[k][i] - s * f;
+               } /* end k-loop */
+            } /* end i-loop */
+            if(r == 0.0 && i >= l) continue;
+            d[l] -= p;
+            e[l]  = g;
+            e[m]  = 0.0;
+         } /* end if-loop for m != 1 */
+      } while(m != l);
+   } /* end l-loop */
+} /* End: function tqli(), (C) Copr. 1986-92 Numerical Recipes Software )%. */
+   
 bool operator==(const thevec &vec1,const thevec &vec2){
   /*
     Determine whether or not two vectors are not equal to each other.

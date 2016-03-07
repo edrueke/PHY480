@@ -37,11 +37,12 @@ H\Psi=E\Psi,
 \end{equation}
 
 \noindent where $H$ is the Hamiltonian for the system, $E$ is the energy of the system, and $\Psi$ is the state of the system.  Already, this equation is reminiscent of an eigenvalue problem, in which a matrix (the representation of $H$) acts upon a vector (the ket representation of the state) and returns that vector multiplied by some constant (an eigenvalue, the energy of the system).  Indeed, quantum mechanics is frequently formatted in this way, with state kets being represented by column vectors and the Hamiltonian by a Hermitian matrix \textbf{need citation - Griffiths? Sakurai?}  
-\\\indent However, it is also quite reasonable to attempt to construct an analytical solution to the Schrodinger Equation, which is in fact a differential equation.  The derivatives arise from the quantum mechanical counterparts to classical quantities \textbf{more here - cite Sakurai}.  For example, quantum mechanical momentum is given by 
+\\\indent However, the Schrodinger equation is also a differential equation, and it is also quite reasonable to attempt to construct an analytical solution.  The derivatives arise from the quantum mechanical counterparts to classical quantities \textbf{more here - cite Sakurai}.  For example, quantum mechanical momentum is given by 
 
 $$p\rightarrow -\frac{1}{i\hbar}\frac{\partial}{\partial x}$$
 
-\noindent \textbf{check}  In the case of a particle confined to a well with a harmonic oscillator potential, we have a potential
+\noindent \textbf{check} 
+\\\indent In the case of a particle confined to a well with a harmonic oscillator potential, we have a potential
 
 \begin{equation}
 \label{eq:potential}
@@ -49,7 +50,7 @@ V\left(r\right) = \[\begin{cases} \frac{1}{2}kr^{2} & \left|r\right| < a \\
 \infty & \left|r\right| > a\end{cases}\]
 \end{equation}
 
-\noindent for some $a>0$ and where $m$ is the mass of the particle confined and $k=m\omega^{2}$ where $\omega$ is the harmonic oscillator frequency.  Thus, Schrodinger's Equation reads
+\noindent for some $a>0$, where $m$ is the mass of the particle confined and $k=m\omega^{2}$ where $\omega$ is the harmonic oscillator frequency.  Thus, Schrodinger's Equation reads
 
 \begin{equation}
 \label{eq:schrodpart1}
@@ -89,14 +90,14 @@ $$-\frac{\hbar^{2}}{2m\alpha^{2}}\frac{d}{d\pho^2}u\left(\rho\right)+\left(V\lef
 
 $$-\frac{\hbar^{2}}{2m\alpha^{2}}\frac{d^{2}}{d\rho^{2}}u\left(\rho\right)+\frac{k}{2}\alpha^{2}\rho^{2}u\left(\rho\right)=Eu\left(\rho\right).$$
 
-\indent Now, we have left $\alpha$ arbitrary up until this point, but now we choose it in such a way as to make the calculations simpler.  In particular, we let 
+\indent Up until this point, we have left $\alpha$ arbitrary, but now we choose it in such a way as to make the calculations simpler.  In particular, we let 
 
 \begin{equation}
 \label{eq:alpha}
 \alpha=\left(\frac{\hbar^{2}}{mk}\right)^{1/4}
 \end{equation}
 
-\noindent We can see that $\alpha$ still has dimensions of length, as required.  In particular, we will notice that $\alpha$ defines the length scale of the problem (eg. $\alpha$ will be the Bohr radius for problems on the scale of one nucleus).  Then, letting
+\noindent We can see that $\alpha$ still has dimensions of length, as required.  In particular, we will notice that $\alpha$ defines the length scale of the problem (eg. $\alpha$ will be the Bohr radius for problems on the nuclear scale).  Then, letting
 
 $$\lambda=\frac{2m\alpha^{2}}{\hbar^{2}}E,$$
 
@@ -108,7 +109,7 @@ $$\lambda=\frac{2m\alpha^{2}}{\hbar^{2}}E,$$
 \end{equation}
 
 \noindent\textbf{need citation - lecture notes}  
-\\\indent It was shown in Project 1 \textbf{need citation - project 1 report} how we can set up a tridiagonal matrix in order to compute a numerical approximation to a second derivative.  In particular, we can define a $\rho_{min}=0$ and a $\rho_{max}$ and then, for some number of steps $n_{step}$, calculate a step size
+\\\indent It was shown in Project 1 \textbf{need citation - project 1 report} that we can set up a tridiagonal matrix in order to compute a numerical approximation to a second derivative.  In particular, we can define a $\rho_{min}=0$ and a $\rho_{max}$ and then, for some number of steps $n_{step}$, calculate a step size
 
 $$h=\frac{\rho_{max}-\rho_{min}}{n_{step}}.$$
 
@@ -127,16 +128,145 @@ $$d_{i}=\frac{2}{h^{2}}+V_{i}$$
 
 $$e_{i}=-\frac{1}{h^{2}}.$$
 
-\noindent However, unlike in project 1, we are not solving a system of linear equations in this case, but rather an eigenvalue problem.  Solving this eigenvalue problem will be accomplished with the help of Jacobi's rotation algorithm \textbf{cite lecture notes}, which is outlined in Section~\ref{subsec:jacobi}.  
-\\\indent \textbf{After we've solved eigenvalue problem how do we determine solution?  Various interacting/noninteracting cases?}
+\noindent However, unlike in project 1, we are not solving a system of linear equations in this case, but rather an eigenvalue problem.  Solving this eigenvalue problem will be accomplished with the help of Jacobi's rotation algorithm \textbf{cite lecture notes}, which is outlined in Section~\ref{subsec:jacobi}.  The reason for this is that we can rewrite the Schrodinger equation now in terms of the $d_{i}$ and $e_{i}$ as 
+
+$$d_{i}u_{i}+e_{i-1}u_{i-1}+e_{i+1}u_{i+1}=\lambda u_{i}.$$
+
+\noindent Finding the eigenvalues to this problem will give us the various energy levels.  From there, we can find the eigenvectors, which translate to the wave functions.
+\\\indent In particular, we are interested in two cases of electrons in a harmonic oscillator well.  The first is the case of a single electron, where the radial Schrodinger Equation is 
+
+\begin{equation}
+\label{eq:schrod1e}
+-\frac{\hbar^{2}}{2m}\frac{d^{2}}{dr^{2}}u\left(r\right)+\frac{1}{2}kr^{2}u\left(r\right)=E^{\left(1\right)}u\left(r\right)
+\end{equation}
+
+\noindent as before and the second is the case of two interacting electrons.  To solve this case, we look first at the non-interacting situation, in which case the Schrodinger Equation reads
+
+\begin{equation}
+\label{eq:schrod2e}
+\left(-\frac{\hbar^{2}}{2m}\frac{d^{2}}{dr_{1}^{2}}-\frac{\hbar^{2}}{2m}\frac{d^{2}}{dr_{2}^2}+\frac{1}{2}kr_{1}^2+\frac{1}{2}kr_{2}^2\right)u\left(r_{1},r_{2}\right)=E^{\left(2\right)}u\left(r_{1},r_{2}\right).
+\end{equation}
+
+\noindent To solve this case, we introduce the relative coordinate $r=r_{1}-r_{2}$ and the center of mass coordinate $R=1/2\left(r_{1}+r_{2}\right)$.  In terms of these coordinates, the Schrodinger equation reads
+
+\begin{equation}
+\left(-\frac{\hbar^{2}}{m}\frac{d^{2}}{dr^{2}}-\frac{\hbar^{2}}{4m}\frac{d^{2}}{dR^{2}}+\frac{1}{4}kr^{2}+kR^{2}\right)u\left(r,R\right)=E^{\left(2\right)}u\left(r,R\right).
+\end{equation}
+
+\noindent We solve this again by separation of variables, letting $u\left(r,R\right)=\psi\left(r\right)\phi\left(R\right)$.  
+\\\indent Next, we can introduce the repulsive Coulomb interaction between the two electrons,
+
+\begin{equation}
+\label{eq:coulombrep}
+V\left(r_{1},r_{2}\right)=\frac{\Beta e^{2}}{|r_{1}-r_{2}|}=\frac{\Beta e^{2}}{r}
+\end{equation}
+
+\noindent where $\Beta e^{2}=1.44$ eVnm.  Now the $r$-dependent Schrodinger equation becomes
+
+$$\left(-\frac{\hbar^{2}}{m}\frac{d^{2}}{dr^{2}}+\frac{1}{4}kr^{2}+\frac{\Beta e^{2}}{r}\right)\psi\left(r\right)=E_{r}\psi\left(r\right).$$
+
+\noindent As before, we introduce a dimensionless variable $\rho - r/\alpha$ to get
+
+$$-\frac{d^{2}}{d\rho^{2}}\phi\left(\rho\right)+\frac{1}{4}\frac{mk}{\hbar^{2}}\alpha^{4}\rho^{2}\psi\left(\rho\right)+\frac{m\alpha\Beta e^{2}}{\rho\hbar^{2}}\phi\left(\rho\right)=\frac{m\alpha^{2}}{\hbar^{2}}E_{r}\psi\left(\rho\right).$$
+
+\noindent Next, we can define a frequency $\omega_{r}$ which defines the strength of the oscillator potential.
+
+$$\omega_{r}^{2}=\frac{1}{4}\frac{mk}{\hbar^{2}}\alpha^{2}$$
+
+\noindent and fix 
+
+$$\alpha=\frac{\hbar^{2}}{m\Beta e^{2}}.$$
+
+\noindent Thus, the Schrodinger equation becomes 
+
+$$-\frac{d^{2}}{d\rho^{2}}\psi\left(\rho\right)+\omega_{r}^{2}\rho^{2}\psi\left(\rho\right)+\frac{1}{\rho}=\lambda\psi\left(\rho\right).$$
+
+\\\indent \textbf{cite lecture notes} Throughout this project, we will be studying this potential at the ground level, plotting the wave functions as a function of $r$ and for various values of $\omega_{r}$.  The results are discussed in Section~\ref{sec:results}.
 
 \subsection{The Jacobi Rotation Algorithm}
 \label{subsec:jacobi}
+For a real, symmetric matrix $A$, with eigenvalues $\lambda_{1}$,$\lambda_{2}$, $\ldots$, $\lambda_{n}$, we can create a diagonal matrix $D$ such that
+
+$$D=\left(\begin{array}{cccc}
+\lambda_{1} & 0 & \cdots & 0 \\
+0 & \lambda_{2} & \ddots & 0 \\
+0 & 0 & \ddots & 0 \\
+0 & 0 & \cdots & \lambda_{n}
+\end{array}\right)$$
+
+by applying a particular real, orthogonal matrix $S$.  That is, there exists an $S$ such that $S^{T}AS=D$.  The trick to the Jacobi Rotation Algorithm is to find this $S$ in order to reduce $A$ to its diagonal form.  In particular, the Jacobi Algorithm looks for an $S$ of the form
+
+$$S = \left(\begin{array}{ccccccccc}
+1 & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 & 0 \\
+0 & 1 & \ddots & 0 & 0 & 0 & \cdots & 0 & 0 \\
+\vdots & \ddots & \ddots & 1 & 0 & 0 & \cdots & 0 & 0 \\
+\vdots & 0 & \cdots & 0 & \cos(\theta) & 0 & \cdots & 0 & \sin(\theta) \\
+\vdots & 0 & \cdots & 0 & 0 & 1 & \ddots & 0 & 0 \\
+\vdots & \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & \cdots & 0 & 0 & 0 & \cdots & 1 & 0 \\
+0 & 0 & \cdots & 0 & -\sin(\theta) & 0 & \cdots & 0 & \cos(\theta) 
+\end{array}\right)$$
+
+for some $\theta$.  And so of course the algorithm really boils down to finding the $\theta$ which will diagonalize $A$, or at least make the off-diagonal elements of $A$ as small as possible. \textbf{cite lecture notes}  
+\\\indent But how do we define "as small as possible"?  In particular, we compute the Frobenius norm of the off-diagonal elements and require it be less than some threshold $\epsilon$.  The Frobenius norm is defined to be 
+
+\begin{equation}
+\label{eq:frob}
+||A||_{F} = \sqrt{\sum_{i=1}^{n}\sum_{j=1}^{n}|a_{ij}|^{2}}.
+\end{equation}
+
+\noindent And so we require
+
+\begin{equation}
+\text{off}(||A||_{F}) = \sqrt{\sum_{i=1}^{n}\sum_{j=1,i\neq j}^{n}|a_{ij}|^{2}}<\epsilon.
+\end{equation}
+
+\\\indent If this norm is greater than $\epsilon$, then we find the maximum off-diagonal element, $a_{lk}$ and compute
+
+$$\tau=\frac{a_{kk}-a_{kk}}{2a_{kl}}$$
+
+\noindent and 
+
+$$\tan(\theta)=-\tau\pm\sqrt{1+\tau^2}.$$
+
+\noindent This will clearly yield two possible values for $\tan(\theta)$, and we choose the smallest one \textbf{why? - check p 217 of lecture notes} to continue.  From there, we can calculate
+
+$$\cos(\theta)=\frac{1}{\sqrt{1+\tan^{2}(\theta)}}$$
+
+\noindent and
+
+$$\sin(\theta)=\tan(\theta)\cos(\theta).$$
+
+\noindent With these values of $\sin(\theta)$ and $\cos(\theta)$, we can calculate the rotation matrix $S$ and effectively set the largest off-diagonal element we started wit, $a_{kl}$, to 0.  We continue this process until $||A||_{F}<\epsilon$ as desired.  \textbf{cite lecture notes}
+
 \section{The Algorithm}
 \label{sec:algorithm}
+As shown in Section~\ref{sec:theory}, we are essentially trying to solve the equation
+
+$$-\frac{d^{2}u}{d\rho^{2}}+\rho^{2}u=\lambda u,$$
+
+\noindent which is an eigenvalue problem with eigenvalue $\lambda$.  Discretizing this, we see that we can let
+
+$$\begin{array}{ccc}
+u & \rightarrow & u_{i}\rho_{i} \\
+\rho & \rightarrow & \rho_{i}=\rho_{0}+ih \\
+h & \rightarrow & \frac{b-a}{n+1} \\
+-\frac{d^{2}u}{d\rho^{2}} & \rightarrow & \frac{u_{i+1}+u_{i-1}-2u_{i}}{h^{2}}
+\end{array}$$
+
+\noindent to get
+
+\begin{equation}
+\label{eq:alg1}
+-\left(u_{i+1}+u_{i-1}-2u_{i}\right)+\rho_{i}^{2}u_{i}h^{2}=h^{2}\lambda u_{i}.
+\end{equation}
+
+
+
 
 \subsection{Time Dependence}
 \label{subsec:timedependence}
+There are several steps involved with the algorithm described in Section~\ref{sec:algorithm}, each of which has its own time-dependence.  We start with a discussion of the Jacobi Rotation Algorithm.  Each step of this algorithm is designed to zero-out one off-diagonal element of the matrix $A$, and so one might expect that there would be $n^{2}-n$ rotations required to diagonalize $A$.  However, what we find is that any given rotation might force a previously-zeroed non-diagonal element to become non-zero.  And so in fact there are typically $3n^{2}-5n^{2}$ rotations required to fully diagonalize $A$, and each rotation requires $4n$ operations \textbf{why?  What are they?}  This results in a total of $12n^{3}-20n^{3}$ operations to diagonalize $A$ \textbf{cite lecture notes}.
 
 \section{Results and Benchmarks}
 \label{sec:results}

@@ -124,4 +124,7 @@ thevec LU_decomp_solver_special(thevec &vec, themat &L, themat &U);
 
 //New to Project 2
 themat Jacobi_Method(themat &mat,double eps);
+themat Jacobi_Method(themat &mat,double eps, TGraph * theg, int *pt);
 themat Jacobi_Method_step(themat &mat,double eps);
+void tqli(thevec *d, thevec *e, int n, themat *z);
+double pythag(double a, double b);
