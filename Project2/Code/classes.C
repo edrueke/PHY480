@@ -784,7 +784,6 @@ themat Jacobi_Method_step(themat &mat,double eps){
   }
 
   if(max < eps){
-    cout<<"norm = "<<max<<"; eps = "<<eps<<endl;
     return mat;
   }
 
@@ -827,27 +826,6 @@ themat Jacobi_Method_step(themat &mat,double eps){
   //Compute the transformed matrix
   themat B = S*mat*S.transpose();
 
-  /*themat B = mat;
-  int k, l;
-  k=row;
-  l=column;
-  double a_kk, a_ll, a_ik, a_il;
-  a_kk = B[k][k];
-  a_ll = B[l][l];
-  B.point[k][k]=cos*cos*a_kk-2.0*cos*sin*B[k][l]+sin*sin*a_ll;
-  B.point[l][l]=sin*sin*a_kk+2.0*cos*sin*B[k][l]+cos*cos*a_ll;
-  B.point[k][l]=0;
-  B.point[l][k]=0;
-  for(int i=0;i<B.sz-1;i++){
-    if(i!=k && i!= l){
-      a_ik = B[i][k];
-      a_il = B[i][l];
-      B.point[i][k]=cos*a_ik-sin*a_il;
-      B.point[k][i]=B[i][k];
-      B.point[i][l]=cos*a_il+sin*a_ik;
-      B.point[l][i]=B[i][l];
-    }
-    }*/
   return B;  
 }
 
@@ -873,7 +851,6 @@ themat Jacobi_Method(themat &mat,double eps, TGraph * theg, int *pt){
   themat ret = Jacobi_Method_step(mat,eps);
   int n_turns = 0;
   while(ret!=Jacobi_Method_step(ret,eps)){
-    //cout<<ret.print()<<endl;
     ret = Jacobi_Method_step(ret,eps);
     n_turns++;
   }
