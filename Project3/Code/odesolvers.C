@@ -16,7 +16,7 @@ classes.C and classes.h developed in Projects 1 and 2.
 #include <iomanip>
 #include <stdlib.h>
 
-#include "classes.C"
+#include "classes.h"
 #include "odesolvers.h"
 
 using namespace std;
@@ -33,8 +33,8 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
     NOTE: May need to change so that we are including planets as a class.
 
     Args:
-    -t0: a double for the initial time
-    -tf: a double for the final time
+    -t0: a double for the initial time (years)
+    -tf: a double for the final time (years)
     -nsteps: an integer giving the number of steps we want to use in the 
     discretization
     -x0: a double for the initial position
@@ -46,7 +46,7 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   */
 
   //Compute the step size.
-  double h = (1.0*xf-1.0*x0)/(1.0*nsteps);
+  double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
 
   //Define a vector of the inputs to the function.
   thevec times = thevec(nsteps+1);
@@ -60,13 +60,11 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   pos.point[0]=x0;
   pos.point[nsteps]=xf;
 
+  //Note that x_1 = x_0+h*v_0+O(h^2)
+  pos.point[1]=pos[0]+h*v0;
+
   //Compute the positions using the algorithm: x_{i+1} = 2x_{i}-x_{i-1}+h^{2}a
-
-  /*
-    ERROR: NEED SOME VALUE FOR pos[i-2] FOR i=1
-  */
-
-  for(int i=1;i<nsteps;i++){
+  for(int i=2;i<nsteps;i++){
     pos.point[i] = 2*pos[i-1]-pos[i-2]+a*pow(h,2);
   }
 
@@ -87,7 +85,7 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   return to_ret;
 }
 
-thevec RK2(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf){
+thevec RK2(double t0, double tf, int nsteps, double x0, double xf){
   /*
     Uses the 2nd-order Runge-Kutta Algorithm, discussed in Chapter 8.4 of 
     the lecture notes to solve the differential equation from Newton's 
@@ -112,7 +110,7 @@ thevec RK2(double t0, double tf, int nsteps, double x0, double xf, double a, dou
   */
 
   //Compute the step size.
-  double h = (1.0*xf-1.0*x0)/(1.0*nsteps);
+  double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
 
   //Define a vector of the inputs to the function.
   thevec times = thevec(nsteps+1);
@@ -142,7 +140,7 @@ thevec RK2(double t0, double tf, int nsteps, double x0, double xf, double a, dou
   return pos;
 }
 
-thevec RK4(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf){
+thevec RK4(double t0, double tf, int nsteps, double x0, double xf){
   /*
     Uses the 4th-order Runge-Kutta Algorithm, discussed in Chapter 8.4 of 
     the lecture notes to solve the differential equation from Newton's 
@@ -167,7 +165,7 @@ thevec RK4(double t0, double tf, int nsteps, double x0, double xf, double a, dou
   */
 
   //Compute the step size.
-  double h = (1.0*xf-1.0*x0)/(1.0*nsteps);
+  double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
 
   //Define a vector of the inputs to the function.
   thevec times = thevec(nsteps+1);

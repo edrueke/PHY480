@@ -1,3 +1,6 @@
+#ifndef ODESOLVERS_H
+#define ODESOLVERS_H
+
 /*
 Elizabeth Drueke
 PHY 480
@@ -22,8 +25,12 @@ classes.C and classes.h developed in Projects 1 and 2.
 #include "TLegend.h"
 #include "TStyle.h"
 
+#include "classes.h"
+
 using namespace std;
 
 vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf);
-thevec RK2(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf);
-thevec RK4(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf);
+thevec RK2(double t0, double tf, int nsteps, double x0, double xf);
+thevec RK4(double t0, double tf, int nsteps, double x0, double xf);
+
+#endif

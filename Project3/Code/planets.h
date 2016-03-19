@@ -1,3 +1,6 @@
+#ifndef PLANETS_H
+#define PLANETS_H
+
 /*
 Elizabeth Drueke
 PHY 480
@@ -22,23 +25,31 @@ classes.C and classes.h developed in Projects 1 and 2.
 #include "TLegend.h"
 #include "TStyle.h"
 
+#include "classes.h"
+
 using namespace std;
 
 //Planet class
 class planet{
  public:
   //Components
-  double mass; //mass of planet
-  double dist_sun; //distance from sun of planet
+  double mass; //mass of planet in kg
+  double dist_sun; //distance from sun of planet in AU
   string name; //name of planet
+  double acc; //acceleration of planet on a circular orbit
   //vector for velocities?
   //vector for positions?
   
   //Constructors
-  planet(string n, double m, double d);
+  planet(string n, double m, double d); //Initializer
+  planet(const planet &p); //Copy constructor
+  ~planet(); //Destructor
 
   //Other functions and operators
+  string print();
   //kinetic energy?
   //potential energy?
 
 };
+
+#endif
