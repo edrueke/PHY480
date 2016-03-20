@@ -59,16 +59,16 @@ void parta(){
   cout<<"xvel: "<<xvel.print()<<endl<<"yvel: "<<yvel.print()<<endl;
   
   //Plot the position and velocity
-  TGraph *g_pos = new TGraph();
-  TGraph *g_velx = new TGraph();
-  TGraph *g_vely = new TGraph();
+  TGraph *g_pos = new TGraph(nsteps);
+  TGraph *g_velx = new TGraph(nsteps);
+  TGraph *g_vely = new TGraph(nsteps);
 
   double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
 
   for(int i=0;i<xpos.sz;i++){
-    g_pos->SetPoint(i+1,xpos[i],ypos[i]);
-    g_velx->SetPoint(i+1,t0+i*h,xvel[i]);
-    g_vely->SetPoint(i+1,t0+i*h,yvel[i]);
+    g_pos->SetPoint(i,xpos[i],ypos[i]);
+    g_velx->SetPoint(i,t0+i*h,xvel[i]);
+    g_vely->SetPoint(i,t0+i*h,yvel[i]);
   }
 
   g_pos->SetLineColor(kBlue);
