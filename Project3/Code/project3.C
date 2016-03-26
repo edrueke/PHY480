@@ -31,58 +31,64 @@ void parta(){
     to solve the problem.
   */
 
+  gStyle->SetOptFit();
+
   //Define the earth as a planet.
   planet earth = planet("earth",6e24,1);
   
   //Compute the expected velocity given a circular orbit.
   double v = sqrt(4*pow(PI,2)/earth.dist_sun);
 
+  //cout<<"v = "<<v<<endl;
+
   //Define required quantities for Verlet method
   double t0 = 0; //Initial time (years)
   double tf = 1; //Final time (years)
-  double nsteps = 10; //# of steps
+  int nsteps = 100; //# of steps
 
   //Compute the x position and velocity of the earth over 1 year (1 revolution)
   //Assume the planet starts moving entirely in the x-direction.
-  /*
-    ERROR: NEED TO TAKE INTO ACCOUNT MULTIPLE COMPONENTS OF ACCELERATION
-  */
-  vector<thevec> xcomp = Verlet(t0,tf,nsteps,0,0,earth.acc,v,v);
-  vector<thevec> ycomp = Verlet(t0,tf,nsteps,-1.0*earth.dist_sun,-1.0*earth.dist_sun,earth.acc,0,0);
 
-  thevec xpos = xcomp.at(0);
-  thevec xvel = xcomp.at(1);
-  thevec ypos = ycomp.at(0);
-  thevec yvel = ycomp.at(1);
+  //First using Verlet
+  vector<thevec> xcomp_v = Verlet(t0,tf,nsteps,0,0,earth.acc,v,v,earth.dist_sun);
+  vector<thevec> ycomp_v = Verlet(t0,tf,nsteps,-1.0*earth.dist_sun,-1.0*earth.dist_sun,earth.acc,0,0,earth.dist_sun);
 
-  cout<<"xpos: "<<xpos.print()<<endl<<"ypos: "<<ypos.print()<<endl;
-  cout<<"xvel: "<<xvel.print()<<endl<<"yvel: "<<yvel.print()<<endl;
+  thevec xpos_v = xcomp_v.at(0);
+  thevec xvel_v = xcomp_v.at(1);
+  thevec ypos_v = ycomp_v.at(0);
+  thevec yvel_v = ycomp_v.at(1);
+
+  //cout<<"xpos: "<<xpos.print()<<endl<<"ypos: "<<ypos.print()<<endl;
+  //cout<<"xvel: "<<xvel.print()<<endl<<"yvel: "<<yvel.print()<<endl;
   
   //Plot the position and velocity
-  TGraph *g_pos = new TGraph(nsteps);
-  TGraph *g_velx = new TGraph(nsteps);
-  TGraph *g_vely = new TGraph(nsteps);
+  TGraph *g_pos_v = new TGraph();
+  TGraph *g_vel_vx = new TGraph(nsteps+1);
+  TGraph *g_vel_vy = new TGraph(nsteps+1);
 
   double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
 
-  for(int i=0;i<xpos.sz;i++){
-    g_pos->SetPoint(i,xpos[i],ypos[i]);
-    g_velx->SetPoint(i,t0+i*h,xvel[i]);
-    g_vely->SetPoint(i,t0+i*h,yvel[i]);
+  for(unsigned int i=0;i<nsteps+1;i++){
+    double x = xpos_v[i];
+    double y = ypos_v[i];
+    double t = t0+i*h;
+    g_pos_v->SetPoint(i,x,y);
+    g_vel_vx->SetPoint(i,t,xvel_v[i]);
+    g_vel_vy->SetPoint(i,t,yvel_v[i]);
   }
 
-  g_pos->SetLineColor(kBlue);
-  g_pos->SetMarkerColor(kBlue);
-  g_pos->SetMarkerStyle(3);
-  g_pos->SetMarkerSize(1.5);
-  g_velx->SetLineColor(kBlue);
-  g_velx->SetMarkerColor(kBlue);
-  g_velx->SetMarkerStyle(3);
-  g_velx->SetMarkerSize(1.5);
-  g_vely->SetLineColor(kRed);
-  g_vely->SetMarkerColor(kRed);
-  g_vely->SetMarkerStyle(3);
-  g_vely->SetMarkerSize(1.5);
+  g_pos_v->SetLineColor(kBlue);
+  g_pos_v->SetMarkerColor(kBlue);
+  g_pos_v->SetMarkerStyle(3);
+  g_pos_v->SetMarkerSize(1.5);
+  g_vel_vx->SetLineColor(kBlue);
+  g_vel_vx->SetMarkerColor(kBlue);
+  g_vel_vx->SetMarkerStyle(3);
+  g_vel_vx->SetMarkerSize(1.5);
+  g_vel_vy->SetLineColor(kRed);
+  g_vel_vy->SetMarkerColor(kRed);
+  g_vel_vy->SetMarkerStyle(3);
+  g_vel_vy->SetMarkerSize(1.5);
 
   TLegend *leg = new TLegend(0.450,0.6,1.0,0.9);
   leg->SetFillColor(0);
@@ -90,34 +96,40 @@ void parta(){
   leg->SetShadowColor(0);
   leg->SetTextSize(0.04);
 
-  leg->AddEntry(g_velx,"v_x");
-  leg->AddEntry(g_vely,"v_y");
+  leg->AddEntry(g_vel_vx,"v_x");
+  leg->AddEntry(g_vel_vy,"v_y");
 
-  TMultiGraph *m_pos = new TMultiGraph("m_pos","Position of Earth");
-  m_pos->SetTitle("Position of Earth;x (AU);y(AU)");
-  TMultiGraph *m_vel = new TMultiGraph("m_vel","Velocity of Earth");
-  m_vel->SetTitle("Velocity of Earth;time (yr);v (AU/yr)");
+  TMultiGraph *m_pos_v = new TMultiGraph("m_pos_v","Position of Earth");
+  m_pos_v->SetTitle("Position of Earth;x (AU);y(AU)");
+  TMultiGraph *m_vel_v = new TMultiGraph("m_vel_v","Velocity of Earth");
+  m_vel_v->SetTitle("Velocity of Earth;time (yr);v (AU/yr)");
 
-  m_pos->Add(g_pos);
-  m_vel->Add(g_velx);
-  m_vel->Add(g_vely);
+  m_pos_v->Add(g_pos_v);
+  m_vel_v->Add(g_vel_vx);
+  m_vel_v->Add(g_vel_vy);
 
-  TCanvas *c_pos = new TCanvas("c_pos","c_pos",800,720);
-  TCanvas *c_vel = new TCanvas("c_vel","c_vel",800,720);
+  TCanvas *c_pos_v = new TCanvas("c_pos_v","c_pos_v",800,720);
+  TCanvas *c_vel_v = new TCanvas("c_vel_v","c_vel_v",800,720);
   
-  c_pos->cd();
-  m_pos->Draw("AH*");
-  c_pos->SaveAs("plots/earth_pos.png");
-  c_pos->SaveAs("plots/earth_pos.pdf");
-  c_pos->Close();
+  c_pos_v->SetBorderMode(0);
+  c_pos_v->cd();
+  m_pos_v->Draw("AC*");
+  c_pos_v->SaveAs("plots/earth_pos_verlet.png");
+  c_pos_v->SaveAs("plots/earth_pos_verlet.pdf");
+  c_pos_v->Close();
   
-  c_vel->cd();
-  m_vel->Draw("AH*");
+  c_vel_v->SetBorderMode(0);
+  c_vel_v->cd();
+  m_vel_v->Draw("AC*");
   leg->Draw("SAME");
-  c_vel->SaveAs("plots/earth_vel.png");
-  c_vel->SaveAs("plots/earth_vel.pdf");
-  c_vel->Close();  
+  c_vel_v->SaveAs("plots/earth_vel_verlet.png");
+  c_vel_v->SaveAs("plots/earth_vel_verlet.pdf");
+  c_vel_v->Close();  
 
+  //Include test of kinetic energy (and other tests?)
+
+  //Now solve with RK4
+  
 }
 
 void project3(){

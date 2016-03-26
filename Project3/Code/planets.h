@@ -43,7 +43,7 @@ class planet{
   //Constructors
   planet(string n, double m, double d); //Initializer
   planet(const planet &p); //Copy constructor
-  ~planet(); //Destructor
+  ~planet() {}; //Destructor
 
   //Other functions and operators
   string print();

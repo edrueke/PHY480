@@ -51,14 +51,6 @@ planet::planet(const planet &p){
   acc = p.acc;
 }
 
-planet::~planet(){
-  /*
-    Destructor for planet class.
-  */
-
-  1+1;
-}
-
 string planet::print(){
   /*
     Returns a string with the planet information.

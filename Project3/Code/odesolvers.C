@@ -21,7 +21,7 @@ classes.C and classes.h developed in Projects 1 and 2.
 
 using namespace std;
 
-vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf){
+vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf,double r){
   /*
     Uses the Verlet Algorithm discussed in Chapter 8.3.2 of the lecture notes
     to solve the differential equation from Newton's second law for the 
@@ -39,10 +39,10 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
     discretization
     -x0: a double for the initial position
     -xf: a double for the final position
-    -a: a double for the acceleration (which is constant in the case of the 
-    planets in the solar system
+    -a: a double for the acceleration 
     -v0: double for initial velocity
     -vf: double for final velocity
+    -r: constant distance between planet and sun (AU)
   */
 
   //Compute the step size.
@@ -65,7 +65,7 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
 
   //Compute the positions using the algorithm: x_{i+1} = 2x_{i}-x_{i-1}+h^{2}a
   for(int i=2;i<nsteps;i++){
-    pos.point[i] = 2*pos[i-1]-pos[i-2]+a*pow(h,2);
+    pos.point[i] = 2*pos[i-1]-pos[i-2]-a*pow(h,2)*pos[i-1]/r;
   }
 
   //Define a vector for the velocity.
