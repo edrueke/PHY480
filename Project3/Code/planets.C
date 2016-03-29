@@ -60,3 +60,31 @@ string planet::print(){
 
   return to_ret;
 }
+
+double planet::kinetic(double vel){
+  /*
+    Takes in the velocity at some point and returns the kinetic energy.
+  */
+
+  double T = 0.5*mass*pow(vel,2);
+  return T;
+}
+
+double planet::potential(double pos){
+  /*
+    Takes in the position at some point and returns the potential energy.
+  */
+
+  double V = mass*4*pow(PI,2)/pow(pos,2);
+  return V;
+}
+
+double planet::ang_mom(double vel, double pos){
+  /*
+    Takes in the position and velocity at some point and returns the
+    angular momentum.
+  */
+
+  double l = mass*vel*pos;
+  return l;
+}

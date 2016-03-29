@@ -85,62 +85,7 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   return to_ret;
 }
 
-thevec RK2(double t0, double tf, int nsteps, double x0, double xf){
-  /*
-    Uses the 2nd-order Runge-Kutta Algorithm, discussed in Chapter 8.4 of 
-    the lecture notes to solve the differential equation from Newton's 
-    second law for the position and velocity.
-
-    NOTE: This method does not take into account gravitational effects of one 
-    planet on another, only the effects of the sun on individual planets.
-    
-    NOTE: May need to change so that we are including planets as a class.
-
-    Args:
-    -t0: a double for the initial time
-    -tf: a double for the final time
-    -nsteps: an integer giving the number of steps we want to use in the 
-    discretization
-    -x0: a double for the initial position
-    -xf: a double for the final position
-    -a: a double for the acceleration (which is constant in the case of the 
-    planets in the solar system
-    -v0: double for initial velocity
-    -vf: double for final velocity
-  */
-
-  //Compute the step size.
-  double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
-
-  //Define a vector of the inputs to the function.
-  thevec times = thevec(nsteps+1);
-  times.point[0] = t0;
-  for(int i=1;i<nsteps+1;i++){
-    times.point[i] = t0+i*h;
-  }
-
-  //Define a vector for the positions.
-  thevec pos = thevec(nsteps+1);
-  pos.point[0]=x0;
-  pos.point[nsteps]=xf;
-
-  //Compute the positions using the algorithm
-
-  /*
-    ERROR: In the notes, this algorithm is defined in terms of f(t,y).  But
-    what is this f in this context?
-  */
-
-  for(int i=1;i<nsteps;i++){
-    double k1 = h*pos[i-1];
-    double k2 = h*(pos[i-1]+1.0*k1/2);
-    pos.point[i] = pos[i-1]+k2;
-  }
-
-  return pos;
-}
-
-thevec RK4(double t0, double tf, int nsteps, double x0, double xf){
+vector<thevec> RK4(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf, double r){
   /*
     Uses the 4th-order Runge-Kutta Algorithm, discussed in Chapter 8.4 of 
     the lecture notes to solve the differential equation from Newton's 
@@ -158,10 +103,10 @@ thevec RK4(double t0, double tf, int nsteps, double x0, double xf){
     discretization
     -x0: a double for the initial position
     -xf: a double for the final position
-    -a: a double for the acceleration (which is constant in the case of the 
-    planets in the solar system
+    -a: a double for the acceleration 
     -v0: double for initial velocity
     -vf: double for final velocity
+    -r: total radius in the case of a circular orbit (AU)
   */
 
   //Compute the step size.
@@ -179,20 +124,30 @@ thevec RK4(double t0, double tf, int nsteps, double x0, double xf){
   pos.point[0]=x0;
   pos.point[nsteps]=xf;
 
-  //Compute the positions using the algorithm
+  //Define a vector for the velocities.
+  thevec vel = thevec(nsteps+1);
+  vel.point[0]=v0;
+  vel.point[nsteps]=vf;
+
+  //Compute the positions and velocities using the algorithm
 
   /*
     ERROR: In the notes, this algorithm is defined in terms of f(t,y).  But
     what is this f in this context?
   */
 
-  for(int i=1;i<nsteps;i++){
-    double k1 = h*pos[i-1];
-    double k2 = h*(pos[i-1]+1.0*k1/2);
-    double k3 = h*(pos[i-1]+1.0*k2/2);
-    double k4 = h*(pos[i-1]+k3);
+  /*for(int i=1;i<nsteps;i++){
+    double k1p = h*vel[i-1];
+    double k1v = -1.0*h*a*pos[i-1]/r;
+    
+    double k2p = h*(pos[i-1]+1.0*k1/2);
+    double k3p = h*(pos[i-1]+1.0*k2/2);
+    double k4p = h*(pos[i-1]+k3);
     pos.point[i] = pos[i-1]+(1.0/6)*(k1+2*k2+2*k3+k4);
-  }
+    }*/
 
-  return pos;
+  vector<thevec> to_ret;
+  to_ret.push_back(pos);
+  to_ret.push_back(vel);
+  return to_ret;
 }

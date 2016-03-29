@@ -46,9 +46,10 @@ class planet{
   ~planet() {}; //Destructor
 
   //Other functions and operators
-  string print();
-  //kinetic energy?
-  //potential energy?
+  string print(); //String for cout-ing
+  double kinetic(double vel); //Calculates T for some velocity
+  double potential(double pos); //Calculates V for some position
+  double ang_mom(double vel, double pos); //Calculates l for some x, v
 
 };
 

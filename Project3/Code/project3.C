@@ -23,7 +23,179 @@ to solve the problem of the solar system.
 
 using namespace std;
 
-void parta(){
+void benchmarks(){
+  /*
+    Solve the earth-sun system and check for conservation of kinetic and 
+    potential energy and angular momentum.
+  */
+
+  //Define the earth as a planet
+  planet earth = planet("earth",6e24,1);
+  
+  //Compute the expected velocity given a circular orbit
+  double v = sqrt(4*pow(PI,2)/earth.dist_sun);
+  
+  //Define required quantities for Verlet
+  double t0 = 0;
+  double tf = 1;
+  int nsteps = 100;
+
+  //Solve the system using Verlet
+  vector<thevec> xcomp = Verlet(t0,tf,nsteps,0,0,earth.acc,v,v,earth.dist_sun);
+  vector<thevec> ycomp = Verlet(t0,tf,nsteps,-1.0*earth.dist_sun,-1.0*earth.dist_sun,earth.acc,0,0,earth.dist_sun);
+
+  thevec xpos = xcomp.at(0);
+  thevec xvel = xcomp.at(1);
+  thevec ypos = ycomp.at(0);
+  thevec yvel = ycomp.at(1);
+
+  //Check for consistency
+  double max_T, min_T, max_V, min_V, max_l, min_l;
+  for(int i=0;i<xpos.sz;i++){
+    double dist = sqrt(pow(xpos[i],2)+pow(ypos[i],2));
+    double vel = sqrt(pow(xvel[i],2)+pow(yvel[i],2));
+    double T = earth.kinetic(vel);
+    double V = earth.potential(dist);
+    double l = earth.ang_mom(vel,dist);
+
+    if(i==0){
+      max_T = T;
+      min_T = max_T;
+      max_V = V;
+      min_V = max_V;
+      max_l = l;
+      min_l = max_l;
+    }
+
+    else{
+      if(T < min_T)
+	min_T = T;
+      if(T > max_T)
+	max_T = T;
+      if(V < min_V)
+	min_V = V;
+      if(V > max_V)
+	max_V = V;
+      if(l < min_l)
+	min_l = l;
+      if(l > min_l)
+	max_l = l;
+    }
+  }
+
+  //Record results
+  ofstream myfile;
+  myfile.open("plots/benchmarks.txt");
+
+  myfile<<"Max T: "<<max_T<<endl;
+  myfile<<"Min T: "<<min_T<<endl;
+  myfile<<"% diff: "<<100*(max_T - min_T)/max_T<<"%"<<endl<<endl;
+
+  myfile<<"Max V: "<<max_V<<endl;
+  myfile<<"Min V: "<<min_V<<endl;
+  myfile<<"% diff: "<<100*(max_V - min_V)/max_V<<"%"<<endl<<endl;
+
+  myfile<<"Max l: "<<max_l<<endl;
+  myfile<<"Min l: "<<min_l<<endl;
+  myfile<<"% diff: "<<100*(max_l - min_l)/max_l<<"%"<<endl;
+
+  myfile.close();
+}
+
+void check_time_steps(){
+  /*
+    Solve the earth-sun system for various possible time steps and plot
+    the stability.
+  */
+
+  gStyle->SetOptFit();
+
+  //Define the earth as a planet
+  planet earth = planet("earth",6e24,1);
+
+  //Compute the expected velocity given a circular orbit
+  double v = sqrt(4*pow(PI,2)/earth.dist_sun);
+
+  //Define required quantities for Verlet
+  double t0 = 0;
+  double tf = 1;
+
+  //Define vector of possible numbers of steps
+  vector<int> nsteps;
+  for(int i=1;i<101;i++){
+    if(i<10)
+      nsteps.push_back(i);
+    else if(i<30 && i%5==0)
+      nsteps.push_back(i);
+    else if(i%10==0)
+      nsteps.push_back(i);
+  }
+
+  /*
+    ISSUE: need to fix legend characteristics
+  */
+
+  //Define certain plotting requirements
+  TLegend *leg = new TLegend(0.45,0.6,1.0,0.9);
+  leg->SetFillColor(0);
+  leg->SetLineColor(0);
+  leg->SetShadowColor(0);
+  leg->SetTextSize(0.01);
+
+  TMultiGraph *m_pos = new TMultiGraph("m_pos","Position of Earth");
+  m_pos->SetTitle("Position of Earth;x (AU);y (AU)");
+  TMultiGraph *m_vel = new TMultiGraph("m_vel","Velocity of Earth");
+  m_vel->SetTitle("Velocity of Earth;v_x (AU/yr);v_y (AU/yr)");
+
+  //Compute the solutions using verlet for various nsteps.
+  for(unsigned int i=0;i<nsteps.size();i++){
+    vector<thevec> xcomp = Verlet(t0,tf,nsteps.at(i),0,0,earth.acc,v,v,earth.dist_sun);
+    vector<thevec> ycomp = Verlet(t0,tf,nsteps.at(i),-1.0*earth.dist_sun, -1.0*earth.dist_sun,earth.acc,0,0,earth.dist_sun);
+
+    thevec xpos = xcomp.at(0);
+    thevec xvel = xcomp.at(1);
+    thevec ypos = ycomp.at(0);
+    thevec yvel = ycomp.at(1);
+
+    //Create the plots
+    TGraph *g_pos = new TGraph();
+    TGraph *g_vel = new TGraph();
+
+    for(int j=0;j<xpos.sz;j++){
+      g_pos->SetPoint(j,xpos[j],ypos[j]);
+      g_vel->SetPoint(j,xvel[j],yvel[j]);
+    }
+    
+    g_pos->SetLineColor(i);
+    g_vel->SetLineColor(i);
+
+    leg->AddEntry(g_pos,("nstep = "+to_string(nsteps.at(i))).c_str());
+    m_pos->Add(g_pos);
+    m_vel->Add(g_vel);
+  }
+
+  //Plot the graphs and save
+  TCanvas *c_pos = new TCanvas("c_pos","c_pos",800,720);
+  TCanvas *c_vel = new TCanvas("c_vel","c_vel",800,720);
+
+  c_pos->SetBorderMode(0);
+  c_pos->cd();
+  m_pos->Draw("AC");
+  leg->Draw("SAME");
+  c_pos->SaveAs("plots/pos_nstep_check.png");
+  c_pos->SaveAs("plots/pos_nstep_check.pdf");
+  c_pos->Close();
+
+  c_vel->SetBorderMode(0);
+  c_vel->cd();
+  m_vel->Draw("AC");
+  leg->Draw("SAME");
+  c_vel->SaveAs("plots/vel_nstep_check.png");
+  c_vel->SaveAs("plots/vel_nstep_check.pdf");
+  c_vel->Close();
+}
+
+void partb(){
   /*
     Using the discretized versions of the x- and y- components of the 
     velocity and position of the planet Earth (in the single-planet version
@@ -38,8 +210,6 @@ void parta(){
   
   //Compute the expected velocity given a circular orbit.
   double v = sqrt(4*pow(PI,2)/earth.dist_sun);
-
-  //cout<<"v = "<<v<<endl;
 
   //Define required quantities for Verlet method
   double t0 = 0; //Initial time (years)
@@ -58,9 +228,6 @@ void parta(){
   thevec ypos_v = ycomp_v.at(0);
   thevec yvel_v = ycomp_v.at(1);
 
-  //cout<<"xpos: "<<xpos.print()<<endl<<"ypos: "<<ypos.print()<<endl;
-  //cout<<"xvel: "<<xvel.print()<<endl<<"yvel: "<<yvel.print()<<endl;
-  
   //Plot the position and velocity
   TGraph *g_pos_v = new TGraph();
   TGraph *g_vel_vx = new TGraph(nsteps+1);
@@ -68,7 +235,7 @@ void parta(){
 
   double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
 
-  for(unsigned int i=0;i<nsteps+1;i++){
+  for(int i=0;i<nsteps+1;i++){
     double x = xpos_v[i];
     double y = ypos_v[i];
     double t = t0+i*h;
@@ -138,6 +305,9 @@ void project3(){
     solve the problem posed in project 3.
   */
 
-  parta();
+  partb();
 
+  //Part c
+  check_time_steps();
+  benchmarks();
 }

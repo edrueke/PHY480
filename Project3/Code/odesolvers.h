@@ -30,7 +30,6 @@ classes.C and classes.h developed in Projects 1 and 2.
 using namespace std;
 
 vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf, double r);
-thevec RK2(double t0, double tf, int nsteps, double x0, double xf);
-thevec RK4(double t0, double tf, int nsteps, double x0, double xf);
+vector<thevec> RK4(double t0, double tf, int nsteps, double x0, double xf, double a, double v0, double vf, double r);
 
 #endif
