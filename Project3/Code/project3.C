@@ -23,10 +23,141 @@ to solve the problem of the solar system.
 
 using namespace std;
 
+void partd_precise(){
+  /*
+    Determine by trial and error a more precise value for the escape velocity 
+    than that found in partd() for planet earth.
+  */
+
+  //Define the planet
+  planet earth = planet("earth",6e24,1);
+
+  //Begin with the expected velocity of a stable circular orbit
+  double v = sqrt(4*pow(PI,2)/earth.dist_sun);
+
+  //Vary velocities until the change is less than some delta
+  double delta = 1e-10;
+
+  double v0 = 0; double vf = v;
+  do{
+
+    v0 = vf;
+    v = vf;
+
+    double vstep = 0.1*v0;
+    double dist = 0;
+
+    double t0 = 0;
+    double tf = 1;
+    double nsteps = 100;
+
+    do{
+
+      //Solve the systep using Verlet
+      vector<thevec> xcomp = Verlet(t0,tf,nsteps,0,0,earth.acc,v,v,earth.dist_sun);
+      vector<thevec> ycomp = Verlet(t0,tf,nsteps,-1.0*earth.dist_sun,-1.0*earth.dist_sun,earth.acc,0,0,earth.dist_sun);
+
+      thevec xpos = xcomp.at(0);
+      thevec xvel = xcomp.at(1);
+      thevec ypos = ycomp.at(0);
+      thevec yvel = ycomp.at(1);
+
+      dist = sqrt(pow((xpos[xpos.sz-1]-xpos[xpos.sz-2]),2)+pow((ypos[ypos.sz-1]-ypos[ypos.sz-2]),2));
+
+      v = v+vstep;
+
+    }while(dist < 1);
+
+    vf = v-vstep;
+  }while(abs(vf-v0)>delta);
+
+  cout<<endl<<"Final Escape Velocity: "<<vf<<endl;
+}
+
+void partd(){
+  /*
+    Determine by trial and error what the initial velocity of a planet must
+    be for it to escape from the sun if it starts at a distance of 1AU.
+  */
+
+  //First define a list of several possible masses of the planet.
+  vector<double> masses;
+  for(int i=1;i<11;i++)
+    masses.push_back(i*pow(10,24));
+
+  //Define a plot of escape velocity vs mass
+  TGraph *g_escape = new TGraph();
+
+  //Determine the escape velocity by trial and error.
+  for(unsigned int i=0;i<masses.size();i++){
+    double mass = masses.at(i);
+
+    //Define the planet
+    planet plan = planet("plan",mass,1);
+
+    //Start with the expected velocity of a stable circular orbit
+    double v = sqrt(4*pow(PI,2)/plan.dist_sun);
+
+    //Check velocities every 10%
+    double vstep = 0.01*v;
+
+    //Can only check a finite number of years (say 10)
+    double t0=0;
+    double tf=10;
+    double nsteps=100;
+
+    double dist = 0;
+
+    do{
+      //Solve the system using Verlet
+      vector<thevec> xcomp = Verlet(t0,tf,nsteps,0,0,plan.acc,v,v,plan.dist_sun);
+      vector<thevec> ycomp = Verlet(t0,tf,nsteps,-1.0*plan.dist_sun,-1.0*plan.dist_sun,plan.acc,0,0,plan.dist_sun);
+      
+      thevec xpos = xcomp.at(0);
+      thevec xvel = xcomp.at(1);
+      thevec ypos = ycomp.at(0);
+      thevec yvel = ycomp.at(0);
+      
+      //We consider a distance of 1AU from the expected final position to mean 
+      //the planet escaped
+      dist = sqrt(pow((xpos[xpos.sz-1]-xpos[xpos.sz-2]),2)+pow((ypos[ypos.sz-1]-ypos[ypos.sz-2]),2));
+      
+      v += vstep;
+
+    }while(dist < 1);
+
+    g_escape->SetPoint(i,mass,v-vstep);
+  }
+
+  //Plot results
+  TMultiGraph *m_escape = new TMultiGraph("m_escape","Escape Velocities");
+  m_escape->SetTitle("Escape Velocities;Planet Mass (kg);Escape Velocity(AU/yr)");
+
+  m_escape->Add(g_escape);
+
+  TCanvas *c_escape = new TCanvas("c_escape","c_escape",800,720);
+  c_escape->SetBorderMode(0);
+  c_escape->cd();
+  m_escape->Draw("AC*");
+  c_escape->SaveAs("plots/escape_vel.png");
+  c_escape->SaveAs("plots/escape_vel.pdf");
+  c_escape->Close();
+
+  /*
+    PROBLEM: escape velocity does not seem to depend on mass.  Should figure 
+    out why and compute.
+  */
+
+}
+
 void benchmarks(){
   /*
     Solve the earth-sun system and check for conservation of kinetic and 
     potential energy and angular momentum.
+  */
+
+  /*
+    PROBLEM: Should make plot of differences
   */
 
   //Define the earth as a planet
@@ -39,7 +170,8 @@ void benchmarks(){
   double t0 = 0;
   double tf = 1;
   int nsteps = 100;
-
+  double h = (tf-t0)/nsteps;
+  
   //Solve the system using Verlet
   vector<thevec> xcomp = Verlet(t0,tf,nsteps,0,0,earth.acc,v,v,earth.dist_sun);
   vector<thevec> ycomp = Verlet(t0,tf,nsteps,-1.0*earth.dist_sun,-1.0*earth.dist_sun,earth.acc,0,0,earth.dist_sun);
@@ -49,14 +181,27 @@ void benchmarks(){
   thevec ypos = ycomp.at(0);
   thevec yvel = ycomp.at(1);
 
+  //Define plots for energy and angular momentum
+  TGraph *g_T = new TGraph();
+  TGraph *g_V = new TGraph();
+  TGraph *g_l = new TGraph();
+  TGraph *g_tot = new TGraph();
+
   //Check for consistency
-  double max_T, min_T, max_V, min_V, max_l, min_l;
+  double max_T, min_T, max_V, min_V, max_l, min_l, min_tot, max_tot;
   for(int i=0;i<xpos.sz;i++){
     double dist = sqrt(pow(xpos[i],2)+pow(ypos[i],2));
     double vel = sqrt(pow(xvel[i],2)+pow(yvel[i],2));
     double T = earth.kinetic(vel);
     double V = earth.potential(dist);
     double l = earth.ang_mom(vel,dist);
+    double tot = T+V;
+
+    //Plot energy and angular momentum
+    g_T->SetPoint(i,h*i,T);
+    g_V->SetPoint(i,h*i,V);
+    g_tot->SetPoint(i,h*i,tot);
+    g_l->SetPoint(i,h*i,l);
 
     if(i==0){
       max_T = T;
@@ -65,6 +210,8 @@ void benchmarks(){
       min_V = max_V;
       max_l = l;
       min_l = max_l;
+      min_tot = tot;
+      max_tot = min_tot;
     }
 
     else{
@@ -80,12 +227,16 @@ void benchmarks(){
 	min_l = l;
       if(l > min_l)
 	max_l = l;
+      if(tot < min_tot)
+	min_tot = tot;
+      if(tot > max_tot)
+	max_tot = tot;
     }
   }
 
   //Record results
   ofstream myfile;
-  myfile.open("plots/benchmarks.txt");
+  myfile.open("benchmarks/benchmarks.txt");
 
   myfile<<"Max T: "<<max_T<<endl;
   myfile<<"Min T: "<<min_T<<endl;
@@ -95,11 +246,52 @@ void benchmarks(){
   myfile<<"Min V: "<<min_V<<endl;
   myfile<<"% diff: "<<100*(max_V - min_V)/max_V<<"%"<<endl<<endl;
 
+  myfile<<"Max T+V: "<<max_tot<<endl;
+  myfile<<"Min T+V: "<<min_tot<<endl;
+  myfile<<"% diff: "<<100*(max_tot - min_tot)/max_tot<<"%"<<endl<<endl;
+
   myfile<<"Max l: "<<max_l<<endl;
   myfile<<"Min l: "<<min_l<<endl;
   myfile<<"% diff: "<<100*(max_l - min_l)/max_l<<"%"<<endl;
 
   myfile.close();
+
+  //Plot results
+  TMultiGraph *m_T = new TMultiGraph("m_T","Kinetic Energy");
+  m_T->SetTitle("Kinetic Energy;time (AU);Energy");
+  TMultiGraph *m_V = new TMultiGraph("m_V","Potential Energy");
+  m_V->SetTitle("Potential Energy;time (AU);Energy");
+  TMultiGraph *m_l = new TMultiGraph("m_l","Angular Momentum");
+  m_l->SetTitle("Angular Momentum;time (AU);Angular Momentum");
+  TMultiGraph *m_tot = new TMultiGraph("m_tot","Total Energy");
+  m_tot->SetTitle("Total Energy;time (AU);Energy");
+
+  m_T->Add(g_T);
+  m_V->Add(g_V);
+  m_l->Add(g_l);
+  m_tot->Add(g_tot);
+
+  TCanvas *can = new TCanvas("can","can",800,720);
+  can->SetBorderMode(0);
+
+  can->cd();
+  m_T->Draw("AC*");
+  can->SaveAs("benchmarks/kinetic.png");
+  can->SaveAs("benchmarks/kinetic.pdf");
+  m_V->Draw("AC*");
+  can->SaveAs("benchmarks/potential.pdf");
+  can->SaveAs("benchmarks/potential.png");
+  m_tot->Draw("AC*");
+  can->SaveAs("benchmarks/total_energy.png");
+  can->SaveAs("benchmarks/total_energy.pdf");
+  m_l->Draw("AC*");
+  can->SaveAs("benchmarks/angular_mom.png");
+  can->SaveAs("benchmarks/angular_mom.pdf");
+  can->Close();
+
+  /*
+    PROBLEM: there seems to be an issue with the velocity calculation for Verlet
+  */
 }
 
 void check_time_steps(){
@@ -293,8 +485,6 @@ void partb(){
   c_vel_v->SaveAs("plots/earth_vel_verlet.pdf");
   c_vel_v->Close();  
 
-  //Include test of kinetic energy (and other tests?)
-
   //Now solve with RK4
   
 }
@@ -305,9 +495,13 @@ void project3(){
     solve the problem posed in project 3.
   */
 
-  partb();
+  //partb();
 
   //Part c
-  check_time_steps();
+  //check_time_steps();
   benchmarks();
+
+  //partd();
+  partd_precise();
+
 }

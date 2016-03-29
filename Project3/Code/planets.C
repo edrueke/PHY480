@@ -75,7 +75,7 @@ double planet::potential(double pos){
     Takes in the position at some point and returns the potential energy.
   */
 
-  double V = mass*4*pow(PI,2)/pow(pos,2);
+  double V = mass*4*pow(PI,2)/pos;
   return V;
 }
 
