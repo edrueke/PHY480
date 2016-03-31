@@ -58,13 +58,13 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   //Define a vector for the positions.
   thevec pos = thevec(nsteps+1);
   pos.point[0]=x0;
-  pos.point[nsteps]=xf;
+  //pos.point[nsteps]=xf;
 
   //Note that x_1 = x_0+h*v_0+O(h^2)
   pos.point[1]=pos[0]+h*v0;
 
   //Compute the positions using the algorithm: x_{i+1} = 2x_{i}-x_{i-1}+h^{2}a
-  for(int i=2;i<nsteps;i++){
+  for(int i=2;i<nsteps+1;i++){
     pos.point[i] = 2*pos[i-1]-pos[i-2]-a*pow(h,2)*pos[i-1]/r;
   }
 
@@ -136,15 +136,22 @@ vector<thevec> RK4(double t0, double tf, int nsteps, double x0, double xf, doubl
     what is this f in this context?
   */
 
-  /*for(int i=1;i<nsteps;i++){
+  for(int i=1;i<nsteps;i++){
     double k1p = h*vel[i-1];
     double k1v = -1.0*h*a*pos[i-1]/r;
     
-    double k2p = h*(pos[i-1]+1.0*k1/2);
-    double k3p = h*(pos[i-1]+1.0*k2/2);
-    double k4p = h*(pos[i-1]+k3);
-    pos.point[i] = pos[i-1]+(1.0/6)*(k1+2*k2+2*k3+k4);
-    }*/
+    double k2p = h*(vel[i-1]+k1v/2);//v(ti+h/2,yi+k1/2);
+    double k2v = -h*a*(pos[i-1]+k1p/2)/pow(r,3);//x(ti+h/2,yi+k1/2)/pow(r,3);
+
+    double k3p = h*(vel[i-1]+k2v/2);//v(ti+h/2,yi+k2/2);
+    double k3v = -h*a*(pos[i-1]+k2p/2)/pow(r,3);//x(ti+h/2,yi+k1/2)/pow(r,3);
+
+    double k4p = h*(vel[i-1]+k3v);//v(ti+h,yi+k3);
+    double k4v = -h*a*(pos[i-1]+k3p)/pow(r,3);//x(ti+h,yi+k3)/pow(r,3);
+
+    pos.point[i] = pos[i-1]+(1.0/6)*(k1p+2*k2p+2*k3p+k4p);
+    vel.point[i] = vel[i-1]+(1.0/6)*(k1v+2*k2v+2*k3v+k4v);
+  }
 
   vector<thevec> to_ret;
   to_ret.push_back(pos);
