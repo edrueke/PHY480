@@ -50,8 +50,8 @@ thevec::thevec(){
     Default constructor.
   */
 
-  point = new double[1];
-  sz = 1;
+  point = new double[100000];
+  sz = 100000;
 
 }
 

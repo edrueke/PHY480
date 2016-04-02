@@ -50,6 +50,7 @@ class planet{
   thevec velocitiesy_r; //RK4 velocities
   
   //Constructors
+  planet(); //Default constructor
   planet(string n, double m, double d); //Initializer
   planet(string n, double m, double d, double v); //Initializer
   planet(const planet &p); //Copy constructor

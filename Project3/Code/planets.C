@@ -23,6 +23,26 @@ using namespace std;
 
 //Planet functions
 
+planet::planet(){
+  /*
+    Default constructor.
+  */
+
+  mass = 0;
+  dist_sun = 0;
+  name = "";
+  acc = 0;
+  v0 = 0;
+  positionsx_v = thevec();
+  positionsy_v = thevec();
+  positionsx_r = thevec();
+  positionsy_r = thevec();
+  velocitiesx_v = thevec();
+  velocitiesy_v = thevec();
+  velocitiesx_r = thevec();
+  velocitiesy_r = thevec();
+}
+
 planet::planet(string n, double m, double d){
   /*
     Constructor which initializes the planet (or any other orb-shaped
@@ -37,14 +57,14 @@ planet::planet(string n, double m, double d){
   acc = 4*PI*PI/(dist_sun*dist_sun);
   
   v0 = 0;
-  positionsx_v = thevec(1);
-  positionsy_v = thevec(1);
-  velocitiesx_v = thevec(1);
-  velocitiesy_v = thevec(1);
-  positionsx_r = thevec(1);
-  positionsy_r = thevec(1);
-  velocitiesx_r = thevec(1);
-  velocitiesy_r = thevec(1);
+  positionsx_v = thevec();
+  positionsy_v = thevec();
+  velocitiesx_v = thevec();
+  velocitiesy_v = thevec();
+  positionsx_r = thevec();
+  positionsy_r = thevec();
+  velocitiesx_r = thevec();
+  velocitiesy_r = thevec();
 
 }
 
@@ -62,14 +82,14 @@ planet::planet(string n, double m, double d, double v){
   
   acc = 4*PI*PI/(dist_sun*dist_sun);
 
-  positionsx_v = thevec(1);
-  positionsy_v = thevec(1);
-  velocitiesx_v = thevec(1);
-  velocitiesy_v = thevec(1);
-  positionsx_r = thevec(1);
-  positionsy_r = thevec(1);
-  velocitiesx_r = thevec(1);
-  velocitiesy_r = thevec(1);
+  positionsx_v = thevec();
+  positionsy_v = thevec();
+  velocitiesx_v = thevec();
+  velocitiesy_v = thevec();
+  positionsx_r = thevec();
+  positionsy_r = thevec();
+  velocitiesx_r = thevec();
+  velocitiesy_r = thevec();
 
 }
 

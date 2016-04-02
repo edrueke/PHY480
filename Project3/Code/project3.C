@@ -31,21 +31,20 @@ void parteandf(){
     NASA site 
   */
 
-  //km/s -> AU/yr
-  double convert_vel = 0.210805;
+  //km/sec->AU/yr
+  double convert = 0.210805;
 
-  //km -> AU
-  double convert_pos = 6.68459e-9;
-
-  planet earth = planet("earth",5.97219e24,6371.01*convert_pos,29.7859*convert_vel);
-  planet jupiter = planet("jupiter",1898.13e24,778.5e6*convert_pos,13.0697*convert_vel);
+  planet earth = planet("earth",5.972e24,1,30*convert);
+  planet jupiter = planet("jupiter",1898.13e24,5.2,47051*convert/3600);
 
   solar_system milky_way = solar_system(earth);
   milky_way.Add(jupiter);
 
   //First solve with just the earth and jupiter
-  milky_way.Solve_Verlet(100000,100);
-  //milky_way.Draw_Verlet("jupiter_only");
+  milky_way.nsteps = 1000;
+  milky_way.tf = 10;
+  milky_way.Solve_Verlet();
+  milky_way.Draw_Verlet("jupiter_only");
 
 }
 

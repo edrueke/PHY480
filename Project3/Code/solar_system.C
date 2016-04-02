@@ -56,7 +56,7 @@ void solar_system::Add(planet &p){
   planets.push_back(&p);
 }
 
-void solar_system::Solve_Verlet(int nsteps, double tf){
+void solar_system::Solve_Verlet(){
   /*
     Solves the solar system after all planets are added.
   */
@@ -66,151 +66,170 @@ void solar_system::Solve_Verlet(int nsteps, double tf){
   double fact = -1.0*4*pow(PI,2);
   double msun = 1.989e30; 
 
+  planet *theplanets = new planet[planets.size()];
+
+  for(unsigned int i=0;i<planets.size();i++){
+    theplanets[i] = *planets.at(i);
+  }
+  
   for(unsigned int it=0;it<planets.size();it++){
+    
+    planet myplan = theplanets[it];
 
-    planet *myplan = planets.at(it);
-
-    //Solve positions and velocities using verlet
+    //Solve initial positions and velocities using verlet
     thevec posx_v = thevec(2);
     thevec posy_v = thevec(2);
     thevec velx_v = thevec(1);
     thevec vely_v = thevec(1);
 
-    //Initial positions and velocities
     posx_v.point[0] = 0;
-    posx_v.point[1] = posx_v[0]+h*(*myplan).v0;
+    posx_v.point[1] = posx_v[0]+h*myplan.v0;
 
-    posy_v.point[0] = -1.0*(*myplan).dist_sun;
-    posy_v.point[1] = posy_v[0]+h*(*myplan).v0;
+    posy_v.point[0] = -1.0*(myplan).dist_sun;
+    posy_v.point[1] = posy_v[0];
 
-    velx_v.point[0] = (*myplan).v0;
+    velx_v.point[0] = (myplan).v0;
     vely_v.point[0] = 0;
 
-    (*planets.at(it)).positionsx_v = posx_v;
-    (*planets.at(it)).positionsy_v = posy_v;
-    (*planets.at(it)).velocitiesx_v = velx_v;
-    (*planets.at(it)).velocitiesy_v = vely_v;
+    theplanets[it].positionsx_v.point[0] = posx_v[0];
+    theplanets[it].positionsx_v.point[1] = posx_v[1];
+    theplanets[it].positionsy_v.point[0] = posy_v[0];
+    theplanets[it].positionsy_v.point[1] = posy_v[1];
+    theplanets[it].velocitiesx_v.point[0] = velx_v[0];
+    theplanets[it].velocitiesy_v.point[0] = vely_v[0];
+
   }
 
+  
   //Solve the first velocities
   for(unsigned int it = 0;it<planets.size();it++){
-
-    planet *myplan = planets.at(it);
-
-    thevec velx_v = (*myplan).velocitiesx_v;
-    thevec vely_v = (*myplan).velocitiesy_v;
-    thevec posx_v = (*myplan).positionsx_v;
-    thevec posy_v = (*myplan).positionsy_v;
-
+    
+    planet myplan = theplanets[it];
+    
+    thevec velx_v = myplan.velocitiesx_v;
+    thevec vely_v = myplan.velocitiesy_v;
+    thevec posx_v = myplan.positionsx_v;
+    thevec posy_v = myplan.positionsy_v;
+    
     //Solve the first velocity
     double r = sqrt(pow(posx_v[1],2)+pow(posy_v[1],2));
     double vx = velx_v[0]+(h/2)*(fact/pow(r,3));
     double vy = vely_v[0]+(h/2)*(fact/pow(r,3));
     for(unsigned int m = 0;m<planets.size();m++){
+    
+      planet plan = theplanets[m];//planets.at(m);
+      double vxpi = (plan.positionsx_v)[1];
+      double vypi = (plan.positionsy_v)[1];
       
-      planet *plan = planets.at(m);
-      double vxpi = ((*plan).positionsx_v)[1];
-      double vypi = ((*plan).positionsy_v)[1];
-
       if(plan!=myplan){
 	double rp = sqrt(pow(posx_v[1] - vxpi,2)+pow(posy_v[1]-vypi,2));
-	vx += fact*(*plan).mass*(posx_v[1] - vxpi)/(pow(rp,3)*msun);
-	vy += fact*(*plan).mass*(posy_v[1] - vypi)/(pow(rp,3)*msun);
+	vx += fact*(plan).mass*(posx_v[1] - vxpi)/(pow(rp,3)*msun);
+	vy += fact*(plan).mass*(posy_v[1] - vypi)/(pow(rp,3)*msun);
       }
-    
+      
     }
-
-    ((*(planets.at(it))).velocitiesx_v).Add(vx);
-    ((*planets.at(it)).velocitiesy_v).Add(vy);
-
+    
+    theplanets[it].velocitiesx_v.point[1] = vx;
+    theplanets[it].velocitiesy_v.point[1] = vy;
+        
   }
   
-  //Solve the first velocity
+  //Solve the rest of the system
   
-  for(int i=2;i<nsteps+1;i++){
+  for(int i=1;i<nsteps;i++){
     
+    cout<<"i = "<<i<<endl;
+
     //Compute positions first
     for(unsigned int it = 0;it<planets.size();it++){
       
-      planet *myplan = planets.at(it);
+      planet myplan = theplanets[it];
       
-      double vx_prev = ((*myplan).velocitiesx_v)[i-1];
-      //double vy_prev = ((*myplan).velocitiesy_v)[i-1];
-      //double x_prev = ((*myplan).positionsx_v)[i-1];
-      //double y_prev = ((*myplan).positionsy_v)[i-1];
+      double vx_prev = myplan.velocitiesx_v[i-1];
+      double vy_prev = myplan.velocitiesy_v[i-1];
+      double x_prev = myplan.positionsx_v[i-1];
+      double y_prev = myplan.positionsy_v[i-1];
       
-      /*double r_prev = sqrt(pow(x_prev,2)+pow(y_prev,2));
+      double r_prev = sqrt(pow(x_prev,2)+pow(y_prev,2));
       
       double x = x_prev+h*vx_prev+(pow(h,2)/2)*fact*x_prev/pow(r_prev,3);
       double y = y_prev+h*vy_prev+(pow(h,2)/2)*fact*y_prev/pow(r_prev,3);
       
       for(unsigned int m = 0;m<planets.size();m++){
 	
-	planet *plan = planets.at(m);
+	planet plan = theplanets[m];
 	
 	if(myplan != plan){
 	  
-	  double xp_prev = ((*plan).positionsx_v)[i-1];
-	  double yp_prev = ((*plan).positionsy_v)[i-1];
+	  double xp_prev = plan.positionsx_v[i-1];
+	  double yp_prev = plan.positionsy_v[i-1];
 	  
-	  double rp_prev = sqrt(pow(x_prev - xp_prev,2)+pow(y_prev - yp_prev,2));
+	  double rp_prev = sqrt(pow(x_prev-xp_prev,2)+pow(y_prev-yp_prev,2));
 	  
-	  x += (pow(h,2)/2)*fact*(*plan).mass*(x_prev - xp_prev)/(msun*pow(rp_prev,3));
-	  y += (pow(h,2)/2)*fact*(*plan).mass*(y_prev - yp_prev)/(msun*pow(rp_prev,3));
+	  x += (pow(h,2)/2)*fact*plan.mass*(x_prev-xp_prev)/(msun*pow(rp_prev,3));
+	  y += (pow(h,2)/2)*fact*plan.mass*(y_prev-yp_prev)/(msun*pow(rp_prev,3));
 	  
 	}
       }
       
-      ((*planets.at(it)).positionsx_v).Add(x);
-      ((*planets.at(it)).positionsy_v).Add(y);*/
+      theplanets[it].positionsx_v.point[i] = x;
+      theplanets[it].positionsy_v.point[i] = y;
       
     }
     
     //Then compute velocities
-    /*for(unsigned int it = 0;it<planets.size();it++){
+    for(unsigned int it = 0;it<planets.size();it++){
       
-      planet *myplan = planets.at(it);
+      planet myplan = theplanets[it];
       
-      double vx_prev = ((*myplan).velocitiesx_v)[i-1];
-      double vy_prev = ((*myplan).velocitiesy_v)[i-1];
-      double x_prev = ((*myplan).positionsx_v)[i-1];
-      double y_prev = ((*myplan).positionsy_v)[i-1];
+      double vx_prev = myplan.velocitiesx_v[i-1];
+      double vy_prev = myplan.velocitiesy_v[i-1];
+      double x_prev = myplan.positionsx_v[i-1];
+      double y_prev = myplan.positionsy_v[i-1];
       
       double r_prev = sqrt(pow(x_prev,2)+pow(y_prev,2));
       
-      double x = ((*myplan).positionsx_v)[i];
-      double y = ((*myplan).positionsy_v)[i];
+      double x = myplan.positionsx_v[i];
+      double y = myplan.positionsy_v[i];
       double newr = sqrt(pow(x,2)+pow(y,2));
-
+    
       double vx = vx_prev + (h/2)*fact*(x/pow(newr,3)+x_prev/pow(r_prev,3));
       double vy = vy_prev + (h/2)*fact*(y/pow(newr,3)+y_prev/pow(r_prev,3));
-
+      
       for(unsigned int m = 0;m<planets.size();m++){
-
-	planet *plan = planets.at(m);
-
+	
+	planet plan = theplanets[m];
+	
 	if(myplan != plan){
-
-	  double xp_prev = ((*plan).positionsx_v)[i-1];
-	  double yp_prev = ((*plan).positionsy_v)[i-1];
-
-	  double xp_cur = ((*plan).positionsx_v)[i];
-	  double yp_cur = ((*plan).positionsy_v)[i];
-
-	  double rp_cur = sqrt(pow(x - xp_cur,2) + pow(y - yp_cur,2));
-	  double rp_prev = sqrt(pow(x_prev - xp_prev,2)+pow(y_prev - yp_prev,2));
 	  
-	  vx += ((h/2)*fact*(*plan).mass/msun)*((x - xp_cur)/pow(rp_cur,3) + (x_prev - xp_prev)/pow(rp_prev,3));
-	  vy += ((h/2)*fact*(*plan).mass/msun)*((y - yp_cur)/pow(rp_cur,3) + (y_prev - yp_prev)/pow(rp_prev,3));
-
+	  double xp_prev = plan.positionsx_v[i-1];
+	  double yp_prev = plan.positionsy_v[i-1];
+	  
+	  double xp_cur = plan.positionsx_v[i];
+	  double yp_cur = plan.positionsy_v[i];
+	  
+	  double rp_cur = sqrt(pow(x-xp_cur,2)+pow(y-yp_cur,2));
+	  double rp_prev = sqrt(pow(x_prev-xp_prev,2)+pow(y_prev-yp_prev,2));
+	  
+	  vx += ((h/2)*fact*plan.mass/msun)*((x-xp_cur)/pow(rp_cur,3)+(x_prev-xp_prev)/pow(rp_prev,3));
+	  vy += ((h/2)*fact*plan.mass/msun)*((y-yp_cur)/pow(rp_cur,3)+(y_prev-yp_prev)/pow(rp_prev,3));
+	  
 	}
       }
       
-      ((*planets.at(it)).velocitiesx_v).Add(vx);
-      ((*planets.at(it)).velocitiesy_v).Add(vy);
+      theplanets[it].velocitiesx_v.point[i] = vx;
+      theplanets[it].velocitiesy_v.point[i] = vy;
     
-      }*/
+    }
   }
+  
+  vector<planet*> temp;
+  for(int i=0;i<planets.size();i++){
+    temp.push_back(&theplanets[i]);
+  }
+  
+  planets = temp;
+  
 }
 
 void solar_system::Draw_Verlet(string name){
@@ -218,6 +237,8 @@ void solar_system::Draw_Verlet(string name){
     Draw the paths of the planets and save it in the plots/ directory as
     name.
   */
+
+  gStyle->SetOptFit();
 
   TMultiGraph *m_pos = new TMultiGraph("m_pos","Positions");
   m_pos->SetTitle("Positions (Verlet);x (AU);y (AU)");
@@ -238,18 +259,23 @@ void solar_system::Draw_Verlet(string name){
     TGraph *g_pos = new TGraph();
     TGraph *g_vel = new TGraph();
 
-    for(int j=0;j<(p.positionsx_v).sz;j++){
+    for(int j=0;j<nsteps;j++){
       g_pos->SetPoint(j,p.positionsx_v[j],p.positionsy_v[j]);
+    }
+
+    for(int j=0;j<nsteps;j++){
       g_vel->SetPoint(j,p.velocitiesx_v[j],p.velocitiesy_v[j]);
     }
 
     g_pos->SetLineColor(i+1);
     g_pos->SetMarkerColor(i+1);
+    g_pos->SetMarkerSize(0);
     g_pos->SetFillColor(0);
     g_pos->SetFillStyle(0);
 
     g_vel->SetLineColor(i+1);
     g_vel->SetMarkerColor(i+1);
+    g_vel->SetMarkerSize(0);
     g_vel->SetFillColor(0);
     g_vel->SetFillStyle(0);
 
