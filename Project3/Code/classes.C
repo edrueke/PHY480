@@ -21,6 +21,42 @@ using namespace std;
 
 //Vector functions
 
+//Project 3
+void thevec::Add(double a){
+  /*
+    Append a to the end of the vector.
+  */
+
+  int size = sz+1;
+  thevec v = thevec(size);
+
+  for(int i=0;i<sz;i++)
+    v.point[i] = point[i];
+
+  v.point[sz] = a;
+  
+  sz = size;
+
+  delete [] point;
+
+  point = v.point;
+
+  delete [] v.point;
+
+}
+
+thevec::thevec(){
+  /*
+    Default constructor.
+  */
+
+  point = new double[1];
+  sz = 1;
+
+}
+
+//End project 3
+
 thevec::thevec(int s){
   /*
     Initialize a dynamic memory array of size sz.

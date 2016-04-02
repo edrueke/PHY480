@@ -29,6 +29,8 @@ classes.C and classes.h developed in Projects 1 and 2.
 
 using namespace std;
 
+const double PI = 3.14159265358979;
+
 //Planet class
 class planet{
  public:
@@ -37,11 +39,19 @@ class planet{
   double dist_sun; //distance from sun of planet in AU
   string name; //name of planet
   double acc; //acceleration of planet on a circular orbit
-  //vector for velocities?
-  //vector for positions?
+  double v0; //Initial velocity
+  thevec positionsx_v; //Verlet positions
+  thevec positionsy_v; //Verlet positions
+  thevec velocitiesx_v; //Verlet velocities
+  thevec velocitiesy_v; //Verlet velocities
+  thevec positionsx_r; //RK4 positions
+  thevec positionsy_r; //RK4 positions
+  thevec velocitiesx_r; //RK4 velocities
+  thevec velocitiesy_r; //RK4 velocities
   
   //Constructors
   planet(string n, double m, double d); //Initializer
+  planet(string n, double m, double d, double v); //Initializer
   planet(const planet &p); //Copy constructor
   ~planet() {}; //Destructor
 
@@ -51,6 +61,11 @@ class planet{
   double potential(double pos); //Calculates V for some position
   double ang_mom(double vel, double pos); //Calculates l for some x, v
 
+  //Standard operations
+  friend bool operator!=(const planet &p1, const planet &p2); //Comparison
+  friend bool operator==(const planet &p1, const planet &p2); //Comparison
 };
 
+bool operator !=(const planet &p1, const planet &p2); //Comparison
+bool operator ==(const planet &p1, const planet &p2); //Comparison
 #endif

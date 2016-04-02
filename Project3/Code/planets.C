@@ -21,8 +21,6 @@ classes.C and classes.h developed in Projects 1 and 2.
 
 using namespace std;
 
-const double PI = 3.14159265358979;
-
 //Planet functions
 
 planet::planet(string n, double m, double d){
@@ -38,6 +36,41 @@ planet::planet(string n, double m, double d){
   //Calculate the acceleration
   acc = 4*PI*PI/(dist_sun*dist_sun);
   
+  v0 = 0;
+  positionsx_v = thevec(1);
+  positionsy_v = thevec(1);
+  velocitiesx_v = thevec(1);
+  velocitiesy_v = thevec(1);
+  positionsx_r = thevec(1);
+  positionsy_r = thevec(1);
+  velocitiesx_r = thevec(1);
+  velocitiesy_r = thevec(1);
+
+}
+
+planet::planet(string n, double m, double d, double v){
+  /*
+    Constructor which initalizes the planet (including v0)
+    
+    Necessary for solar system
+  */
+  
+  mass = m;
+  name = n;
+  dist_sun = d;
+  v0 = v;
+  
+  acc = 4*PI*PI/(dist_sun*dist_sun);
+
+  positionsx_v = thevec(1);
+  positionsy_v = thevec(1);
+  velocitiesx_v = thevec(1);
+  velocitiesy_v = thevec(1);
+  positionsx_r = thevec(1);
+  positionsy_r = thevec(1);
+  velocitiesx_r = thevec(1);
+  velocitiesy_r = thevec(1);
+
 }
 
 planet::planet(const planet &p){ 
@@ -49,6 +82,16 @@ planet::planet(const planet &p){
   name = p.name;
   dist_sun = p.dist_sun;
   acc = p.acc;
+  v0 = p.v0;
+  positionsx_v = p.positionsx_v;
+  positionsy_v = p.positionsy_v;
+  velocitiesx_v = p.velocitiesx_v;
+  velocitiesy_v = p.velocitiesy_v;
+  positionsx_r = p.positionsx_r;
+  positionsy_r = p.positionsy_r;
+  velocitiesx_r = p.velocitiesx_r;
+  velocitiesy_r = p.velocitiesy_r;
+
 }
 
 string planet::print(){
@@ -88,3 +131,20 @@ double planet::ang_mom(double vel, double pos){
   double l = mass*vel*pos;
   return l;
 }
+
+bool operator==(const planet &p1, const planet &p2){
+  /*
+    Determine whether two planets are the same.
+  */
+  
+  return(p1.name == p2.name);
+}
+
+bool operator!=(const planet &p1, const planet &p2){
+  /*
+    Determine whether two planets are not the same.
+  */
+
+  return !(p1==p2);
+}
+  

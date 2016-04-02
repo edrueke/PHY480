@@ -73,9 +73,9 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   vel.point[0]=v0;
   vel.point[nsteps]=vf;
 
-  //Compute the velocities using the algorithm: v_{i} = (x_{i+1}-x_{i-1})/(2h)
+  //Compute the velocities using the algorithm: v_{i} = v_{i}+(h/2)*(v'_{i+1}+v'_{i})
   for(int i=1;i<nsteps;i++){
-    vel.point[i] = (pos[i+1]-pos[i-1])/(2*h);
+    vel.point[i] = vel[i-1]+(h/2)*(-1.0*a*pos[i]/pow(r,3)-1.0*a*pos[i-1]/pow(r,3));//(pos[i+1]-pos[i-1])/(2*h);
   }
 
   //Define the vector to return

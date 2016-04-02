@@ -33,6 +33,7 @@ class thevec{
   double *point; //Dynamic memory array
 
   //Constructors
+  thevec(); //Default constructor
   thevec(int s); //Initializer
   thevec(vector<double> vec); //Initializer from a vector of doubles
   thevec(const thevec &vec); //Copy Constructor
@@ -51,6 +52,10 @@ class thevec{
   double two_norm(); //2-norm
   friend bool operator!=(const thevec &vec1,const thevec &vec2); //Comparison
   friend bool operator==(const thevec &vec1,const thevec &vec2); //Comparison
+
+  //New to Project 3
+  void Add(double a); //Add element to vector
+
 };
 
 thevec operator+(const thevec &vec1,const thevec &vec2);

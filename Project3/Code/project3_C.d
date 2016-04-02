@@ -1,7 +1,7 @@
 
 # DO NOT DELETE
 
-./project3_C.so: planets.C planets.h
+./project3_C.so: solar_system.C solar_system.h classes.h
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TGraph.h
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TNamed.h
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TObject.h
@@ -52,7 +52,7 @@
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TStyle.h
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TAttAxis.h
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TArrayI.h
-./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TArray.h classes.h
-./project3_C.so: odesolvers.C odesolvers.h classes.C
+./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TArray.h planets.h
+./project3_C.so: odesolvers.h planets.C odesolvers.C classes.C
 ./project3_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/cintdictversion.h /msu/opt/cern/rootSL6/v5.34.12_64/include/RVersion.h
 project3_C__ROOTBUILDVERSION= 5.34/12

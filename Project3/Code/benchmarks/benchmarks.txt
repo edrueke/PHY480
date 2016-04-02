@@ -1,18 +1,18 @@
-Max T_v: 1.22154e+26
-Min T_v: 1.14716e+26
-% diff: 6.08879%
+Max T_v: 1.28272e+26
+Min T_v: 1.08944e+26
+% diff: 15.068%
 
 Max V_v: 2.4056e+26
 Min V_v: 2.33122e+26
 % diff: 3.0922%
 
-Max T_v+V_v: 3.62715e+26
-Min T_v+V_v: 3.47838e+26
-% diff: 4.10139%
+Max T_v+V_v: 3.6854e+26
+Min T_v+V_v: 3.4236e+26
+% diff: 7.10375%
 
 Max l_v: 3.77003e+25
-Min l_v: 3.76991e+25
-% diff: 0.00324996%
+Min l_v: 3.65318e+25
+% diff: 3.09944%
 Max T_r: 1.18435e+26
 Min T_r: 1.18435e+26
 % diff: 8.45605e-06%

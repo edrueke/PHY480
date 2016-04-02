@@ -17,11 +17,37 @@ to solve the problem of the solar system.
 #include <iomanip>
 #include <stdlib.h>
 
+#include "solar_system.C"
 #include "planets.C"
 #include "odesolvers.C"
 #include "classes.C"
 
 using namespace std;
+
+void parteandf(){
+  /*
+    Add Jupiter and the other planets and solve the solar system again
+    using verlet and rk4 methods.  Initial velocities are obtained from 
+    NASA site 
+  */
+
+  //km/s -> AU/yr
+  double convert_vel = 0.210805;
+
+  //km -> AU
+  double convert_pos = 6.68459e-9;
+
+  planet earth = planet("earth",5.97219e24,6371.01*convert_pos,29.7859*convert_vel);
+  planet jupiter = planet("jupiter",1898.13e24,778.5e6*convert_pos,13.0697*convert_vel);
+
+  solar_system milky_way = solar_system(earth);
+  milky_way.Add(jupiter);
+
+  //First solve with just the earth and jupiter
+  milky_way.Solve_Verlet(100000,100);
+  //milky_way.Draw_Verlet("jupiter_only");
+
+}
 
 void partd_precise(){
   /*
@@ -683,13 +709,14 @@ void project3(){
     solve the problem posed in project 3.
   */
 
-  partb();
+  //partb();
 
   //Part c
-  check_time_steps();
-  benchmarks();
+  //check_time_steps();
+  //benchmarks();
 
-  partd();
-  partd_precise();
+  //partd();
+  //partd_precise();
 
+  parteandf();
 }
