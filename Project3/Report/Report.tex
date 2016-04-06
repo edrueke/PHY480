@@ -1,0 +1,261 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{setspace}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{enumitem}
+\usepackage{listings}
+
+\numberwithin{equation}{section}
+
+\title{Numerical Solutions to the Problem of the Solar System}
+\author{Elizabeth Drueke}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+
+a
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+For as long as humans have been on the earth, we have been looking to the sky.  Ancient peoples relied on the stars and planets to tell when the seasons were changing, so they would know when was a good time to plant crops for food.  A little later, the stars were used by mariners as a compass, guiding them across the seas.  
+\\\indent Today still we look towards the skies.  Today, however, we know more about them.  We know that our solar system is not the center of the universe, nor are we the center of our solar system.  We know that our sun is a middle-sized star, and without its light and heat there would be no life on earth.  We know that the rotation of the planets around the sun is dictated by Newton's Second Law, and, with this, we can calculate the trajectory of the planetary bodies around us.  
+\\\indent Here, we present two such calculations.  Using the Verlet and $4^{th}$-Order Runge-Kutta (RK4) Methods, we investigate the motion of the planets around the sun.  We begin by presenting the simple theory of planetary motion in Section~\ref{sec:theory}.  Then we discuss the Verlet and RK4 methods in Sections~\ref{subsec:verlet} and~\ref{subsec:rk4}.  After this, we discuss the framework and the algorithm developed particularly in this project in Section~\ref{sec:algorithm}.  Finally, results and benchmarks for the code are discussed in Section~\ref{sec:results}.
+
+\section{Theory}
+\label{sec:theory}
+
+As mentioned in~\ref{sec:intro}, the movements of planets are dictated by Newton's Second Law, which states
+
+$$\vec{F} = m\vec{a}.$$
+
+\noindent Thus, we have a second order differential equation:
+
+$$m\frac{d^{2}\vec{x}}{dt^{2}} = \vec{F}$$
+
+\noindent where $\vec{F}$ is the sum of the forces on the planet in question.  In particular, the force of one planet on another is given by
+
+\begin{equation}
+\label{eq:bigg}
+\vec{F} = -\frac{Gm_{1}m_{2}}{r^{2}}\hat{r}
+\end{equation}
+
+\noindent where $G = 6.67\times10^{-11} m^{3}kg^{-1}s^{-2}$ is the gravitational constant, $m_{1,2}$ are the masses of the two planets, and $r$ is the distance between the planets.
+\\\indent Now, we want to be able to use some sort of discretized version of this in order to use a computer to approximate a numerical solution to this problem.  Our first step is then to look at Eq.~\ref{eq:bigg} component-wise (ie. look at the $x$- and $y$- components separately).  In particular, we should have
+
+$$
+m\frac{d^{2}x}{dt^{2}} = F_{x} \text{ and } m\frac{d^{2}y}{dt^{2}} = F_{y}
+$$
+
+\noindent Noting that $\vec{r}=x\hat{x}+y\hat{y}$, this gives us that
+
+$$
+F_{x} = -\frac{Gm_{1}m_{2}x}{r^{3}}\text{ and } F_{y} = -\frac{Gm_{1}m_{2}y}{r^{3}}
+$$
+
+\noindent Thus we have two coupled second-order differential equations:
+
+\begin{equation}
+\label{eq:diffeqs1}
+\frac{d^{2}x}{dt^{2}} = -\frac{Gm_{1}x}{r^{3}}\text{ and } \frac{d^{2}y}{dt^{2}} = -\frac{Gm_{1}y}{r^{3}}
+\end{equation}
+
+\noindent or, alternatively, four coupled first-order differential equations:
+
+\begin{equation}
+\label{eq:diffeqs2}
+\begin{align}
+\frac{dx}{dt} = v_{x} &\text{, }&\frac{dv_{x}}{dt}=-\frac{Gm_{1}x}{r^{3}}, \\
+\frac{dy}{dt} = v_{y} &\text{, }&\frac{dv_{y}}{dt}=-\frac{Gm_{1}y}{r^{3}}.
+\end{align}
+\end{equation}
+
+\\\indent In this analysis, we first investigate the unperturbed earth-sun system.  In this case, Eq.~\ref{eq:bigg} becomes
+
+\begin{equation}
+\label{eq:earthsunbigg}
+\vec{F} = \frac{GM_{\odot}m_{E}}{r^{2}}\hat{r}
+\end{equation}
+
+\noindent where $m_{E}$ is the mass of the earth and $M_{\odot}$ is the mass of the sun.  Assuming a circular orbit, we can say that 
+
+$$a = \frac{mc^{2}}{r},$$
+
+\noindent and so we have
+
+$$\frac{mv^{2}}{r} = \frac{GM_{\odot}m_{E}}{r^{2}}$$
+
+\noindent or
+
+$$v^{2}r = GM_{\odot} = 4\pi^{2} AU^{2}yr^{-2}.$$
+
+\noindent Thus, for the unperturbed earth-sun system, we wish to investigate
+
+\begin{equation}
+\label{eq:earthsun}
+\frac{d^{2}x}{dt^{2}} = -\frac{4\pi^{2}x}{r^{3}} \text{ and } \frac{d^{2}y}{dt^{2}} = -\frac{4\pi^{2}y}{r^{3}}.
+\end{equation}
+
+\\\indent We will also want to look at adding other planets to our solar system.  After all, the unperturbed earth-sun system is really to simplistic to be a reasonable approximation for how the solar system.  Noting that
+
+$$Gm_{p} = GM_{\odot}\frac{m_{p}}{M_{\odot}}=4\pi^{2}\frac{m_{p}}{M_{\odot}},$$
+
+\noindent we have, for planet $p\prime$,
+
+\begin{equation}
+\label{eq:multiplanet}
+\begin{align}
+a_{x} & = & \frac{dv_{x}}{dt} & = & -\frac{4\pi^{2}}{r_{p\prime\odot}^{3}}\left(x_{p\prime} - x_{\odot}\right) - \frac{4\pi^{2}}{M_{\odot}}\sum_{p\neq p\prime}\frac{m_{p}\left(x_{p\prime} - x_{p}\right)}{r_{pp\prime}^{3}}, \\
+a_{y} & = & \frac{dv_{y}}{dt} & = & -\frac{4\pi^{2}}{r_{p\prime\odot}^{3}}\left(y_{p\prime} - y_{\odot}\right) - \frac{4\pi^{2}}{M_{\odot}}\sum_{p\neq p\prime}\frac{m_{p}\left(y_{p\prime} - y_{p}\right)}{r_{pp\prime}^{3}}.
+\end{align}
+\end{equation}
+
+\\\indent The solution of Eq.~\ref{eq:earthsun} is fairly straightforward (we are only really looking at two coupled second-order differential equations), although still not simple by any means.  However, the solution to Eq.~\ref{eq:multiplanet} is impossible to get by hand.  The number of couple equations will be twice the number of planets in the solar system.  Thus, to solve either system, it is useful to turn to numerical approximations and computer algorithms.  In particular, we look into the Verlet and RK4 methods as means by which to solve the system.
+
+\subsection{Verlet Method}
+\label{subsec:verlet}
+
+It is a common practice in creating computer algorithms to solve complex problems to discretize the equations in order to get something more concrete to work with.  In this case, we will discretize using the Taylor Series expansion.  That is, we will have
+
+\begin{equation}
+\label{eq:taylor}
+x\left(t+h\right) = x\left(t\right)+hx\prime\left(t+h\right)+\frac{h^{2}}{2}x\prime\prime\left(t+h\right)+O\left(h^{3}\right)
+\end{equation}
+
+\noindent Thus, we can say, letting $x_{i} = x\left(t_{0}+hi\right)$, that, for planet $p\prime$ in the multi-planet system, 
+
+\begin{equation}
+\label{eq:discx}
+\begin{align}
+x_{i+1} &= x_{i}+hv_{i}+\frac{h^{2}}{2}v_{i}\prime+O\left(h^{3}\right) \\
+&= x_{i}+hv_{i}+\frac{h^{2}}{2}\left(-\frac{4\pi^{2}}{r_{p\prime\odot}_{i}^{3}}\left(x_{p\prime}-x_{\odot}\right)_{i} - \frac{4\pi^{2}}{M_{\odot}}\sum_{p\neq p\prime}\frac{m_{p}\left(x_{p\prime}-x_{p}\right)_{i}}{r_{pp\prime}_{i}^{3}}\right)+O\left(h^{3}\right).
+\end{align}
+\end{equation}
+
+\noindent We can similarly discretize the velocity of planet $p\prime$ to find
+
+\begin{equation}
+\label{eq:discv}
+\begin{align}
+v_{i+1} &= v_{i}+\frac{h}{2}\left(v_{i+1}\prime+v_{i}\prime\right)+O\left(h^{2}\right) \\
+&= v_{i}+\frac{h}{2}\left(-4\pi^{2}\left(\frac{\left(x_{p\prime}-x_{\odot}\right)_{i}}{r_{p\prime\odot}_{i}^{3}}+\frac{\left(x_{p\prime}-x_{\odot}\right)_{i+1}}{r_{p\prime\odot}_{i+1}^{3}}\right) \\
+ &- \frac{4\pi^{2}}{M_{\odot}}\sum_{p\neq p\prime}m_{p}\left(\frac{\left(x_{p\prime}-x_{p}\right)_{i}}{r_{pp\prime}_{i}^{3}} +  \frac{\left(x_{p\prime}-x_{p}\right)_{i+1}}{r_{pp\prime}_{i+1}^{3}}\right)\right)+O\left(h^{3}\right).
+\end{align}
+\end{equation}
+
+\noindent In the case of the unperturbed earth-sun system, Eqs.~\ref{eq:discx} and~\ref{eq:discv} simplify to
+
+$$
+x_{i+1} =  x_{i}+hv_{i}+\frac{h^{2}}{2}\left(-\frac{4\pi^{2}}{r_{p\prime\odot}_{i}^{3}}\left(x_{p\prime}-x_{\odot}\right)_{i}\right)+O\left(h^{3}\right)
+$$
+
+\noindent and
+
+$$
+v_{i+1} =  v_{i}+\frac{h}{2}\left(-4\pi^{2}\left(\frac{\left(x_{p\prime}-x_{\odot}\right)_{i}}{r_{p\prime\odot}_{i}^{3}}+\frac{\left(x_{p\prime}-x_{\odot}\right)_{i+1}}{r_{p\prime\odot}_{i+1}^{3}}\right)\right)+O\left(h^{3}\right).
+$$
+
+\\\indent Together, Eqs.~\ref{eq:discx} and~\ref{eq:discv} make up what is known as the Verlet method \textbf{cite lecture notes}.  With the introduction of the velocity Verlet method, this method is self-starting.
+
+\subsection{Fourth-Order Runge-Kutta}
+\label{subsec:rk4}
+
+The RK4 method is a bit more precise than the Verlet method discussed in Section~\ref{subsec:verlet}.  It is based on the observation that, for
+
+$$
+\frac{dy}{dt} = f\left(t,y\right),
+$$
+
+\noindent we can say
+
+$$
+y\left(t\right) = \int f\left(t,y\right)dt.
+$$
+
+\noindent Discretizing, this yields
+
+$$
+y_{i+1}=y_{i} + \int_{t_{i}}^{t_{i+1}}f\left(t,y\right)dt.
+$$
+
+\noindent Letting $y_{i+1/2} = y\left(t_{i}+h/2\right)$, and using the midpoint formula for the integral, we find 
+
+$$
+\int_{t_{i}}^{t_{i+1}}f\left(t,y\right)dt \approx hf\left(t_{i+1/2},y_{i+1/2}\right)+O\left(h^{3}\right).
+$$
+
+\noindent Thus, we have
+
+$$
+y_{i+1}=y_{i} +  hf\left(t_{i+1/2},y_{i+1/2}\right)+O\left(h^{3}\right).
+$$
+
+\noindent However, it is clear that, in order to use this method, we must have some idea of what $y_{i+1/2}$ is.  To get this quantity, we use Euler's method to approximate it:
+
+$$
+y_{i+1/2} \approx y_{i}+\frac{h}{2}f\left(t_{i},y_{i}\right).
+$$
+
+\\\indent This leads us to the $2^{nd}$-Order Runge-Kutta Method, or RK2, which says that, for
+
+\begin{equation}
+\label{eq:rk2part1}
+\begin{align}
+k_{1} & = hf\left(t_{i},y_{i}\right) \\
+k_{2} & = hf\left(t_{i+1/2},y_{i}+k_{1}/2\right),
+\end{align}
+\end{equation}
+
+\noindent we have
+
+\begin{equation}
+\label{eq:re2part2}
+y_{i+1} \approx y_{i}+k_{2}+O\left(h^{2}\right).
+\end{equation}
+
+\\\indent We can go through another similar sequence of steps to get to RK4, culminating in the following definitions:
+
+\begin{equation}
+\label{eq:rk4}
+\begin{align}
+k_{1} & = hf\left(t_{i},y_{i}\right) \\
+k_{2} & = hf\left(t_{i}+h/2,y_{i}+k_{1}/2\right), \\
+k_{3} & = hf\left(t_{i}+h/2,y_{i}+k_{2}/2\right), \\
+k_{4} & = hf\left(t_{i}+h,y_{i}+k_{3}\right), \\
+y_{i+1} & \approx y_{i}+\left(1/6\right)\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)+O\left(h^{4}\right).
+\end{align}
+\end{equation}
+
+\section{Algorithm}
+\label{sec:algorithm}
+
+\section{Results and Benchmarks}
+\label{sec:results}
+
+
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+
+
+\section{Bibliography}
+\label{sec:bib}
+
+\begin{enumerate}
+
+\item a
+
+\end{enumerate}
+
+\end{document}

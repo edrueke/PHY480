@@ -36,16 +36,64 @@ void parteandf(){
 
   planet earth = planet("earth",5.972e24,1,30*convert);
   planet jupiter = planet("jupiter",1898.13e24,5.2,47051*convert/3600);
+  planet sun = planet("sun",1.989e30,0);
 
   solar_system milky_way = solar_system(earth);
   milky_way.Add(jupiter);
+  milky_way.Add(sun);
 
   //First solve with just the earth and jupiter
-  milky_way.nsteps = 1000;
-  milky_way.tf = 10;
-  milky_way.Solve_Verlet();
-  milky_way.Draw_Verlet("jupiter_only");
+  milky_way.nsteps = 50;
+  milky_way.tf = 1;
 
+  //milky_way.Solve_Verlet();
+  //milky_way.Draw_Verlet("jupiter_only");
+
+  //milky_way.Solve_RK4();
+  //milky_way.Draw_RK4("jupiter_only");
+
+  //Solve 3-body problem with com origin
+  /*milky_way.Set_COM();
+  milky_way.Solve_Verlet();
+  milky_way.Draw_Verlet("jupiter_only_com");
+
+  milky_way.Solve_RK4();
+  milky_way.Draw_RK4("jupiter_only_com");*/
+
+  //Now add other planets
+  planet mercury = planet("mercury",3.285e23,0.387,47.4*convert);
+  planet venus = planet("venus",4.867e24,0.723,126077*convert/3600);
+  planet mars = planet("mars",6.39e23,1.524,86871*convert/3600);
+  planet saturn = planet("saturn",5.683e26,9.539,34821*convert/3600);
+  planet uranus = planet("uranus",8.681e25,19.2,24607*convert/3600);
+  planet neptune = planet("neptune",1.024e26,30.1,19720*convert/3600);
+  planet pluto = planet("pluto",1.309e22,40,17096*convert/3600);
+
+  milky_way.Add(mercury);
+  milky_way.Add(venus);
+  milky_way.Add(mars);
+  milky_way.Add(saturn);
+  milky_way.Add(uranus);
+  milky_way.Add(neptune);
+  milky_way.Add(pluto);
+
+  milky_way.Set_O();
+
+  milky_way.Solve_Verlet();
+  milky_way.Draw_Verlet("milky_way_full");
+
+  milky_way.Solve_RK4();
+  milky_way.Draw_RK4("milky_way_full");
+  
+  milky_way.Set_COM();
+
+  milky_way.Solve_Verlet();
+  milky_way.Draw_Verlet("milky_way_full_com");
+
+  milky_way.Solve_RK4();
+  milky_way.Draw_RK4("milky_way_full_com");
+  
+  
 }
 
 void partd_precise(){

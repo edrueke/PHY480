@@ -131,14 +131,9 @@ vector<thevec> RK4(double t0, double tf, int nsteps, double x0, double xf, doubl
 
   //Compute the positions and velocities using the algorithm
 
-  /*
-    ERROR: In the notes, this algorithm is defined in terms of f(t,y).  But
-    what is this f in this context?
-  */
-
   for(int i=1;i<nsteps;i++){
     double k1p = h*vel[i-1];
-    double k1v = -1.0*h*a*pos[i-1]/r;
+    double k1v = -1.0*h*a*pos[i-1]/pow(r,3);
     
     double k2p = h*(vel[i-1]+k1v/2);//v(ti+h/2,yi+k1/2);
     double k2v = -h*a*(pos[i-1]+k1p/2)/pow(r,3);//x(ti+h/2,yi+k1/2)/pow(r,3);

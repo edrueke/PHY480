@@ -29,6 +29,8 @@ class solar_system{
   vector<planet*> planets; //Vector of planets
   int nsteps; //Number of steps for the calculations
   double tf; //Final time for calculations
+  double originx; //x-coordinate of origin
+  double originy; //y-coordinate of origin
 
   //Constructors
   solar_system(planet &p); //Construct from single planet
@@ -39,9 +41,11 @@ class solar_system{
   //Other functions and operators.
   void Add(planet &p); //Add a planet to the mix.
   void Solve_Verlet(); //Solve once all planets have been added.
-  //void Solve_RK4(int nsteps,double tf); //Solve once all planets have been added.
+  void Solve_RK4(); //Solve once all planets have been added.
   void Draw_Verlet(string name); //Draw and save to plots/ directory
   void Draw_RK4(string name); //Draw and save to plots/ directory
+  void Set_COM(); //Set the origin to be at the center of mass
+  void Set_O(); //Set origin to 0
 };
 
 #endif
