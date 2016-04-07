@@ -46,8 +46,8 @@ void parteandf(){
   milky_way.nsteps = 50;
   milky_way.tf = 1;
 
-  //milky_way.Solve_Verlet();
-  //milky_way.Draw_Verlet("jupiter_only");
+  milky_way.Solve_Verlet();
+  milky_way.Draw_Verlet("jupiter_only");
 
   //milky_way.Solve_RK4();
   //milky_way.Draw_RK4("jupiter_only");
@@ -61,7 +61,7 @@ void parteandf(){
   milky_way.Draw_RK4("jupiter_only_com");*/
 
   //Now add other planets
-  planet mercury = planet("mercury",3.285e23,0.387,47.4*convert);
+  /*  planet mercury = planet("mercury",3.285e23,0.387,47.4*convert);
   planet venus = planet("venus",4.867e24,0.723,126077*convert/3600);
   planet mars = planet("mars",6.39e23,1.524,86871*convert/3600);
   planet saturn = planet("saturn",5.683e26,9.539,34821*convert/3600);
@@ -91,7 +91,7 @@ void parteandf(){
   milky_way.Draw_Verlet("milky_way_full_com");
 
   milky_way.Solve_RK4();
-  milky_way.Draw_RK4("milky_way_full_com");
+  milky_way.Draw_RK4("milky_way_full_com");*/
   
   
 }

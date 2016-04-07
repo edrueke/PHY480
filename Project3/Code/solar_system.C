@@ -126,7 +126,6 @@ void solar_system::Solve_Verlet(){
     thevec posx_v = myplan.positionsx_v;
     thevec posy_v = myplan.positionsy_v;
     
-    //Solve the first velocity
     double r = sqrt(pow(posx_v[1]-originx,2)+pow(posy_v[1]-originy,2));
     double vx = velx_v[0];
     double vy = vely_v[0];
