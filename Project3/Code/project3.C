@@ -43,17 +43,22 @@ void parteandf(){
   milky_way.Add(sun);
 
   //First solve with just the earth and jupiter
-  milky_way.nsteps = 50;
-  milky_way.tf = 1;
+  milky_way.nsteps = 10000;
+  milky_way.tf = 100;
 
-  milky_way.Solve_Verlet();
-  milky_way.Draw_Verlet("jupiter_only");
+  /*milky_way.Solve_Verlet();
+  milky_way.Draw_Verlet("jupiter1000_only_long_5000steps");
 
-  //milky_way.Solve_RK4();
-  //milky_way.Draw_RK4("jupiter_only");
+  milky_way.Solve_RK4();
+  milky_way.Draw_RK4("jupiter1000_only_long_5000steps");*/
 
   //Solve 3-body problem with com origin
-  /*milky_way.Set_COM();
+  //milky_way.Set_COM();
+    
+  //Compute velocity of COM
+  /*double vsun = (jupiter.mass*jupiter.v0+earth.mass+earth.v0)/(sun.mass);
+  sun.v0 = -1.0*vsun;
+
   milky_way.Solve_Verlet();
   milky_way.Draw_Verlet("jupiter_only_com");
 
@@ -61,7 +66,7 @@ void parteandf(){
   milky_way.Draw_RK4("jupiter_only_com");*/
 
   //Now add other planets
-  /*  planet mercury = planet("mercury",3.285e23,0.387,47.4*convert);
+  planet mercury = planet("mercury",3.285e23,0.387,47.4*convert);
   planet venus = planet("venus",4.867e24,0.723,126077*convert/3600);
   planet mars = planet("mars",6.39e23,1.524,86871*convert/3600);
   planet saturn = planet("saturn",5.683e26,9.539,34821*convert/3600);
@@ -79,13 +84,23 @@ void parteandf(){
 
   milky_way.Set_O();
 
-  milky_way.Solve_Verlet();
-  milky_way.Draw_Verlet("milky_way_full");
+  //milky_way.Solve_Verlet();
+  //milky_way.Draw_Verlet("milky_way_full_100yrs");
 
   milky_way.Solve_RK4();
-  milky_way.Draw_RK4("milky_way_full");
+  milky_way.Draw_RK4("milky_way_full_100yrs");
   
-  milky_way.Set_COM();
+  /*milky_way.Set_COM();
+
+    double vsun = 0;
+    for(int i=0;i<milky_way.planets();i++){
+    planet myplan = *milky_way.planets.at(i);
+    if(myplan.name!="sun")
+    vsun+=myplan.v0*myplan.mass;
+    }
+    vsun = vsun/sun,mass;
+    
+    sun.v0=-vsun;
 
   milky_way.Solve_Verlet();
   milky_way.Draw_Verlet("milky_way_full_com");
@@ -233,8 +248,8 @@ void benchmarks(){
   
   //Define required quantities for Verlet
   double t0 = 0;
-  double tf = 1;
-  int nsteps = 100;
+  double tf = 300;
+  int nsteps = 100000;
   double h = (tf-t0)/nsteps;
   
   //Solve the system using Verlet
@@ -409,7 +424,7 @@ void benchmarks(){
 
   //Record results
   ofstream myfile;
-  myfile.open("benchmarks/benchmarks.txt");
+  myfile.open("benchmarks/benchmarks_long.txt");
 
   myfile<<"Max T_v: "<<max_T_v<<endl;
   myfile<<"Min T_v: "<<min_T_v<<endl;
@@ -470,20 +485,20 @@ void benchmarks(){
   can->cd();
   m_T->Draw("AC*");
   leg->Draw("SAME");
-  can->SaveAs("benchmarks/kinetic.png");
-  can->SaveAs("benchmarks/kinetic.pdf");
+  can->SaveAs("benchmarks/kinetic_long.png");
+  can->SaveAs("benchmarks/kinetic_long.pdf");
   m_V->Draw("AC*");
   leg->Draw("SAME");  
-  can->SaveAs("benchmarks/potential.pdf");
-  can->SaveAs("benchmarks/potential.png");
+  can->SaveAs("benchmarks/potential_long.pdf");
+  can->SaveAs("benchmarks/potential_long.png");
   m_tot->Draw("AC*");
   leg->Draw("SAME");
-  can->SaveAs("benchmarks/total_energy.png");
-  can->SaveAs("benchmarks/total_energy.pdf");
+  can->SaveAs("benchmarks/total_energy_long.png");
+  can->SaveAs("benchmarks/total_energy_long.pdf");
   m_l->Draw("AC*");
   leg->Draw("SAME");
-  can->SaveAs("benchmarks/angular_mom.png");
-  can->SaveAs("benchmarks/angular_mom.pdf");
+  can->SaveAs("benchmarks/angular_mom_long.png");
+  can->SaveAs("benchmarks/angular_mom_long.pdf");
   can->Close();
 
 }
@@ -510,6 +525,7 @@ void check_time_steps(){
   vector<int> nsteps;
   nsteps.push_back(2); nsteps.push_back(3); nsteps.push_back(5);
   nsteps.push_back(10); nsteps.push_back(20); nsteps.push_back(50);
+  nsteps.push_back(75); nsteps.push_back(100);
 
   //Define certain plotting requirements
   TLegend *leg = new TLegend(0.2,0.15,0.4,0.4);
@@ -563,17 +579,23 @@ void check_time_steps(){
       g_vel_r->SetPoint(j,xvel_r[j],yvel_r[j]);
     }
     
-    g_pos_v->SetLineColor(i);
-    g_vel_v->SetLineColor(i);
+    int thecolor = i;
+    if(i==0)
+      thecolor = 30;
+    if(i>9)
+      thecolor = i+30;
+
+    g_pos_v->SetLineColor(thecolor);
+    g_vel_v->SetLineColor(thecolor);
     g_pos_v->SetFillColor(0);
     g_pos_v->SetFillStyle(0);
     g_vel_v->SetFillColor(0);
     g_vel_v->SetFillStyle(0);
 
-    g_pos_r->SetLineColor(i);
+    g_pos_r->SetLineColor(thecolor);
     g_pos_r->SetFillColor(0);
     g_pos_r->SetFillStyle(0);
-    g_vel_r->SetLineColor(i);
+    g_vel_r->SetLineColor(thecolor);
     g_vel_r->SetFillColor(0);
     g_vel_r->SetFillStyle(0);
 
@@ -641,8 +663,8 @@ void partb(){
 
   //Define required quantities for Verlet method
   double t0 = 0; //Initial time (years)
-  double tf = 1; //Final time (years)
-  int nsteps = 100; //# of steps
+  double tf = 300; //Final time (years)
+  int nsteps = 10000; //# of steps
 
   //Compute the x position and velocity of the earth over 1 year (1 revolution)
   //Assume the planet starts moving entirely in the x-direction.
@@ -734,18 +756,18 @@ void partb(){
   
   c_pos->SetBorderMode(0);
   c_pos->cd();
-  m_pos->Draw("AC*");
+  m_pos->Draw("AC");//*");
   leg->Draw("SAME");
-  c_pos->SaveAs("plots/earth_pos.png");
-  c_pos->SaveAs("plots/earth_pos.pdf");
+  c_pos->SaveAs("plots/earth_pos_long.png");//.png");
+  c_pos->SaveAs("plots/earth_pos_long.pdf");//.pdf");
   c_pos->Close();
   
   c_vel->SetBorderMode(0);
   c_vel->cd();
-  m_vel->Draw("AC*");
+  m_vel->Draw("AC");//*");
   leg->Draw("SAME");
-  c_vel->SaveAs("plots/earth_vel.png");
-  c_vel->SaveAs("plots/earth_vel.pdf");
+  c_vel->SaveAs("plots/earth_vel_long.png");//.png");
+  c_vel->SaveAs("plots/earth_vel_long.pdf");//.pdf");
   c_vel->Close();  
   
 }

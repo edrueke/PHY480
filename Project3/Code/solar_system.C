@@ -79,7 +79,7 @@ void solar_system::Solve_Verlet(){
 
   double h = 1.0*tf/nsteps;
 
-  double fact = -1.0*4*pow(PI,2);
+  double fact = -4*pow(PI,2);
   double msun = 1.989e30; 
 
   planet *theplanets = new planet[planets.size()];
@@ -101,7 +101,7 @@ void solar_system::Solve_Verlet(){
     posx_v.point[0] = 0;
     posx_v.point[1] = posx_v[0]+h*myplan.v0;
 
-    posy_v.point[0] = -1.0*(myplan).dist_sun;
+    posy_v.point[0] = -(myplan).dist_sun;
     posy_v.point[1] = posy_v[0];
 
     velx_v.point[0] = (myplan).v0;
@@ -267,7 +267,7 @@ void solar_system::Solve_RK4(){
     planet myplan = theplanets[it];
 
     theplanets[it].positionsx_r.point[0] = 0;
-    theplanets[it].positionsy_r.point[0] = -1.0*myplan.dist_sun;
+    theplanets[it].positionsy_r.point[0] = -myplan.dist_sun;
 
     theplanets[it].velocitiesx_r.point[0] = myplan.v0;
     theplanets[it].velocitiesy_r.point[0] = 0;
@@ -288,12 +288,12 @@ void solar_system::Solve_RK4(){
       thevec velx = myplan.velocitiesx_r;
       thevec vely = myplan.velocitiesy_r;
       
-      double prev_r = 1.0*sqrt(pow(posx[i-1]-originx,2)+pow(posy[i-1]-originy,2));
+      double prev_r = sqrt(pow(posx[i-1]-originx,2)+pow(posy[i-1]-originy,2));
 
       double k1vx = 0;
       double k1vy = 0;
-      double k1x = 1.0*h*velx[i-1];
-      double k1y = 1.0*h*vely[i-1];
+      double k1x = h*velx[i-1];
+      double k1y = h*vely[i-1];
 
       for(unsigned int n=0;n<planets.size();n++){
 
@@ -301,16 +301,16 @@ void solar_system::Solve_RK4(){
 
 	if(myplan!=plan){
 
-	  double prev_rp = 1.0*sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
-	  k1vx+=1.0*h*fact*plan.mass*(posx[i-1]-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
-	  k1vy+=1.0*h*fact*plan.mass*(posy[i-1]-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
+	  double prev_rp = sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
+	  k1vx+=h*fact*plan.mass*(posx[i-1]-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
+	  k1vy+=h*fact*plan.mass*(posy[i-1]-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
 	}
       }
       
       double k2vx = 0;
       double k2vy = 0;
-      double k2x = 1.0*h*(velx[i-1]+k1vx/2);
-      double k2y = 1.0*h*(vely[i-1]+k1vy/2);
+      double k2x = h*(velx[i-1]+k1vx/2);
+      double k2y = h*(vely[i-1]+k1vy/2);
 
       for(unsigned int n=0;n<planets.size();n++){
 
@@ -318,16 +318,16 @@ void solar_system::Solve_RK4(){
 
 	if(myplan!=plan){
 
-	  double prev_rp = 1.0*sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
-	  k2vx+=1.0*h*fact*plan.mass*(posx[i-1]+k1x/2-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
-	  k2vy+=1.0*h*fact*plan.mass*(posy[i-1]+k1y/2-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
+	  double prev_rp = sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
+	  k2vx+=h*fact*plan.mass*(posx[i-1]+k1x/2-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
+	  k2vy+=h*fact*plan.mass*(posy[i-1]+k1y/2-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
 	}
       }
       
       double k3vx = 0;
       double k3vy = 0;
-      double k3x = 1.0*h*(velx[i-1]+k2vx/2);
-      double k3y = 1.0*h*(vely[i-1]+k2vy/2);
+      double k3x = h*(velx[i-1]+k2vx/2);
+      double k3y = h*(vely[i-1]+k2vy/2);
 
       for(unsigned int n=0;n<planets.size();n++){
 
@@ -335,16 +335,16 @@ void solar_system::Solve_RK4(){
 
 	if(myplan!=plan){
 
-	  double prev_rp = 1.0*sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
-	  k3vx+=1.0*h*fact*plan.mass*(posx[i-1]+k2x/2-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
-	  k3vy+=1.0*h*fact*plan.mass*(posy[i-1]+k2y/2-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
+	  double prev_rp = sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
+	  k3vx+=h*fact*plan.mass*(posx[i-1]+k2x/2-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
+	  k3vy+=h*fact*plan.mass*(posy[i-1]+k2y/2-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
 	}
       }
       
       double k4vx = 0;
       double k4vy = 0;
-      double k4x = 1.0*h*(velx[i-1]+k3vx);
-      double k4y = 1.0*h*(vely[i-1]+k3vy);
+      double k4x = h*(velx[i-1]+k3vx);
+      double k4y = h*(vely[i-1]+k3vy);
 
       for(unsigned int n=0;n<planets.size();n++){
 
@@ -352,27 +352,21 @@ void solar_system::Solve_RK4(){
 
 	if(myplan!=plan){
 
-	  double prev_rp = 1.0*sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
-	  k4vx+=1.0*h*fact*plan.mass*(posx[i-1]+k3x-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
-	  k4vy+=1.0*h*fact*plan.mass*(posy[i-1]+k3y-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
+	  double prev_rp = sqrt(pow(posx[i-1]-plan.positionsx_r[i-1],2)+pow(posy[i-1]-plan.positionsy_r[i-1],2));
+	  k4vx+=h*fact*plan.mass*(posx[i-1]+k3x-plan.positionsx_r[i-1])/pow(prev_rp,3)/msun;
+	  k4vy+=h*fact*plan.mass*(posy[i-1]+k3y-plan.positionsy_r[i-1])/pow(prev_rp,3)/msun;
 	}
       }
 
-      theplanets[it].positionsx_r.point[i] = 1.0*posx[i-1]+(1.0/6)*(k1x+2.0*k2x+2.0*k3x+k4x);
-      theplanets[it].positionsy_r.point[i] = 1.0*posy[i-1]+(1.0/6)*(k1y+2.0*k2y+2.0*k3y+k4y);
-      theplanets[it].velocitiesx_r.point[i] = 1.0*velx[i-1]+(1.0/6)*(k1vx+2.0*k2vx+2.0*k3vx+k4vx);
-      theplanets[it].velocitiesy_r.point[i] = 1.0*vely[i-1]+(1.0/6)*(k1vy+2.0*k2vy+2.0*k3vy+k4vy);
+      theplanets[it].positionsx_r.point[i] = posx[i-1]+(1.0/6)*(k1x+2.0*k2x+2.0*k3x+k4x);
+      theplanets[it].positionsy_r.point[i] = posy[i-1]+(1.0/6)*(k1y+2.0*k2y+2.0*k3y+k4y);
+      theplanets[it].velocitiesx_r.point[i] = velx[i-1]+(1.0/6)*(k1vx+2.0*k2vx+2.0*k3vx+k4vx);
+      theplanets[it].velocitiesy_r.point[i] = vely[i-1]+(1.0/6)*(k1vy+2.0*k2vy+2.0*k3vy+k4vy);
 
     }
 
   }
   
-  /*for(int i=0;i<100;i++){
-    cout<<"i = "<<i<<endl;
-    cout<<"theplanets[0]: "<<theplanets[0].positionsx_r[i]<<", "<<theplanets[0].positionsy_r[i]<<endl;
-    cout<<"theplanets[1]: "<<theplanets[1].positionsx_r[i]<<", "<<theplanets[1].positionsy_r[i]<<endl;
-    }*/
-
   vector<planet*> temp;
   for(unsigned int i=0;i<planets.size();i++)
     temp.push_back(&theplanets[i]);
@@ -416,7 +410,7 @@ void solar_system::Draw_Verlet(string name){
       g_vel->SetPoint(j,p.velocitiesx_v[j],p.velocitiesy_v[j]);
     }
 
-    if(i<10){
+    if(i<9){
       g_pos->SetLineColor(i+1);
       g_pos->SetMarkerColor(i+1);
       g_pos->SetMarkerSize(0);
@@ -508,7 +502,7 @@ void solar_system::Draw_RK4(string name){
       g_vel->SetPoint(j,p.velocitiesx_r[j],p.velocitiesy_r[j]);
     }
 
-    if(i<10){
+    if(i<9){
       g_pos->SetLineColor(i+1);
       g_pos->SetMarkerColor(i+1);
       g_pos->SetMarkerSize(0);

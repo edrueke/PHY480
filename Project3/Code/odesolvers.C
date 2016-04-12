@@ -46,7 +46,7 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
   */
 
   //Compute the step size.
-  double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
+  double h = (tf-t0)/(1.0*nsteps);
 
   //Define a vector of the inputs to the function.
   thevec times = thevec(nsteps+1);
@@ -75,7 +75,7 @@ vector<thevec> Verlet(double t0, double tf, int nsteps, double x0, double xf, do
 
   //Compute the velocities using the algorithm: v_{i} = v_{i}+(h/2)*(v'_{i+1}+v'_{i})
   for(int i=1;i<nsteps;i++){
-    vel.point[i] = vel[i-1]+(h/2)*(-1.0*a*pos[i]/pow(r,3)-1.0*a*pos[i-1]/pow(r,3));//(pos[i+1]-pos[i-1])/(2*h);
+    vel.point[i] = vel[i-1]+(h/2)*(-a*pos[i]/pow(r,3)-a*pos[i-1]/pow(r,3));//(pos[i+1]-pos[i-1])/(2*h);
   }
 
   //Define the vector to return
@@ -110,14 +110,7 @@ vector<thevec> RK4(double t0, double tf, int nsteps, double x0, double xf, doubl
   */
 
   //Compute the step size.
-  double h = (1.0*tf-1.0*t0)/(1.0*nsteps);
-
-  //Define a vector of the inputs to the function.
-  thevec times = thevec(nsteps+1);
-  times.point[0] = t0;
-  for(int i=1;i<nsteps+1;i++){
-    times.point[i] = t0+i*h;
-  }
+  double h = (tf-t0)/(1.0*nsteps);
 
   //Define a vector for the positions.
   thevec pos = thevec(nsteps+1);
@@ -133,7 +126,7 @@ vector<thevec> RK4(double t0, double tf, int nsteps, double x0, double xf, doubl
 
   for(int i=1;i<nsteps;i++){
     double k1p = h*vel[i-1];
-    double k1v = -1.0*h*a*pos[i-1]/pow(r,3);
+    double k1v = -h*a*pos[i-1]/pow(r,3);
     
     double k2p = h*(vel[i-1]+k1v/2);//v(ti+h/2,yi+k1/2);
     double k2v = -h*a*(pos[i-1]+k1p/2)/pow(r,3);//x(ti+h/2,yi+k1/2)/pow(r,3);
