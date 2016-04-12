@@ -20,9 +20,7 @@
 \maketitle
 
 \begin{abstract}
-
-
-a
+The study of the solar system is a good window into how planetary bodies orbit and interact.  As a result, determining numerical methods for solving for the orbits of planets in the Milky Way have broad applications in many areas of astrophysics.  Here, we work on developing two such methods -- the Verlet and 4th-order Runge-Kutta algorithms -- and apply them to the problem of our solar system, focusing particularly on stability of orbits and computation time required to do the calculations. 
 \end{abstract}
 
 \section{Introduction}
@@ -165,7 +163,7 @@ $$
 v_{i+1} =  v_{i}+\frac{h}{2}\left(-4\pi^{2}\left(\frac{\left(x_{p\prime}-x_{\odot}\right)_{i}}{r_{p\prime\odot}_{i}^{3}}+\frac{\left(x_{p\prime}-x_{\odot}\right)_{i+1}}{r_{p\prime\odot}_{i+1}^{3}}\right)\right)+O\left(h^{3}\right).
 $$
 
-\\\indent Together, Eqs.~\ref{eq:discx} and~\ref{eq:discv} make up what is known as the Verlet method \textbf{cite lecture notes}.  With the introduction of the velocity Verlet method, this method is self-starting.
+\\\indent Together, Eqs.~\ref{eq:discx} and~\ref{eq:discv} make up what is known as the Verlet method [4].  With the introduction of the velocity Verlet method, this method is self-starting.
 
 \subsection{Fourth-Order Runge-Kutta}
 \label{subsec:rk4}
@@ -239,7 +237,7 @@ y_{i+1} & \approx y_{i}+\left(1/6\right)\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)+O
 \section{The Algorithm}
 \label{sec:algorithm}
 
-The code developed for this project is written in C++ using the ROOT \textbf{cite root} framework for plotting.  Code from \textbf{project 1 cite} and \textbf{project 2 cite} was reused, particularly the \textttt{thevec} and \textttt{themat} classes defined in \textttt{classes.C}.  However, several new classes and functions were designed specifically for the problem of solving the solar system.
+The code developed for this project is written in C++ using the ROOT [1] framework for plotting.  Code from [2] and [3] was reused, particularly the \textttt{thevec} and \textttt{themat} classes defined in \textttt{classes.C}.  However, several new classes and functions were designed specifically for the problem of solving the solar system.
 \par In header file \texttt{odesolvers.h} we define the \texttt{Verlet} and \texttt{RK4} functions, each of which return two \texttt{thevec}s, one of the discretized position solution and the other of the discretized velocity solution.  
 
 \begin{itemize}
@@ -538,7 +536,7 @@ Then, the algorithm redefines the planets in the \texttt{planets} vector so that
 
 \end{itemize}
 
-\par These classes are used together in \texttt{project3.C}, which defines individual planets according to their masses, average distances from the sun, and average velocities \textbf{need citation}, adds them to an object of type \texttt{solar\_system}, and calls the appropriate \texttt{solar\_system} methods to solve the multi-body problem.  This code also does some benchmark checking and other smaller calculations.
+\par These classes are used together in \texttt{project3.C}, which defines individual planets according to their masses, average distances from the sun, and average velocities [6], adds them to an object of type \texttt{solar\_system}, and calls the appropriate \texttt{solar\_system} methods to solve the multi-body problem.  This code also does some benchmark checking and other smaller calculations.
 
 \section{Results and Benchmarks}
 \label{sec:results}
@@ -809,21 +807,48 @@ v_{sun} = -\frac{\sum_{p\neq sun}m_{p}v_{p}}{m_{sun}}.
 \end{center}
 \end{figure}
 
-\par Finally, we looked at solving the full solar system problem.  Here we investigated the motion over 100 years with 10000 steps, first with the sun as the origin \textbf{plots} and then with the center of mass at the origin and the sun's velocity set as in Eq.~\ref{eq:suncom} \textbf{plots}.  The initial velocities for each planet were assumed to be the average velocity of the planet around the sun.  These numbers and the masses and average distances from the sun were taken from \textbf{need citation}.
+\par Finally, we looked at solving the full solar system problem.  Here we investigated the motion over 100 years with 10000 steps, first with the sun as the origin, as shown in Fig.~\ref{fig:12}, and then with the center of mass at the origin and the sun's velocity set as in Eq.~\ref{eq:suncom} \textbf{plots}.  In both cases, the initial velocities for each planet were assumed to be the average velocity of the planet around the sun.  These numbers and the masses and average distances from the sun were taken from [6].
+\par We can see that, in Fig.~\ref{fig:12}, the orbits seem stable and elliptical, as expected.  The only small instability comes from the RK4 algorithm, where we see that the velocity of mercury has some fluctuations as time progresses (as evidenced by the thicker velocity ring).  This is somewhat surprising as some sources [5] suggest that only a step size of 0.5 days should be needed to observe stability, and our step size was $\sim0.2$ days.  However, it is not clear which integrating technique this source used and, as our Verlet algorithm does indicate stability, it is fairly safe to say that this instability observed may be a step size problem or a small bug in the code.  
+\par In \textbf{plots}, 
+
+\begin{figure}[h]
+\begin{center}
+\begin{subfigure}
+\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_verlet_pos.png}
+\end{subfigure}
+\begin{subfigure}
+\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_verlet_vel.png}
+\end{subfigure} \\
+\begin{subfigure}
+\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_rk4_pos.png}
+\end{subfigure}
+\begin{subfigure}
+\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_rk4_vel.png}
+\end{subfigure} 
+\caption{The solution to the solar system over 100 years with 10000 steps with the sun at the origin.}
+\label{fig:12}
+\end{center}
+\end{figure}
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-Want to investigate more the dependence of the stability of the Verlet (and RK4) algorithms on step size and length of time.  Due to computational time, couldn't do more than what was discussed in Section~\ref{sec:results}.
-\par Also want to spend more time working on the calculation of the escape velocity.
-\par Also RK4 takes way longer.  Could do study.
+Overall, this project was fairly successful.  We were able to create a fully object-oriented C++ code which could work with planets and solar systems and calculate the positions and velocities of those planets in orbit around the sun.  We were able to find relative stability in the orbits of the planets, as expected, in both the cases of the sun stationary at the center of the system and with the center of mass of the system as the origin and the sun moving in such a way (Eq.~\ref{eq:suncom}) as to keep the center of mass stationary.  However, there are several further tests which may be performed on the algorithms and which may shed more light on the apparent fluctuations in Mercury's velocity as it orbits around the sun as part of the full solar system.
+\par The first and probably most enlightening study we might perform is a further investigation into the dependence of the stability of the Verlet and RK4 algorithms on step size and length of time.  It was observed throughout the course of the project that both algorithms, but particularly the RK4 algorithm, required a very small step size in order to accurately compute the positions and velocities of the planets.  It would be interesting to do a study on what the minimum number of steps would be for integration for larger systems specifically.  
+\par Along these lines, it would also be useful to work on optimizing the code.  One of the main limitations in what was studied in this project was computation time.  In particular, the RK4 algorithm took significantly longer to run than the Verlet algorithm.  This makes sense because, for each step, the RK4 algorithm calculates four floating point quantites which must be further combined into the solution.  This gave us only 2 flops per quantity (ie. 8 flops to calculate the $k$'s) for the positions.  However, this number was quite a bit larger for the velocities because each planet required 6 flops per $k$ based on the function used in the integration.  With 11 planets, we had 66 flops per $k$.  This means that. due to computational time, we were unable to do any more than what was discussed in Section~\ref{sec:results}.The Verlet algorithm is not as flop-heavy, but still requires $\sim9$ flops per planet for the position calculations and about 11 for the velocity calculations.  This requires a very high computation time as well.
+\par We wiykd aksi kuje to spend more time working on the calculation of the escape velocity.  As discussed in Section~\ref{sec:results}, our calculation of this quantity was inconsistent with expected values.  It would be very useful to have more time to devote to this problem, as it provides a very convenient check that the algorithms are working properly.
 
 \section{Bibliography}
 \label{sec:bib}
 
 \begin{enumerate}
 
-\item a
+\item Brun, Rene, and Fons Rademakers. "ROOT - An Object Oriented Data Analysis Framework." \textit{Nuclear Instruments and Methods in Physics Research A} 389 (1997): 81-86. Web.
+\item Drueke, Elizabeth A. \textit{Programming a Linear Algebra Solution to the Poisson Equation.} Rep. N.p.: n.p., n.d. Print.
+\item Drueke, Elizabeth A. \textit{Programming a Linear Algebra Solution to the Problem of Two Electrons Trapped in a Spherical Harmonic Oscillator Well.} Rep. N.p.: n.p., n.d. Print.
+\item Hjorth-Jensen, Morten. \textit{Computational Physics}. N.p.: Department of Physics, U of Oslo, n.d. Print.
+\item Laskar, Jacques. "Stability of the Solar System." \textit{Scholarpedia.} Scholarpedia, 31 Oct. 2014. Web. 12 Apr. 2016. $<$http://www.scholarpedia.org/article/Stability\_of\_the\_solar\_system$>$.
+\item "Planetary Fact Sheet - Metric." \textit{Planetary Fact Sheet.} NASA, n.d. Web. 12 Apr. 2016. $<$http://nssdc.gsfc.nasa.gov/planetary/factsheet/$>$.
 
 \end{enumerate}
 

@@ -87,26 +87,26 @@ void parteandf(){
   //milky_way.Solve_Verlet();
   //milky_way.Draw_Verlet("milky_way_full_100yrs");
 
-  milky_way.Solve_RK4();
-  milky_way.Draw_RK4("milky_way_full_100yrs");
+  //milky_way.Solve_RK4();
+  //milky_way.Draw_RK4("milky_way_full_100yrs");
   
-  /*milky_way.Set_COM();
-
-    double vsun = 0;
-    for(int i=0;i<milky_way.planets();i++){
-    planet myplan = *milky_way.planets.at(i);
+  milky_way.Set_COM();
+  
+  double vsun = 0;
+  for(int i=0;i<milky_way.planets.size();i++){
+    planet myplan = *(milky_way.planets.at(i));
     if(myplan.name!="sun")
-    vsun+=myplan.v0*myplan.mass;
-    }
-    vsun = vsun/sun,mass;
-    
-    sun.v0=-vsun;
-
+      vsun+=myplan.v0*myplan.mass;
+  }
+  vsun = vsun/sun.mass;
+  
+  sun.v0=-vsun;
+  
   milky_way.Solve_Verlet();
   milky_way.Draw_Verlet("milky_way_full_com");
 
   milky_way.Solve_RK4();
-  milky_way.Draw_RK4("milky_way_full_com");*/
+  milky_way.Draw_RK4("milky_way_full_com");
   
   
 }
