@@ -104,7 +104,7 @@ $$v^{2}r = GM_{\odot} = 4\pi^{2} AU^{2}yr^{-2}.$$
 \frac{d^{2}x}{dt^{2}} = -\frac{4\pi^{2}x}{r^{3}} \text{ and } \frac{d^{2}y}{dt^{2}} = -\frac{4\pi^{2}y}{r^{3}}.
 \end{equation}
 
-\\\indent We will also want to look at adding other planets to our solar system.  After all, the unperturbed earth-sun system is really to simplistic to be a reasonable approximation for how the solar system.  Noting that
+\\\indent We will also want to look at adding other planets to our solar system.  After all, the unperturbed earth-sun system is really to simplistic too be a reasonable approximation for how the solar system evolves in time.  Noting that
 
 $$Gm_{p} = GM_{\odot}\frac{m_{p}}{M_{\odot}}=4\pi^{2}\frac{m_{p}}{M_{\odot}},$$
 
@@ -118,12 +118,12 @@ a_{y} &=  \frac{dv_{y}}{dt} =&  -\frac{4\pi^{2}}{r_{p\prime\odot}^{3}}\left(y_{p
 \end{align}
 \end{equation}
 
-\\\indent The solution of Eq.~\ref{eq:earthsun} is fairly straightforward (we are only really looking at two coupled second-order differential equations), although still not simple by any means.  However, the solution to Eq.~\ref{eq:multiplanet} is impossible to get by hand.  The number of couple equations will be twice the number of planets in the solar system.  Thus, to solve either system, it is useful to turn to numerical approximations and computer algorithms.  In particular, we look into the Verlet and RK4 methods as means by which to solve the system.
+\\\indent The solution of Eq.~\ref{eq:earthsun} is fairly straightforward (we are only really looking at two coupled second-order differential equations), although still not simple by any means.  However, the solution to Eq.~\ref{eq:multiplanet} is impossible to calculate by hand.  The number of couple equations will be twice the number of planets in the solar system.  Thus, to solve either system, it is useful to turn to numerical approximations and computer algorithms.  In particular, we look into the Verlet and RK4 methods as means by which to solve the system.
 
 \subsection{Verlet Method}
 \label{subsec:verlet}
 
-It is a common practice in creating computer algorithms to solve complex problems to discretize the equations in order to get something more concrete to work with.  In this case, we will discretize using the Taylor Series expansion.  That is, we will have
+It is a common practice in creating computer algorithms to solve complex problems to discretize the equations in order to get something more concrete to work with.  In this case, we will discretize using the Taylor Series expansion.  That is, 
 
 \begin{equation}
 \label{eq:taylor}
@@ -237,8 +237,8 @@ y_{i+1} & \approx y_{i}+\left(1/6\right)\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)+O
 \section{The Algorithm}
 \label{sec:algorithm}
 
-The code developed for this project is written in C++ using the ROOT [1] framework for plotting.  Code from [2] and [3] was reused, particularly the \textttt{thevec} and \textttt{themat} classes defined in \textttt{classes.C}.  However, several new classes and functions were designed specifically for the problem of solving the solar system.
-\par In header file \texttt{odesolvers.h} we define the \texttt{Verlet} and \texttt{RK4} functions, each of which return two \texttt{thevec}s, one of the discretized position solution and the other of the discretized velocity solution.  
+The code developed for this project is written in C++ using the ROOT [1] framework for plotting.  Code from [2] and [3] was reused, particularly the \texttt{thevec} and \texttt{themat} classes defined in \texttt{classes.C}.  However, several new classes and functions were designed specifically for the problem of solving the solar system.
+\par In header file \texttt{odesolvers.h}, we define the \texttt{Verlet} and \texttt{RK4} functions, each of which return two \texttt{thevec}s, one of the discretized position solution and the other of the discretized velocity solution.  
 
 \begin{itemize}
 \item The \texttt{Verlet} method begins by determining a step size \texttt{h} according to certain inputs (the initial time \texttt{t0} and final time \texttt{tf}, as well as the number of steps \texttt{nsteps}) as
@@ -300,7 +300,7 @@ where \texttt{r} is the averate distance between the planet and the sun.
 
 \end{itemize}
 \noindent These algorithms clearly are only designed to solve one direction ($x$ or $y$) at a time, and are designed only to handle the earth-sun system with the earth in an assumed circular orbit.  The multi-body problem was solved by a similar code in \texttt{solar\_system.C}.
-\par We also, for this project, found it prudent to define two new classes: \texttt{planet} and \texttt{solar\_system}.  The \texttt{planet} class is declared and defined in \texttt{planets.h} and \texttt{planets.C}.  Each object of type \texttt{planet} has associated it with it a \texttt{mass} (\texttt{double} of mass in kilograms), \texttt{dist\_sun} (\texttt{double} of the average distance between the planet and the sun, \texttt{name} (\texttt{string} of the name of the planet), \texttt{acc} (\texttt{double} of the acceleration the planet would have in a pure, idealized sun-planet system with a circular orbit), \texttt{v0} (\texttt{double} of the average velocity of the planet around the sun), and eight \texttt{thevec} which are used to hold the positions and velocities in the $x$- and $y$-directions after they are solved for by the \texttt{RK4} and \texttt{Verlet} algorithms.  These last objects, however, are not directly used by the \texttt{planet} class.  It only became obvious after the class had been designed, during the designing stage of the \texttt{solar\_system} class, that it would be convenient for the \texttt{planet} objects to have these components.  Thus they are used solely by the \texttt{solar\_system} class as discussed below. 
+\par We also, for this project, found it prudent to define two new classes: \texttt{planet} and \texttt{solar\_system}.  The \texttt{planet} class is declared and defined in \texttt{planets.h} and \texttt{planets.C}.  Each object of type \texttt{planet} has associated it with it a \texttt{mass} (\texttt{double} of mass in kilograms), \texttt{dist\_sun} (\texttt{double} of the average distance between the planet and the sun, \texttt{name} (\texttt{string} of the name of the planet), \texttt{acc} (\texttt{double} of the acceleration the planet would have in a pure, idealized sun-planet system with a circular orbit), \texttt{v0} (\texttt{double} of the average velocity of the planet around the sun), and eight \texttt{thevec} objects which are used to hold the positions and velocities in the $x$- and $y$-directions after they are solved for by the \texttt{RK4} and \texttt{Verlet} algorithms.  These last objects, however, are not directly used by the \texttt{planet} class.  It only became obvious after the class had been designed, during the designing stage of the \texttt{solar\_system} class, that it would be convenient for the \texttt{planet} objects to have these components.  Thus they are used solely by the \texttt{solar\_system} class as discussed below. 
 \par The \texttt{planet} class has several constructors as well as functions:
 
 \begin{itemize}
@@ -559,10 +559,10 @@ v = \sqrt{\frac{GM_{\odot}}{r}},
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/earth_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/earth_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/earth_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/earth_vel.png}
 \end{subfigure}
 \caption{The position and velocity over 1 year with 100 steps as calculated byt he RK4 and Verlet algorithms.}
 \label{fig:1}
@@ -574,10 +574,10 @@ v = \sqrt{\frac{GM_{\odot}}{r}},
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/earth_pos_very_long.png}
+\includegraphics[width=0.47\textwidth]{plots/earth_pos_very_long.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/earth_vel_very_long.png}
+\includegraphics[width=0.47\textwidth]{plots/earth_vel_very_long.png}
 \end{subfigure}
 \caption{The position and velocity over 3000 years with 1,000,000 steps.  A slight instability is observed in the Verlet velocity solutions.}
 \label{fig:2}
@@ -587,10 +587,10 @@ v = \sqrt{\frac{GM_{\odot}}{r}},
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/earth_pos_long.png}
+\includegraphics[width=0.47\textwidth]{plots/earth_pos_long.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/earth_vel_long.png}
+\includegraphics[width=0.47\textwidth]{plots/earth_vel_long.png}
 \end{subfigure}
 \caption{The position and velocity over 300 years with 10000 steps.  We see that the instability with fewer steps per year is much more pronounced than in Fig.~\ref{fig:2}.}
 \label{fig:3}
@@ -602,16 +602,16 @@ v = \sqrt{\frac{GM_{\odot}}{r}},
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/pos_nstep_check_verlet.png}
+\includegraphics[width=0.47\textwidth]{plots/pos_nstep_check_verlet.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/pos_nstep_check_rk4.png}
+\includegraphics[width=0.47\textwidth]{plots/pos_nstep_check_rk4.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/vel_nstep_check_verlet.png}
+\includegraphics[width=0.47\textwidth]{plots/vel_nstep_check_verlet.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/vel_nstep_check_rk4.png}
+\includegraphics[width=0.47\textwidth]{plots/vel_nstep_check_rk4.png}
 \end{subfigure} 
 \caption{Checking the stability of the RK4 and Verlet algorithms with varying step sizes over the course of one year.}
 \label{fig:4}
@@ -625,16 +625,16 @@ v = \sqrt{\frac{GM_{\odot}}{r}},
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{benchmarks/kinetic.png}
+\includegraphics[width=0.47\textwidth]{benchmarks/kinetic.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{benchmarks/potential.png}
+\includegraphics[width=0.47\textwidth]{benchmarks/potential.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{benchmarks/total_energy.png}
+\includegraphics[width=0.47\textwidth]{benchmarks/total_energy.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{benchmarks/angular_mom.png}
+\includegraphics[width=0.47\textwidth]{benchmarks/angular_mom.png}
 \end{subfigure} 
 \caption{Checking that various expected conserved quantities are actually conserved over the course of one year with 100 steps for the RK4 and Verlet algorithms.}
 \label{fig:5}
@@ -668,7 +668,7 @@ v_{e} = \sqrt{\frac{2GM_{\odot}}{r}}.
 \noindent From Eq.~\ref{eq:escape}, it is clear that the escape velocity should not be dependent on the mass of the planet (or other object) in orbit around the sun, but just on the mass of the sun and the distance from the sun.  In this case, then, we have
 
 $$
-v_{e} = \sqrt{\frac{8\pi^{2}}{1}} = 8.89 \frac{km}{AU}
+v_{e} = \sqrt{\frac{8\pi^{2}}{1}} = 8.89 \frac{AU}{yr}
 $$
 
 \noindent Clearly, then, our calculation of the final escape velocity was incorrectly done within the code.  This is something which it would be nice to investigate further.
@@ -677,16 +677,16 @@ $$
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_rk4_vel.png}
 \end{subfigure} 
 \caption{Adding Jupiter to the Earth-sun system and computing the positions and velocities using the RK4 and Verlet algorithms for 500 steps over 10 years.}
 \label{fig:6}
@@ -696,16 +696,16 @@ $$
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_rk4_vel.png}
 \end{subfigure} 
 \caption{Adding Jupiter to the Earth-sun system and computing the positions and velocities using the RK4 and Verlet algorithms for 100000 steps over 100 years to check the stability over time.}
 \label{fig:7}
@@ -717,16 +717,16 @@ $$
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_500steps_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_500steps_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_500steps_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_500steps_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_500steps_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_500steps_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_long_500steps_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_long_500steps_rk4_vel.png}
 \end{subfigure} 
 \caption{Adding Jupiter to the Earth-sun system and computing the positions and velocities using the RK4 and Verlet algorithms for 500 steps over 50 years to check the stability over time.}
 \label{fig:8}
@@ -738,16 +738,16 @@ $$
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter10_only_long_750steps_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter10_only_long_750steps_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter10_only_long_750steps_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter10_only_long_750steps_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter10_only_long_750steps_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter10_only_long_750steps_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter10_only_long_750steps_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter10_only_long_750steps_rk4_vel.png}
 \end{subfigure} 
 \caption{Investigating the effect of making Jupiter 10 times more massive than it actually is on the orbit of earth around the sun in the three-body system.}
 \label{fig:9}
@@ -757,16 +757,16 @@ $$
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter1000_only_long_2000steps_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter1000_only_long_2000steps_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter1000_only_long_2000steps_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter1000_only_long_2000steps_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter1000_only_long_2000steps_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter1000_only_long_2000steps_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter1000_only_long_2000steps_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter1000_only_long_2000steps_rk4_vel.png}
 \end{subfigure} 
 \caption{Investigating the effect of making Jupiter 1000 times more massive than it actually is on the orbit of earth around the sun in the three-body system.}
 \label{fig:10}
@@ -791,52 +791,70 @@ v_{sun} = -\frac{\sum_{p\neq sun}m_{p}v_{p}}{m_{sun}}.
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_com_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_com_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_com_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_com_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_com_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_com_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/jupiter_only_com_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/jupiter_only_com_rk4_vel.png}
 \end{subfigure} 
 \caption{The three-body problem solved over 10 years with 1000 steps with the origin at the center of mass of the system and the initial velocity of the sun set as in Eq.~\ref{eq:suncom}.}
 \label{fig:11}
 \end{center}
 \end{figure}
 
-\par Finally, we looked at solving the full solar system problem.  Here we investigated the motion over 100 years with 10000 steps, first with the sun as the origin, as shown in Fig.~\ref{fig:12}, and then with the center of mass at the origin and the sun's velocity set as in Eq.~\ref{eq:suncom} \textbf{plots}.  In both cases, the initial velocities for each planet were assumed to be the average velocity of the planet around the sun.  These numbers and the masses and average distances from the sun were taken from [6].
+\par Finally, we looked at solving the full solar system problem.  Here we investigated the motion over 100 years with 10000 steps, first with the sun as the origin, as shown in Fig.~\ref{fig:12}, and then with the center of mass at the origin and the sun's velocity set as in Eq.~\ref{eq:suncom}.  In both cases, the initial velocities for each planet were assumed to be the average velocity of the planet around the sun.  These numbers and the masses and average distances from the sun were taken from [6].
 \par We can see that, in Fig.~\ref{fig:12}, the orbits seem stable and elliptical, as expected.  The only small instability comes from the RK4 algorithm, where we see that the velocity of mercury has some fluctuations as time progresses (as evidenced by the thicker velocity ring).  This is somewhat surprising as some sources [5] suggest that only a step size of 0.5 days should be needed to observe stability, and our step size was $\sim0.2$ days.  However, it is not clear which integrating technique this source used and, as our Verlet algorithm does indicate stability, it is fairly safe to say that this instability observed may be a step size problem or a small bug in the code.  
-\par In \textbf{plots}, 
+\par In Fig.~\ref{fig:13}, we solve the same problem taking the origin to be the center of mass of the system and solving for the initial velocity of the sun as in Eq.~\ref{eq:suncom}.  We see here that, as in Fig.~\ref{fig:12}, the solutions seem to be quite stable over time excepting again the velocity of Mercury which shows the same possible instabilities as were seen in the solution with a stationary sun at the origin.
 
 \begin{figure}[h]
 \begin{center}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_verlet_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_100yrs_verlet_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_verlet_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_100yrs_verlet_vel.png}
 \end{subfigure} \\
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_rk4_pos.png}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_100yrs_rk4_pos.png}
 \end{subfigure}
 \begin{subfigure}
-\includegraphics[width=0.45\textwidth]{plots/milky_way_full_100yrs_rk4_vel.png}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_100yrs_rk4_vel.png}
 \end{subfigure} 
 \caption{The solution to the solar system over 100 years with 10000 steps with the sun at the origin.}
 \label{fig:12}
 \end{center}
 \end{figure}
 
+\begin{figure}[h]
+\begin{center}
+\begin{subfigure}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_com_verlet_pos.png}
+\end{subfigure}
+\begin{subfigure}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_com_verlet_vel.png}
+\end{subfigure} \\
+\begin{subfigure}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_com_rk4_pos.png}
+\end{subfigure}
+\begin{subfigure}
+\includegraphics[width=0.47\textwidth]{plots/milky_way_full_com_rk4_vel.png}
+\end{subfigure} 
+\caption{The solution to the solar system over 100 years with 10000 steps with the center of mass as the origin.}
+\label{fig:13}
+\end{center}
+\end{figure}
 \section{Conclusions}
 \label{sec:conclusions}
 
 Overall, this project was fairly successful.  We were able to create a fully object-oriented C++ code which could work with planets and solar systems and calculate the positions and velocities of those planets in orbit around the sun.  We were able to find relative stability in the orbits of the planets, as expected, in both the cases of the sun stationary at the center of the system and with the center of mass of the system as the origin and the sun moving in such a way (Eq.~\ref{eq:suncom}) as to keep the center of mass stationary.  However, there are several further tests which may be performed on the algorithms and which may shed more light on the apparent fluctuations in Mercury's velocity as it orbits around the sun as part of the full solar system.
 \par The first and probably most enlightening study we might perform is a further investigation into the dependence of the stability of the Verlet and RK4 algorithms on step size and length of time.  It was observed throughout the course of the project that both algorithms, but particularly the RK4 algorithm, required a very small step size in order to accurately compute the positions and velocities of the planets.  It would be interesting to do a study on what the minimum number of steps would be for integration for larger systems specifically.  
 \par Along these lines, it would also be useful to work on optimizing the code.  One of the main limitations in what was studied in this project was computation time.  In particular, the RK4 algorithm took significantly longer to run than the Verlet algorithm.  This makes sense because, for each step, the RK4 algorithm calculates four floating point quantites which must be further combined into the solution.  This gave us only 2 flops per quantity (ie. 8 flops to calculate the $k$'s) for the positions.  However, this number was quite a bit larger for the velocities because each planet required 6 flops per $k$ based on the function used in the integration.  With 11 planets, we had 66 flops per $k$.  This means that. due to computational time, we were unable to do any more than what was discussed in Section~\ref{sec:results}.The Verlet algorithm is not as flop-heavy, but still requires $\sim9$ flops per planet for the position calculations and about 11 for the velocity calculations.  This requires a very high computation time as well.
-\par We wiykd aksi kuje to spend more time working on the calculation of the escape velocity.  As discussed in Section~\ref{sec:results}, our calculation of this quantity was inconsistent with expected values.  It would be very useful to have more time to devote to this problem, as it provides a very convenient check that the algorithms are working properly.
+\par We would also like to spend more time working on the calculation of the escape velocity.  As discussed in Section~\ref{sec:results}, our calculation of this quantity was inconsistent with expected values.  It would be very useful to have more time to devote to this problem, as it provides a very convenient check that the algorithms are working properly.
 
 \section{Bibliography}
 \label{sec:bib}
