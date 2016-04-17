@@ -28,6 +28,7 @@ lattice::lattice(){
   size = 2;
   temp = 1;
   MCcycles = 5;
+  accepted = 0;
 
   averages = new double[5];
   for(int i=0;i<5;i++)
@@ -50,7 +51,7 @@ lattice::lattice(){
     }
   }
 
-  calc_stat_quants();
+  (*this).calc_stat_quants();
   for(int i=0;i<5;i++){
     averages[i]=averages[i]/MCcycles;
   }
@@ -70,6 +71,7 @@ lattice::lattice(const lattice &p){
   MCcycles = p.MCcycles;
   CV = p.CV;
   chi = p.chi;
+  accepted = p.accepted;
 
   averages = new double[5];
 
@@ -103,14 +105,15 @@ lattice::~lattice(){
 
 }
 
-lattice::lattice(int sz, double t){
+//lattice::lattice(int sz, double t, int opt=0){
   /*
     Construct a lattice from the temp t and size sz
   */
 
-  size = sz;
+/*  size = sz;
   temp = t;
   MCcycles = 5;
+  accepted = 0;
 
   averages = new double[5];
 
@@ -124,16 +127,28 @@ lattice::lattice(int sz, double t){
   }
 
   //Initialize the lattice with random seeds
-  srand(time(NULL));
-  for(int i=0;i<size;i++){
-    for(int j=0;j<size;j++){
-      int rando = rand()%2;
-      if(rando == 0)
-	spins[i][j] = -1;
-      else
-	spins[i][j] = 0;
+  if(opt==0){
+    srand(time(NULL));
+    for(int i=0;i<size;i++){
+      for(int j=0;j<size;j++){
+	int rando = rand()%2;
+	if(rando == 0)
+	  spins[i][j] = -1;
+	else
+	  spins[i][j] = 0;
+      }
     }
   }
+
+  else{
+    for(int i=0;i<size;i++){
+      for(int j=0;j<size;j++){
+	spins[i][j]=opt;
+      }
+    }
+  }
+
+  (*this).calc_stat_quants();
 
   for(int i=0;i<5;i++)
     averages[i]=averages[i]/MCcycles;
@@ -141,9 +156,9 @@ lattice::lattice(int sz, double t){
   CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
   chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
 
-}
+  }*/
 
-lattice::lattice(int sz, double t, int MC){
+lattice::lattice(int sz, double t, int MC, int opt=0){
   /*
     Construct a lattice from the temp t and size sz and number of MC cycles MC
   */
@@ -151,6 +166,7 @@ lattice::lattice(int sz, double t, int MC){
   size = sz;
   temp = t;
   MCcycles = MC;
+  accepted = 0;
 
   averages = new double[5];
 
@@ -163,17 +179,29 @@ lattice::lattice(int sz, double t, int MC){
     spins[i] = new double[size];
   }
 
-  //Initialize the lattice with random seeds
-  srand(time(NULL));
-  for(int i=0;i<size;i++){
-    for(int j=0;j<size;j++){
-      int rando = rand()%2;
-      if(rando == 0)
-	spins[i][j] = -1;
-      else
-	spins[i][j] = 0;
+  if(opt==0){
+    //Initialize the lattice with random seeds
+    srand(time(NULL));
+    for(int i=0;i<size;i++){
+      for(int j=0;j<size;j++){
+	int rando = rand()%2;
+	if(rando == 0)
+	  spins[i][j] = -1;
+	else
+	  spins[i][j] = 0;
+      }
     }
   }
+
+  else{
+    for(int i=0;i<size;i++){
+      for(int j=0;j<size;j++){
+	spins[i][j]=opt;
+      }
+    }
+  }
+
+  (*this).calc_stat_quants();
 
   for(int i=0;i<5;i++)
     averages[i]=averages[i]/MCcycles;
@@ -230,6 +258,7 @@ void lattice::calc_stat_quants(){
     }
 
     if(go){
+      accepted++;
       M+= 2*spins[therow][thecol];
       E+= deltaE;
     }  
@@ -413,4 +442,12 @@ void lattice::set_MC(int MC){
     averages[i] = newlat.averages[i];
   CV = newlat.CV;
   chi = newlat.chi;
+}
+
+int lattice::get_accepted(){
+  /*
+    Return the number of accepted events in the MC simulation
+  */
+
+  return accepted;
 }

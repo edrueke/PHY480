@@ -39,6 +39,7 @@ class lattice{
   int MCcycles; //# of MC cycles to use in calculations
   double CV; //Specific heat
   double chi; //susceptibility
+  int accepted; //Accepted events in MC simulation
 
   //Important calculations
   void calc_stat_quants(); //Use Metropolis algorithm to calculate important statistical quantities
@@ -50,8 +51,8 @@ class lattice{
   lattice(const lattice &p); //Copy constructor
   ~lattice(); //Destructor
   
-  lattice(int sz, double t); //Construct from a temperature and lattice size
-  lattice(int sz, double t, int MC); //Construct from a temp, lattice size, and number of MC cycles
+  //lattice(int sz, double t, int opt=0); //Construct from a temperature and lattice size
+  lattice(int sz, double t, int MC, int opt=0); //Construct from a temp, lattice size, and number of MC cycles
 
   //Important calculations
   double get_E(); //Get expectation value of E
@@ -61,6 +62,7 @@ class lattice{
   double get_absM(); //Get expectation value of abs(M)
   double get_CV(); //Get the specific heat
   double get_susc(); //Get the susceptibility
+  int get_accepted(); //Get the accepted # of events in MC simulation
   void set_temp(double t); //Reset the temperature
   void set_MC(int MC); //Reset the number of MC cycles
   
