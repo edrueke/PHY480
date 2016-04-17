@@ -29,33 +29,43 @@ const double kB = 1.38064852e-23;
 
 //Planet class
 class lattice{
- public:
+ private:
   
   //Components
   int size; //Size n of nxn lattice
   double **spins; //Matrix of spins
   double temp; //Temperature of system (in K)
-  double *averages[5]; //Average (E,e^2,M,M^2,abs(M)
+  double *averages; //Average (E,E^2,M,M^2,abs(M)
   int MCcycles; //# of MC cycles to use in calculations
   double CV; //Specific heat
   double chi; //susceptibility
+
+  //Important calculations
+  void calc_stat_quants(); //Use Metropolis algorithm to calculate important statistical quantities
+
+ public:
 
   //Constructors/Destructors
   lattice(); //Default constructor
   lattice(const lattice &p); //Copy constructor
   ~lattice(); //Destructor
   
-  lattice(int sz); //Construct from a lattice size
-  lattice(double t); //Construct from a temperature
   lattice(int sz, double t); //Construct from a temperature and lattice size
-  //lattice(int sz, double t, int MC); //Construct from a temp, lattice size, and number of MC cycles
+  lattice(int sz, double t, int MC); //Construct from a temp, lattice size, and number of MC cycles
 
   //Important calculations
-  void calc_stat_quants(); //Use Metropolis algorithm to calculate important statistical quantities
-  double nearest_neighbors(int row, int col); //Calculate deltaE from nearest neighbors
-  void calc_spec_heat(); //Calculate the specific heat
-  void calc_susceptibility(); //Calculate the susceptibility
-
+  double get_E(); //Get expectation value of E
+  double get_M(); //Get expectation value of M
+  double get_E2(); //Get expectation value of E^2
+  double get_M2(); //Get expectation value of M^2
+  double get_absM(); //Get expectation value of abs(M)
+  double get_CV(); //Get the specific heat
+  double get_susc(); //Get the susceptibility
+  void set_temp(double t); //Reset the temperature
+  void set_MC(int MC); //Reset the number of MC cycles
+  
 };
+
+double nearest_neighbors(int row, int col, int size, double **spins); //Calculate deltaE from nearest neighbors
 
 #endif

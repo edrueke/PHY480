@@ -29,6 +29,7 @@ lattice::lattice(){
   temp = 1;
   MCcycles = 5;
 
+  averages = new double[5];
   for(int i=0;i<5;i++)
     averages[i]=0;
 
@@ -54,8 +55,8 @@ lattice::lattice(){
     averages[i]=averages[i]/MCcycles;
   }
 
-  calc_spec_heat();
-  calc_susceptibility();
+  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
 
 }
 
@@ -69,6 +70,8 @@ lattice::lattice(const lattice &p){
   MCcycles = p.MCcycles;
   CV = p.CV;
   chi = p.chi;
+
+  averages = new double[5];
 
   for(int i=0;i<5;i++)
     averages[i]=p.averages[i];
@@ -100,82 +103,6 @@ lattice::~lattice(){
 
 }
 
-lattice::lattice(int sz){
-  /*
-    Construct a lattice of a given size sz.
-  */
-
-  size = sz;
-  temp = 1;
-  MCcycles = 5;
-
-  for(int i=0;i<5;i++)
-    averages[i]=0;
-
-  spins = new double *[size];
-
-  for(int i=0;i<size;i++){
-    spins[i] = new double[size];
-  }
-
-  //Initialize the lattice with random seeds
-  srand(time(NULL));
-  for(int i=0;i<size;i++){
-    for(int j=0;j<size;j++){
-      int rando = rand()%2;
-      if(rando == 0)
-	spins[i][j] = -1;
-      else
-	spins[i][j] = 0;
-    }
-  }
-
-  calc_stat_quants();
-  for(int i=0;i<5;i++)
-    averages[i]=averages[i]/MCcycles;
-
-  calc_spec_heat();
-  calc_susceptibility();
-}
-
-lattice::lattice(double t){
-  /*
-    Construct a lattice from the temp t
-  */
-
-  size = 2;
-  temp = t;
-  MCcycles = 5;
-
-  for(int i=0;i<5;i++)
-    averages[i]=0;
-
-  spins = new double *[size];
-  
-  for(int i=0;i<size;i++){
-    spins[i] = new double[size];
-  }
-
-  //Initialize the lattice with random seeds
-  srand(time(NULL));
-  for(int i=0;i<size;i++){
-    for(int j=0;j<size;j++){
-      int rando = rand()%2;
-      if(rando == 0)
-	spins[i][j] = -1;
-      else
-	spins[i][j] = 0;
-    }
-  }
-
-  calc_stat_quants();
-  for(int i=0;i<5;i++)
-    averages[i]=averages[i]/MCcycles;
-
-  calc_spec_heat();
-  calc_susceptibility();
-}
-
 lattice::lattice(int sz, double t){
   /*
     Construct a lattice from the temp t and size sz
@@ -185,6 +112,8 @@ lattice::lattice(int sz, double t){
   temp = t;
   MCcycles = 5;
 
+  averages = new double[5];
+
   for(int i=0;i<5;i++)
     averages[i]=0;
 
@@ -209,8 +138,49 @@ lattice::lattice(int sz, double t){
   for(int i=0;i<5;i++)
     averages[i]=averages[i]/MCcycles;
 
-  calc_spec_heat();
-  calc_susceptibility();
+  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+
+}
+
+lattice::lattice(int sz, double t, int MC){
+  /*
+    Construct a lattice from the temp t and size sz and number of MC cycles MC
+  */
+
+  size = sz;
+  temp = t;
+  MCcycles = MC;
+
+  averages = new double[5];
+
+  for(int i=0;i<5;i++)
+    averages[i]=0;
+
+  spins = new double *[size];
+  
+  for(int i=0;i<size;i++){
+    spins[i] = new double[size];
+  }
+
+  //Initialize the lattice with random seeds
+  srand(time(NULL));
+  for(int i=0;i<size;i++){
+    for(int j=0;j<size;j++){
+      int rando = rand()%2;
+      if(rando == 0)
+	spins[i][j] = -1;
+      else
+	spins[i][j] = 0;
+    }
+  }
+
+  for(int i=0;i<5;i++)
+    averages[i]=averages[i]/MCcycles;
+
+  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+
 }
 
 void lattice::calc_stat_quants(){
@@ -225,8 +195,10 @@ void lattice::calc_stat_quants(){
   //Initialize energy and magnetization
   double E=0; double M=0;
 
+  int mod = size*size;
+
   for(int cycle = 0;cycle<MCcycles;cycle++){
-    int rando = rand()%(pow(size,2)); //Which spin to change
+    int rando = rand()%mod; //Which spin to change
     int ct = 0;
     int therow = 0; int thecol = 0;
     
@@ -242,7 +214,7 @@ void lattice::calc_stat_quants(){
     }
     
     //Calculate delta-E using nearest neighbors
-    double deltaE = nearest_neighbors(therow,thecol);
+    double deltaE = nearest_neighbors(therow,thecol,size,spins);
     
     //If deltaE>0, compare with a random number to determine if we should keep
     //the new system
@@ -263,14 +235,14 @@ void lattice::calc_stat_quants(){
     }  
     
     averages[0]+=E;
-    averages[1]+=pow(e,2);
+    averages[1]+=pow(E,2);
     averages[2]+=M;
     averages[3]+=pow(M,2);
     averages[4]+=abs(M);
   }
 }
   
-double nearest_neighbors(int row, int col){
+double nearest_neighbors(int row, int col,int size, double **spins){
   /*
     Calculate deltaE from the nearest neighbors
   */
@@ -306,7 +278,7 @@ double nearest_neighbors(int row, int col){
     if(spins[row+1][col]==1)
       ups+=1;
     else
-      downss+=1;
+      downs+=1;
   }
 
   //Then deal with col
@@ -350,19 +322,95 @@ double nearest_neighbors(int row, int col){
   return deltaE;
 }
 
-void calc_spec_heat(){
+double lattice::get_E(){
   /*
-    Calculate the set the specific heat from the averages
-  */
-
-  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-
-}
-
-void calc_susceptibility(){
-  /*
-    Calculate the susceptibility from the averages
+    Return <E>
   */
   
-  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+  return averages[0];
+}
+
+double lattice::get_M(){
+  /*
+    Return <M>
+  */
+
+  return averages[2];
+}
+
+double lattice::get_E2(){
+  /*
+    Return <E^2>
+  */
+
+  return averages[1];
+}
+
+double lattice::get_M2(){
+  /*
+    Return <M^2>
+  */
+
+  return averages[3];
+}
+
+double lattice::get_absM(){
+  /*
+    Return <|M|>
+  */
+
+  return averages[4];
+}
+
+double lattice::get_CV(){
+  /*
+    Return specific heat
+  */
+
+  return CV;
+}
+
+double lattice::get_susc(){
+  /*
+    Return susceptibility
+  */
+
+  return chi;
+}
+
+void lattice::set_temp(double t){
+  /*
+    Reset the temperature and recalculate everything
+  */
+
+  lattice newlat = lattice(size,t,MCcycles);
+  for(int i=0;i<size;i++){
+    for(int j=0;j<size;j++){
+      spins[i][j] = newlat.spins[i][j];
+    }
+  }
+  temp = t;
+  for(int i=0;i<5;i++)
+    averages[i] = newlat.averages[i];
+  CV = newlat.CV;
+  chi = newlat.chi;
+}
+
+void lattice::set_MC(int MC){
+  /*
+    Reset the number of MC cycles to use in the calculation
+  */
+
+  lattice newlat = lattice(size,temp,MC);
+
+  for(int i=0;i<size;i++){
+    for(int j=0;j<size;j++){
+      spins[i][j] = newlat.spins[i][j];
+    }
+  }
+  MCcycles = MC;
+  for(int i=0;i<5;i++)
+    averages[i] = newlat.averages[i];
+  CV = newlat.CV;
+  chi = newlat.chi;
 }
