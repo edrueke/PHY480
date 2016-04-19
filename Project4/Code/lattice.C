@@ -158,7 +158,7 @@ lattice::~lattice(){
 
   }*/
 
-lattice::lattice(int sz, double t, int MC, int opt=0){
+lattice::lattice(int sz, double t, int MC, int opt){
   /*
     Construct a lattice from the temp t and size sz and number of MC cycles MC
   */

@@ -41,6 +41,7 @@ void plots_random(int size,double temp){
     g_acc->SetPoint(point,i,lat.get_accepted());
     point++;
   }
+
   for(int i=10;i<50;i+=5){
     lattice lat = lattice(size,temp,i);
     g_meanE->SetPoint(point,i,lat.get_E());
@@ -50,6 +51,7 @@ void plots_random(int size,double temp){
     g_acc->SetPoint(point,i,lat.get_accepted());
     point++;
   }
+
   for(int i=50;i<1000;i+=10){
     lattice lat = lattice(size,temp,i);
     g_meanE->SetPoint(point,i,lat.get_E());
@@ -122,6 +124,7 @@ void plots_steady(int size,double temp){
     g_acc->SetPoint(point,i,lat.get_accepted());
     point++;
   }
+
   for(int i=10;i<50;i+=5){
     lattice lat = lattice(size,temp,i,1);
     g_meanE->SetPoint(point,i,lat.get_E());
@@ -131,6 +134,7 @@ void plots_steady(int size,double temp){
     g_acc->SetPoint(point,i,lat.get_accepted());
     point++;
   }
+
   for(int i=50;i<1000;i+=10){
     lattice lat = lattice(size,temp,i,1);
     g_meanE->SetPoint(point,i,lat.get_E());
@@ -179,6 +183,59 @@ void plots_steady(int size,double temp){
   can->Close();
 
 }
+
+void parte(int latsize){
+  /*
+    Plot the various stat mech quantities for some lattice size against 
+    temperature.
+  */
+
+  TGraph *g_expE = new TGraph();
+  TGraph *g_expAbsM = new TGraph();
+  TGraph *g_CV = new TGraph();
+  TGraph *g_chi = new TGraph();
+
+  int ct = 0;
+  for(double temp=2.0;temp<=2.4;temp+=0.05){
+    lattice lat = lattice(latsize,temp,100);
+    g_expE->SetPoint(ct,temp,lat.get_E());
+    g_expAbsM->SetPoint(ct,temp,lat.get_absM());
+    g_CV->SetPoint(ct,temp,lat.get_CV());
+    g_chi->SetPoint(ct,temp,lat.get_susc());
+    ct++;
+  }
+
+  TMultiGraph *m_expE = new TMultiGraph("m_expE","<E>");
+  m_expE->SetTitle(("<E> for L="+to_string(latsize)+";Temperature ();<E>").c_str());
+  m_expE->Add(g_expE);
+  TMultiGraph *m_expAbsM = new TMultiGraph("m_expAbsM","<|M|>");
+  m_expAbsM->SetTitle(("<|M|> for L="+to_string(latsize)+";Temperature ();<|M|>").c_str());
+  m_expAbsM->Add(g_expAbsM);
+  TMultiGraph *m_CV = new TMultiGraph("m_CV","C_V");
+  m_CV->SetTitle(("C_{V} for L="+to_string(latsize)+";Temperature ();C_{V}").c_str());
+  m_CV->Add(g_CV);
+  TMultiGraph *m_chi = new TMultiGraph("m_chi","#Chi");
+  m_chi->SetTitle(("#Chi for L="+to_string(latsize)+";Temperature ();#Chi").c_str());
+  m_chi->Add(g_chi);
+
+  TCanvas *can = new TCanvas("can","can",800,720);
+  can->SetBorderMode(0);
+  can->cd();
+  m_expE->Draw("AC*");
+  can->SaveAs(("plots/expE_latsize"+to_string(latsize)+".png").c_str());
+  can->SaveAs(("plots/expE_latsize"+to_string(latsize)+".pdf").c_str());
+  m_expAbsM->Draw("AC*");
+  can->SaveAs(("plots/expAbsM_latsize"+to_string(latsize)+".png").c_str());
+  can->SaveAs(("plots/expAbsM_latsize"+to_string(latsize)+".pdf").c_str());
+  m_CV->Draw("AC*");
+  can->SaveAs(("plots/CV_latsize"+to_string(latsize)+".png").c_str());
+  can->SaveAs(("plots/CV_latsize"+to_string(latsize)+".pdf").c_str());
+  m_chi->Draw("AC*");
+  can->SaveAs(("plots/susceptibility_latsize"+to_string(latsize)+".png").c_str());
+  can->SaveAs(("plots/susceptibility_latsize"+to_string(latsize)+".pdf").c_str());
+  can->Close();
+
+}
   
 void project4(){
   /*
@@ -193,5 +250,10 @@ void project4(){
   plots_random(20,1.0);
   plots_random(20,2.4);
 
+  //Look at the dependence of various stat mech quantities on temperature
+  parte(20);
+  parte(40);
+  parte(60);
+  parte(80);
 }
 
