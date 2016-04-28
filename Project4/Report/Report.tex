@@ -26,11 +26,133 @@ Modeling lattice-type structures under the effects of magnetization has been ach
 \section{Introduction}
 \label{sec:intro}
 
-To say that magnetism is an important physical phenomenon is a strong understatement.  Magnetism plays a strong role in day to day life on earth.  The earth's magnetic field is perhaps the most stunning example of this.  Caused by the electric fields resulting from the magma under the earth's crust \textbf{http://hyperphysics.phy-astr.gsu.edu/hbase/magnetic/magearth.html}, the earth's magnetic field has been used by explorers for centuries to navigate both on land and sea.  Today, magnets are used in some of the greatest experiments of our time, such as the Large Hadron Collider (LHC), which uses magnets both as a means of accelerating particles to high energies and to bend charged particles in detectors in an attempt to classify them.
-\par In general, there are three kinds of magnetism: diamagnetism, paramagnetism, and ferromagnetism \textbf{http://web.hep.uiuc.edu/home/serrede/P435/Lecture\_Notes/Magnetism.pdf}, which is the subject of this paper.  The types of magnetism are distinguished by the behavior of the spins of atoms within the material being magnetized.  In ferromagnetic material, \textbf{What happens?} \textbf{cite Griffiths}.  The simplest theoretical model we have to describe ferromagnetism is the Ising model, described in Section\ref{sec:theory}.  
-\par In this paper, we will discuss the Ising model and its importance, and then go into \textbf{need info and citations}.
+To say that magnetism is an important physical phenomenon is a strong understatement.  Magnetism plays a strong role in day to day life on earth.  The earth's magnetic field is perhaps the most stunning example of this.  Caused by the electric fields resulting from the magma under the earth's crust \textbf{http://hyperphysics.phy-astr.gsu.edu/hbase/magnetic/magearth.html}, the earth's magnetic field has been used by explorers for centuries to navigate both on land and sea.  Today, we are still using magnetization to explore the world around us, although in slightly different ways.  For example, magnets are used in some of the largest physics experiments in the world, such as the Large Hadron Collider (LHC), which uses them both as a means of accelerating particles to high energies and as a means of bending charged particles in detectors in an attempt to classify them and thus answer some of the fundamental questions about the universe in which we live.
+\par In general, there are three kinds of magnetism: diamagnetism, paramagnetism, and ferromagnetism \textbf{http://web.hep.uiuc.edu/home/serrede/P435/Lecture\_Notes/Magnetism.pdf}, which is the subject of this paper.  The types of magnetism are distinguished by the behavior of the spins of atoms within the material being magnetized.  In paramagnets, the spins align parallel to the magnetic field whereas in diamagnets the spins align opposite to the field.  In ferromagnetic material, however, we have the special situation where the material retains its magnetized state even after the polarizing field has been removed.  In this way, ferromagnets may represent a magnetic history of the fields it has encountered. \textbf{cite Griffiths}.  The simplest theoretical model we have to describe ferromagnetism is the Ising model, described in Section~\ref{sec:theory}.  
+\par In this paper, we will discuss the Ising model and its importance, and then go into \textbf{need info and references}.
 
 \section{Theory}
 \label{sec:theory}
+
+As mentioned in Section~\ref{sec:intro}, the Ising model is one of the simplest models we have to describe ferromagnetic material.  It does this by expressing the energy in a simple form,
+\begin{equation}
+\label{eq:isingenergyfull}
+E = -J\sum_{\left<kl\right>}^{N}s_{k}s_{l}-B\sum_{k}^{N}s_{k},
+\end{equation}
+where $s_{k}=\pm1$ is the spin of the $k^{\text{th}}$ lattice point, $J$ is a coupling constant expressing the strength of the interaction between the neighboring spins, $B$ is the externam magnetic field the material is in, and the first sum is taken over nearest neighbors (ie. lattice points directly above, below, to the left, or to the right of each other, assuming periodic boundary conditions).  Because we are working with ferromagnetic materials, which can retain magnetization in the absence of magnetic fields, we can take $B=0$, and so~\eqref{eq:isingenergyfull} becomes
+\begin{equation}
+\label{eq:isingenergy}
+E = -J\sum_{\left<kl\right>}^{N}s_{k}s_{l}.
+\end{equation}
+\par While~\eqref{eq:isingenergy}~\textbf{cite lecture notes} forms the bulk of the math behind what we will discuss here, it is not the only interesting statistical mechanical quantity we will be interested in.  Thus, before we go too far into things, it may behoove us to discuss briefly concepts such as probabilitiy distributions and specific heat.  Statistical mechanics is a science concerned primarily with the expected behavior exhibited by large groups of interacting objects (spins).  As such, it relies heavily on probability because it quickly becomes unfeasible and, in most cases, impossible, to determine exactly how each individual spin is behaving.  Thus, we are often interested in the expected values of various physical quantities.  In particular, the expected value of some physical quantity $X$ is given by 
+\begin{equation}
+\label{eq:expvaldef}
+\left<X\right>=\sum_{i=1}^{N}X_{i}P_{i},
+\end{equation}
+where the sum is over all possible states, $X_{i}$ is the value of $X$ in state $i$, and $P_{i}$ is a probability distribution function.  The probability distribution function typically used in statistical mechanics is the Boltzmann distribution, 
+\begin{equation}
+\label{eq:boltzmann}
+P_{i} = \frac{e^{-\frac{E_{i}}{k_{B}T}}}{Z},
+\end{equation}
+where $E_{i}$ is the energy of state $i$, $k_{B}$ is the Boltzmann constant, $T$ is the temperature, and $Z$ is the partition function, given by
+\begin{equation}
+\label{eq:partition}
+Z=\sum_{i=1}^{N}e^{-\frac{E_{i}}{k_{B}T}}.
+\end{equation}
+\par As an example, we might consider a $2\times2$ ferromagnetic lattice.  In order to find any important statistical mechanical quantities, it will be important to determine the partition function.  We note that there are $2^{4}=16$ possible states of this system, as any lattice point can be spin up or spin down.  Already this is quite a few states to look at explicitly individually, but for the purposes of illustration we do so in Fig~\textbf{need figure - drawn}.  We see that there are two states with energy $+8J$ and two with energy $-8J$, and 12 with energy $0$.  This yields a partition function of
+\begin{equation}
+\label{eq:partition2x2}
+Z=2e^{-\frac{8J}{k_{B}T}}+2e^{\frac{8J}{k_{B}T}}+12.
+\end{equation}
+Using~\eqref{eq:expvaldef}, we see also that
+\begin{equation}
+\label{eq:expe2x2}
+\left<E\right> = \frac{1}{Z}\left(16Je^{-\frac{8J}{k_{B}T}}-16Je^{\frac{8J}{k_{B}T}}\right).
+\end{equation}
+\par We are not only interested in the energy, however.  We also want to investigate the magnetization, which is given by
+\begin{equation}
+\label{eq:mag}
+M_{i}=\sum_{i=1}^{N}s_{i}.
+\end{equation}
+With this simple equation, we can see that the magnetizations for each possible state in the $2\times2$ system are also given in Fig.~\textbf{same figure as above} and that
+\begin{equation}
+\label{eq:expm2x2}
+\left<M\right>=\frac{1}{Z}\left(4e^{-\frac{8J}{k_{B}T}}-4e^{\frac{8J}{k_{B}T}}\right),
+\end{equation}
+or, also enlighteningly,
+\begin{equation}
+\label{eq:expabsm2x2}
+\left<\left|M\right|\right> = \frac{1}{Z}\left(4e^{-\frac{8J}{k_{B}T}}+4e^{\frac{8J}{k_{B}T}}+16\right).
+\end{equation}
+\par The final two statistical quantities we will be interested in are the specific heat, given by
+\begin{equation}
+\label{eq:cvdef}
+C_{V} = \frac{1}{k_{B}T^{2}}\left(\left<E^{2}\right>-\left<E\right>^{2}\right)
+\end{equation}
+and the susceptibility, given by
+\begin{equation}
+\label{eq:chidef}
+\chi = \frac{1}{k_{B}T}\left(\left<M^{2}\right>-\left<M\right>^{2}\right).
+\end{equation}
+In our $2\times2$ case, we will have
+$$
+\left<E^{2}\right> = \frac{64J^{2}}{Z}\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)
+$$
+and
+$$
+\left<M^{2}\right> = \frac{1}{Z}\left(16\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)+32\right).
+$$
+Thus,
+\begin{equation}
+\label{eq:cv2x2}
+C_{V}=\frac{16J\left(4J-1\right)}{Zk_{B}T}\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)
+\end{equation}
+and
+\begin{equation}
+\label{eq:chi2x2}
+\chi = \frac{4}{Zk_{B}T}\left(3\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)+8\right).
+\end{equation}
+
+\section{The Algorithm}
+\label{sec:algorithm}
+
+\subsection{Benchmarks}
+\label{subsec:benchmarks}
+
+To ensure that our algorithm was working properly, we ran a test on the $2\times2$ case discussed in Section~\ref{sec:theory}.  From~\eqref{eq:partition2x2},~\eqref{eq:expe2x2},~\eqref{eq:expm2x2},~\eqref{eq:expabsm2x2},~\eqref{eq:cv2x2}, and~\eqref{eq:chi2x2}, we expect that, for a temperature of $T$ which allows $k_{B}T/J=1$ for coupling $J=1$, we will have the results listed in Table~\ref{tab:2x2exp}.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{c|c} \hline
+Statistical Quantity & $2\times2$ Accepted Value \\ \hline
+$Z$ & 5973.917 \\
+$\left<E\right> & -7.984 \\
+$\left<\left|M\right|\right> & 1.999 \\
+$\left<E^{2}\right> & 31.936 \\
+$\left<M^{2}\right> & 7.989 \\
+$C_{V}$ & 23.952 \\
+$\chi$ & 5.993
+\end{tabular}
+\caption{The accepted calculated values for the $2\times2$ lattice under the Ising model from the equations derived in Section~\ref{sec:theory}.}
+\label{tab:2x2exp}
+\end{center}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \end{document}
