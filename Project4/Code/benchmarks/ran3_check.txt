@@ -1,0 +1,17 @@
+
+Ran3
+
+Frequency
+serial
+poker
+gap
+
+Ran3: 
+
+Mean: 4.50161
+Sigm: 2.87307
+Freq chi: 5.92085
+Seri chi: 106.29
+Poke chi: 7.28835
+Gap  chi: 128.797
+

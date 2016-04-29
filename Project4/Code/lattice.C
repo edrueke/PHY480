@@ -14,6 +14,8 @@ This is the definition file for the lattice class.
 #include <stdio.h>
 #include <time.h>
 
+#include "randos.C"
+
 #include "lattice.h"
 
 using namespace std;
@@ -56,8 +58,8 @@ lattice::lattice(){
     averages[i]=averages[i]/MCcycles;
   }
 
-  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+  CV = (1.0/(1.0*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(1.0*temp))*(averages[3]-pow(averages[2],2));
 
 }
 
@@ -153,8 +155,8 @@ lattice::~lattice(){
   for(int i=0;i<5;i++)
     averages[i]=averages[i]/MCcycles;
 
-  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+  CV = (1.0/(1.0*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(1.0*temp))*(averages[3]-pow(averages[2],2));
 
   }*/
 
@@ -206,8 +208,8 @@ lattice::lattice(int sz, double t, int MC, int opt){
   for(int i=0;i<5;i++)
     averages[i]=averages[i]/MCcycles;
 
-  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+  CV = (1.0/(1.0*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(1.0*temp))*(averages[3]-pow(averages[2],2));
 
 }
 
@@ -219,6 +221,7 @@ void lattice::calc_stat_quants(){
 
   //Change the configuration of the spins by flipping one spin only.
   srand(time(NULL));
+  long int seed = 1000;
 
   //Initialize energy and magnetization
   double E=0; double M=0;
@@ -248,8 +251,9 @@ void lattice::calc_stat_quants(){
     //the new system
     bool go = true;
     if(deltaE>0){
-      double w = exp(-1.0*deltaE/(kB*temp));
-      int myrand = rand()%10; //HERE: What range? 
+      double w = exp(-1.0*deltaE/(1.0*temp));
+      //double myrand = (rand()%1000)/1000.0; //HERE: What range? 
+      double myrand = ran0(&seed);
       if(myrand>w){
 	spins[therow][thecol]*=-1;
 	deltaE=0;

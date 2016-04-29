@@ -61,12 +61,12 @@ Z=\sum_{i=1}^{N}e^{-\frac{E_{i}}{k_{B}T}}.
 \par As an example, we might consider a $2\times2$ ferromagnetic lattice.  In order to find any important statistical mechanical quantities, it will be important to determine the partition function.  We note that there are $2^{4}=16$ possible states of this system, as any lattice point can be spin up or spin down.  Already this is quite a few states to look at explicitly individually, but for the purposes of illustration we do so in Fig~\textbf{need figure - drawn}.  We see that there are two states with energy $+8J$ and two with energy $-8J$, and 12 with energy $0$.  This yields a partition function of
 \begin{equation}
 \label{eq:partition2x2}
-Z=2e^{-\frac{8J}{k_{B}T}}+2e^{\frac{8J}{k_{B}T}}+12.
+Z=2e^{-\frac{8J}{k_{B}T}}+2e^{\frac{8J}{k_{B}T}}+12 = 4\cosh{\frac{8J}{k_{B}T}}.
 \end{equation}
 Using~\eqref{eq:expvaldef}, we see also that
 \begin{equation}
 \label{eq:expe2x2}
-\left<E\right> = \frac{1}{Z}\left(16Je^{-\frac{8J}{k_{B}T}}-16Je^{\frac{8J}{k_{B}T}}\right).
+\left<E\right> = \frac{1}{Z}\left(16Je^{-\frac{8J}{k_{B}T}}-16Je^{\frac{8J}{k_{B}T}}\right) = -8J\tanh{\frac{8J}{k_{B}T}}.
 \end{equation}
 \par We are not only interested in the energy, however.  We also want to investigate the magnetization, which is given by
 \begin{equation}
@@ -76,12 +76,12 @@ M_{i}=\sum_{i=1}^{N}s_{i}.
 With this simple equation, we can see that the magnetizations for each possible state in the $2\times2$ system are also given in Fig.~\textbf{same figure as above} and that
 \begin{equation}
 \label{eq:expm2x2}
-\left<M\right>=\frac{1}{Z}\left(4e^{-\frac{8J}{k_{B}T}}-4e^{\frac{8J}{k_{B}T}}\right),
+\left<M\right>=0,
 \end{equation}
-or, also enlighteningly,
+or, perhaps more enlighteningly,
 \begin{equation}
 \label{eq:expabsm2x2}
-\left<\left|M\right|\right> = \frac{1}{Z}\left(4e^{-\frac{8J}{k_{B}T}}+4e^{\frac{8J}{k_{B}T}}+16\right).
+\left<\left|M\right|\right> = \frac{1}{Z}\left(8e^{\frac{8J}{k_{B}T}}+4\right).
 \end{equation}
 \par The final two statistical quantities we will be interested in are the specific heat, given by
 \begin{equation}
@@ -95,21 +95,21 @@ and the susceptibility, given by
 \end{equation}
 In our $2\times2$ case, we will have
 $$
-\left<E^{2}\right> = \frac{64J^{2}}{Z}\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)
+\left<E^{2}\right> = \frac{128J^{2}\cosh{\frac{8J}{k_{B}T}}}{Z}=32J^{2}
 $$
 and
 $$
-\left<M^{2}\right> = \frac{1}{Z}\left(16\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)+32\right).
+\left<M^{2}\right> = \frac{1}{Z}\left(32e^{\frac{8J}{k_{B}T}}+8\right).
 $$
 Thus,
 \begin{equation}
 \label{eq:cv2x2}
-C_{V}=\frac{16J\left(4J-1\right)}{Zk_{B}T}\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)
+C_{V}=\frac{1}{k_{B}T^{2}}\left(32J^{2}-\left(-8J\tanh{\frac{8J}{k_{B}T}}\right)^{2}\right)=\frac{32J^{2}}{k_{B}T^{2}}\left(1-2\tanh^{2}{\frac{8J}{k_{B}T}}\right)
 \end{equation}
 and
 \begin{equation}
 \label{eq:chi2x2}
-\chi = \frac{4}{Zk_{B}T}\left(3\left(e^{\frac{8J}{k_{B}T}}+e^{-\frac{8J}{k_{B}T}}\right)+8\right).
+\chi = \frac{32e^{\frac{8J}{k_{B}T}}+8}{Zk_{B}T}.
 \end{equation}
 
 \section{The Algorithm}
@@ -124,13 +124,13 @@ To ensure that our algorithm was working properly, we ran a test on the $2\times
 \begin{center}
 \begin{tabular}{c|c} \hline
 Statistical Quantity & $2\times2$ Accepted Value \\ \hline
-$Z$ & 5973.917 \\
-$\left<E\right> & -7.984 \\
-$\left<\left|M\right|\right> & 1.999 \\
-$\left<E^{2}\right> & 31.936 \\
-$\left<M^{2}\right> & 7.989 \\
-$C_{V}$ & 23.952 \\
-$\chi$ & 5.993
+$Z$ & 5961.917 \\
+$\left<E\right> & -8.000 \\
+$\left<\left|M\right|\right> & 4.000 \\
+$\left<E^{2}\right> & 32.000 \\
+$\left<M^{2}\right> & 16.001 \\
+$C_{V}$ & -32.000 \\
+$\chi$ & 16.001
 \end{tabular}
 \caption{The accepted calculated values for the $2\times2$ lattice under the Ising model from the equations derived in Section~\ref{sec:theory}.}
 \label{tab:2x2exp}

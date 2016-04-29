@@ -32,9 +32,12 @@ void serial(string s, int* pt){
     Returns a vector of the number of times each 2-digit pair appears in the sequence
   */
 
-  for(unsigned int i=0;i<s.size();i+=2){
+  for(unsigned int i=0;i<s.size();i++){
     stringstream temp;
-    temp<<s.at(i)<<s.at(i+1);
+    if(i==s.size()-1)
+      temp<<s.at(i)<<s.at(0);
+    else
+      temp<<s.at(i)<<s.at(i+1);
     string hold;
     temp >> hold;
     int n = atoi(hold.c_str());
@@ -48,10 +51,11 @@ void poker(string s, int *pt){
     Returns a vector of the number of times each poker hand occurs (5, 4, 3, 2, full, two pair, other)
   */
 
-  for(std::string::iterator it=s.begin(); it!=s.end(); it+=5){
+  for(int it=0;it<s.size();it++){
+    
     string hand;
     stringstream temp;
-    temp<<*it<<*(it+1)<<*(it+2)<<*(it+3)<<*(it+4);
+    temp<<s.at(it)<<s.at((it+1)%s.size())<<s.at((it+2)%s.size())<<s.at((it+3)%s.size())<<s.at((it+4)%s.size());
     temp>>hand;
     map<char,int> ct;
     vector<char> imports;
@@ -95,14 +99,9 @@ void gap(string s, int *pt){
   */
 
   int ct = -1;
-  for(std::string::iterator it=s.begin(); it!=s.end(); it++){
-    stringstream temp;
-    temp << *it;
-    string c;
-    temp >> c;
-    int n = atoi(c.c_str());
+  for(int it=0;it<s.size();it++){
     
-    if(n==0){
+    if(s.at(it)=='0'){
       if(ct==-1)
 	ct+=1;
       else if(ct < 16){
@@ -128,8 +127,9 @@ double chi2(int *obs, double *exp, int sz){
   double to_ret = 0;
 
   for(int i=0;i<sz;i++){
+    //cout<<"obs: "<<obs[i]<<"; exp: "<<exp[i]<<endl;
     if(obs[i]!=0)
-      to_ret+=1.0*pow(obs[i]-exp[i],2)/obs[i];
+      to_ret+=1.0*pow((obs[i]-exp[i]),2)/obs[i];
     else
       cout<<"ERROR: "<<i<<endl;
   }
@@ -184,6 +184,9 @@ void check_rando0(double len){
     Generates a sequence of digits using ran0 and runs various tests.
   */
 
+  ofstream myfile;
+  myfile.open("benchmarks/ran0_check.txt"); 
+
   long int seed = 1000;
   double ran = ran0(&seed);
   //cout<<ran<<endl;
@@ -192,32 +195,38 @@ void check_rando0(double len){
 
   while(s.size()<len){
     string temp = to_string(ran);
-    stringstream hold;
-    seed = 0;
-    for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
-      char n = *it;
-      hold<<n;
+    /*if(temp.at(0)=='0'){
+      stringstream hold;
+      for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
+	char n = *it;
+	hold<<n;
+      }
+      hold>>temp;
+      for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
+	stringstream temp1;
+	temp1 << *it;
+	string n;
+	temp1 >> n;
+      }
     }
-    hold>>temp;
-    for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
-      stringstream temp1;
-      temp1 << *it;
-      string n;
-      temp1 >> n;
-      seed+=atoi(n.c_str())*pow(10,temp.size()-1);
-    }
+    while(temp.size() < 6)
+      temp+="0";
     for(int i=0;i<temp.size();i++){
       if(s.size()==len)
 	continue;
       s+=temp.at(i);
-    }
+      }*/
+    if(temp.at(0)=='0')
+      s+=temp.at(2);
+    else
+      s+=temp.at(0);
     ran = ran0(&seed);
     //cout<<ran<<endl;
   }
 
   //Run frequency test
-  cout<<"Ran0"<<endl<<endl;
-  cout<<"Frequency"<<endl;
+  myfile<<endl<<"Ran0"<<endl<<endl;
+  myfile<<"Frequency"<<endl;
   int *frequency_test;
   frequency_test = new int[10];
   for(int i=0;i<10;i++)
@@ -233,7 +242,7 @@ void check_rando0(double len){
   double chi_frequency = chi2(frequency_test,frequency_exp,10);
 
   //Run serial test
-  cout<<"serial"<<endl;
+  myfile<<"serial"<<endl;
   int *serial_test;
   serial_test = new int[100];
   for(int i=0;i<100;i++)
@@ -249,7 +258,7 @@ void check_rando0(double len){
   double chi_serial = chi2(serial_test,serial_exp,100);
 
   //Run poker test
-  cout<<"poker"<<endl;
+  myfile<<"poker"<<endl;
   int *poker_test;
   poker_test = new int[7];
   for(int i=0;i<7;i++)
@@ -260,12 +269,12 @@ void check_rando0(double len){
   double *poker_exp;
   poker_exp = new double[7];
   poker_exp[0] = 0.0001*len; poker_exp[1] = 0.0045*len; poker_exp[2] = 0.072*len;
-  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108; poker_exp[6] = 0.3024;
+  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108*len; poker_exp[6] = 0.3024*len;
 
   double chi_poker = chi2(poker_test,poker_exp,7);
 
   //Run gap test
-  cout<<"gap"<<endl;
+  myfile<<"gap"<<endl;
   int *gap_test;
   gap_test = new int[19];
   for(int i=0;i<19;i++)
@@ -275,13 +284,11 @@ void check_rando0(double len){
 
   double *gap_exp;
   gap_exp = new double[19];
-  for(int i=0;i<16;i++)
-    gap_exp[i]=len*pow(9.0/10,i)*1.0/10;
-  gap_exp[16] = len*(1.0/10)*(pow(9.0/10,16)+pow(9.0/10,17)+pow(9.0/10,18)+pow(9.0/10,19)+pow(9.0/10,20));
-  gap_exp[17] = len*(1.0/10)*(pow(9.0/10,21)+pow(9.0/10,22)+pow(9.0/10,23)+pow(9.0/10,24)+pow(9.0/10,25));
-  gap_exp[18]=1;
-  for(int i=0;i<19;i++)
-    gap_exp[18]-=gap_exp[i];
+  gap_exp[0]=len*48.3/5000; gap_exp[1]=len*43.5/5000; gap_exp[2]=len*39.1/5000; gap_exp[3]=len*35.2/5000; 
+  gap_exp[4]=len*31.7/5000;gap_exp[5]=len*28.5/5000; gap_exp[6]=len*25.7/5000; gap_exp[7]=len*23.1/5000;
+  gap_exp[8]=len*20.8/5000; gap_exp[9]=len*18.7/5000; gap_exp[10]=len*16.8/5000; gap_exp[11]=len*15.2/5000;
+  gap_exp[12]=len*13.6/5000; gap_exp[13]=len*12.3/5000; gap_exp[14]=len*11.0/5000; gap_exp[15]=len*9.9/5000; 
+  gap_exp[16]=len*36.7/5000; gap_exp[17]=len*21.6/5000; gap_exp[18]=len*31.2/5000;
 
   double chi_gap = chi2(gap_test,gap_exp,19);
 
@@ -291,31 +298,25 @@ void check_rando0(double len){
   //Compute std dev
   double sigma = std_dev(s,mu);
 
-  cout<<"Ran0: "<<endl<<endl;//s<<endl<<endl;
-  cout<<"Mean: "<<mu<<endl;
-  cout<<"Sigm: "<<sigma<<endl;
-  cout<<"Freq chi: "<<chi_frequency<<endl;
-  cout<<"Seri chi: "<<chi_serial<<endl;
-  cout<<"Poke chi: "<<chi_poker<<endl;
-  cout<<"Gap  chi: "<<chi_gap<<endl<<endl;
+  myfile<<endl<<"Ran0: "<<endl<<endl;//s<<endl<<endl;
+  myfile<<"Mean: "<<mu<<endl;
+  myfile<<"Sigm: "<<sigma<<endl;
+  myfile<<"Freq chi: "<<chi_frequency<<endl;
+  myfile<<"Seri chi: "<<chi_serial<<endl;
+  myfile<<"Poke chi: "<<chi_poker<<endl;
+  myfile<<"Gap  chi: "<<chi_gap<<endl<<endl;
 
   delete [] frequency_test;
-  cout<<"1"<<endl;
   delete [] frequency_exp;
-  cout<<"2"<<endl;
   delete [] serial_test;
-  cout<<"3"<<endl;
   delete [] serial_exp;
-  cout<<"4"<<endl;
   delete [] poker_test;
-  cout<<"5"<<endl;
   delete [] poker_exp;
-  cout<<"6"<<endl;
   delete [] gap_test;
-  cout<<"7"<<endl;
   delete [] gap_exp;
 
-  cout<<"end"<<endl;
+  myfile.close();
+
 }
 
 void check_rando1(double len){
@@ -323,6 +324,8 @@ void check_rando1(double len){
     Generates a sequence of digits using ran1 and runs various tests.
   */
 
+  ofstream myfile;
+  myfile.open("benchmarks/ran1_check.txt"); 
   long int seed = 1000;
   double ran = ran1(&seed);
   //cout<<ran<<endl;
@@ -331,32 +334,39 @@ void check_rando1(double len){
 
   while(s.size()<len){
     string temp = to_string(ran);
-    stringstream hold;
-    seed = 0;
-    for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
-      char n = *it;
-      hold<<n;
+    /*if(temp.at(0)=='0'){
+      /* stringstream hold;
+      for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
+	char n = *it;
+	hold<<n;
+      }
+      hold>>temp;
+      for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
+	stringstream temp1;
+	temp1 << *it;
+	string n;
+	temp1 >> n;
+      }
     }
-    hold>>temp;
-    for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
-      stringstream temp1;
-      temp1 << *it;
-      string n;
-      temp1 >> n;
-      seed+=atoi(n.c_str())*pow(10,temp.size()-1);
-    }
+    while(temp.size()<6)
+      temp+="0";
     for(int i=0;i<temp.size();i++){
       if(s.size()==len)
 	continue;
       s+=temp.at(i);
-    }
+      }*/
+    if(temp.at(0)=='0')
+      s+=temp.at(2);
+    else
+      s+=temp.at(0);
+
     ran = ran1(&seed);
     //cout<<ran<<endl;
   }
 
   //Run frequency test
-  cout<<"Ran1"<<endl<<endl;
-  cout<<"Frequency"<<endl;
+  myfile<<endl<<"Ran1"<<endl<<endl;
+  myfile<<"Frequency"<<endl;
   int *frequency_test = new int[10];
   for(int i=0;i<10;i++)
     frequency_test[i]=0;
@@ -370,7 +380,7 @@ void check_rando1(double len){
   double chi_frequency = chi2(frequency_test,frequency_exp,10);
 
   //Run serial test
-  cout<<"serial"<<endl;
+  myfile<<"serial"<<endl;
   int *serial_test = new int[100];
   for(int i=0;i<100;i++)
     serial_test[i]=0;
@@ -384,7 +394,7 @@ void check_rando1(double len){
   double chi_serial = chi2(serial_test,serial_exp,100);
 
   //Run poker test
-  cout<<"poker"<<endl;
+  myfile<<"poker"<<endl;
   int *poker_test = new int[7];
   for(int i=0;i<7;i++)
     poker_test[i]=0;
@@ -393,12 +403,12 @@ void check_rando1(double len){
 
   double *poker_exp = new double[7];
   poker_exp[0] = 0.0001*len; poker_exp[1] = 0.0045*len; poker_exp[2] = 0.072*len;
-  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108; poker_exp[6] = 0.3024;
+  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108*len; poker_exp[6] = 0.3024*len;
 
   double chi_poker = chi2(poker_test,poker_exp,7);
 
   //Run gap test
-  cout<<"gap"<<endl;
+  myfile<<"gap"<<endl;
   int *gap_test = new int[19];
   for(int i=0;i<19;i++)
     gap_test[i]=0;
@@ -406,13 +416,11 @@ void check_rando1(double len){
   gap(s,gap_test);
 
   double *gap_exp = new double[19];
-  for(int i=0;i<16;i++)
-    gap_exp[i]=len*pow(9.0/10,i)*1.0/10;
-  gap_exp[16] = len*(1.0/10)*(pow(9.0/10,16)+pow(9.0/10,17)+pow(9.0/10,18)+pow(9.0/10,19)+pow(9.0/10,20));
-  gap_exp[17] = len*(1.0/10)*(pow(9.0/10,21)+pow(9.0/10,22)+pow(9.0/10,23)+pow(9.0/10,24)+pow(9.0/10,25));
-  gap_exp[18]=1;
-  for(int i=0;i<18;i++)
-    gap_exp[18]-=gap_exp[i];
+  gap_exp[0]=len*48.3/5000; gap_exp[1]=len*43.5/5000; gap_exp[2]=len*39.1/5000; gap_exp[3]=len*35.2/5000; 
+  gap_exp[4]=len*31.7/5000;gap_exp[5]=len*28.5/5000; gap_exp[6]=len*25.7/5000; gap_exp[7]=len*23.1/5000;
+  gap_exp[8]=len*20.8/5000; gap_exp[9]=len*18.7/5000; gap_exp[10]=len*16.8/5000; gap_exp[11]=len*15.2/5000;
+  gap_exp[12]=len*13.6/5000; gap_exp[13]=len*12.3/5000; gap_exp[14]=len*11.0/5000; gap_exp[15]=len*9.9/5000; 
+  gap_exp[16]=len*36.7/5000; gap_exp[17]=len*21.6/5000; gap_exp[18]=len*31.2/5000;
 
   double chi_gap = chi2(gap_test,gap_exp,19);
 
@@ -422,13 +430,13 @@ void check_rando1(double len){
   //Compute std dev
   double sigma = std_dev(s,mu);
 
-  cout<<"Ran1: "<<endl<<endl;//s<<endl<<endl;
-  cout<<"Mean: "<<mu<<endl;
-  cout<<"Sigm: "<<sigma<<endl;
-  cout<<"Freq chi: "<<chi_frequency<<endl;
-  cout<<"Seri chi: "<<chi_serial<<endl;
-  cout<<"Poke chi: "<<chi_poker<<endl;
-  cout<<"Gap  chi: "<<chi_gap<<endl<<endl;
+  myfile<<endl<<"Ran1: "<<endl<<endl;//s<<endl<<endl;
+  myfile<<"Mean: "<<mu<<endl;
+  myfile<<"Sigm: "<<sigma<<endl;
+  myfile<<"Freq chi: "<<chi_frequency<<endl;
+  myfile<<"Seri chi: "<<chi_serial<<endl;
+  myfile<<"Poke chi: "<<chi_poker<<endl;
+  myfile<<"Gap  chi: "<<chi_gap<<endl<<endl;
 
   delete [] frequency_test;
   delete [] frequency_exp;
@@ -438,6 +446,8 @@ void check_rando1(double len){
   delete [] poker_exp;
   delete [] gap_test;
   delete [] gap_exp;
+
+  myfile.close();
 }
 
 void check_rando2(double len){
@@ -445,6 +455,8 @@ void check_rando2(double len){
     Generates a sequence of digits using ran2 and runs various tests.
   */
 
+  ofstream myfile;
+  myfile.open("benchmarks/ran2_check.txt"); 
   long int seed = 1000;
   double ran = ran2(&seed);
   //cout<<ran<<endl;
@@ -453,32 +465,39 @@ void check_rando2(double len){
 
   while(s.size()<len){
     string temp = to_string(ran);
-    stringstream hold;
-    seed = 0;
-    for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
-      char n = *it;
-      hold<<n;
+    /*if(temp.at(0)=='0'){
+      stringstream hold;
+      for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
+	char n = *it;
+	hold<<n;
+      }
+      hold>>temp;
+      for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
+	stringstream temp1;
+	temp1 << *it;
+	string n;
+	temp1 >> n;
+      }
     }
-    hold>>temp;
-    for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
-      stringstream temp1;
-      temp1 << *it;
-      string n;
-      temp1 >> n;
-      seed+=atoi(n.c_str())*pow(10,temp.size()-1);
-    }
+    while(temp.size()<6)
+      temp+="0";
     for(int i=0;i<temp.size();i++){
       if(s.size()==len)
 	continue;
       s+=temp.at(i);
-    }
+      }*/
+    if(temp.at(0)=='0')
+      s+=temp.at(2);
+    else
+      s+=temp.at(0);
+
     ran = ran2(&seed);
     //cout<<ran<<endl;
   }
 
   //Run frequency test
-  cout<<"Ran2"<<endl<<endl;
-  cout<<"Frequency"<<endl;
+  myfile<<endl<<"Ran2"<<endl<<endl;
+  myfile<<"Frequency"<<endl;
   int *frequency_test = new int[10];
   for(int i=0;i<10;i++)
     frequency_test[i]=0;
@@ -492,7 +511,7 @@ void check_rando2(double len){
   double chi_frequency = chi2(frequency_test,frequency_exp,10);
 
   //Run serial test
-  cout<<"serial"<<endl;
+  myfile<<"serial"<<endl;
   int *serial_test = new int[100];
   for(int i=0;i<100;i++)
     serial_test[i]=0;
@@ -506,7 +525,7 @@ void check_rando2(double len){
   double chi_serial = chi2(serial_test,serial_exp,100);
 
   //Run poker test
-  cout<<"poker"<<endl;
+  myfile<<"poker"<<endl;
   int *poker_test = new int[7];
   for(int i=0;i<7;i++)
     poker_test[i]=0;
@@ -515,12 +534,12 @@ void check_rando2(double len){
 
   double *poker_exp = new double[7];
   poker_exp[0] = 0.0001*len; poker_exp[1] = 0.0045*len; poker_exp[2] = 0.072*len;
-  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108; poker_exp[6] = 0.3024;
+  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108*len; poker_exp[6] = 0.3024*len;
 
   double chi_poker = chi2(poker_test,poker_exp,7);
 
   //Run gap test
-  cout<<"gap"<<endl;
+  myfile<<"gap"<<endl;
   int *gap_test = new int[19];
   for(int i=0;i<19;i++)
     gap_test[i]=0;
@@ -528,13 +547,11 @@ void check_rando2(double len){
   gap(s,gap_test);
 
   double *gap_exp = new double[19];
-  for(int i=0;i<16;i++)
-    gap_exp[i]=len*pow(9.0/10,i)*1.0/10;
-  gap_exp[16] = len*(1.0/10)*(pow(9.0/10,16)+pow(9.0/10,17)+pow(9.0/10,18)+pow(9.0/10,19)+pow(9.0/10,20));
-  gap_exp[17] = len*(1.0/10)*(pow(9.0/10,21)+pow(9.0/10,22)+pow(9.0/10,23)+pow(9.0/10,24)+pow(9.0/10,25));
-  gap_exp[18]=1;
-  for(int i=0;i<18;i++)
-    gap_exp[18]-=gap_exp[i];
+  gap_exp[0]=len*48.3/5000; gap_exp[1]=len*43.5/5000; gap_exp[2]=len*39.1/5000; gap_exp[3]=len*35.2/5000; 
+  gap_exp[4]=len*31.7/5000;gap_exp[5]=len*28.5/5000; gap_exp[6]=len*25.7/5000; gap_exp[7]=len*23.1/5000;
+  gap_exp[8]=len*20.8/5000; gap_exp[9]=len*18.7/5000; gap_exp[10]=len*16.8/5000; gap_exp[11]=len*15.2/5000;
+  gap_exp[12]=len*13.6/5000; gap_exp[13]=len*12.3/5000; gap_exp[14]=len*11.0/5000; gap_exp[15]=len*9.9/5000; 
+  gap_exp[16]=len*36.7/5000; gap_exp[17]=len*21.6/5000; gap_exp[18]=len*31.2/5000;
 
   double chi_gap = chi2(gap_test,gap_exp,19);
 
@@ -544,13 +561,13 @@ void check_rando2(double len){
   //Compute std dev
   double sigma = std_dev(s,mu);
 
-  cout<<"Ran2: "<<endl<<endl;//s<<endl<<endl;
-  cout<<"Mean: "<<mu<<endl;
-  cout<<"Sigm: "<<sigma<<endl;
-  cout<<"Freq chi: "<<chi_frequency<<endl;
-  cout<<"Seri chi: "<<chi_serial<<endl;
-  cout<<"Poke chi: "<<chi_poker<<endl;
-  cout<<"Gap  chi: "<<chi_gap<<endl<<endl;
+  myfile<<endl<<"Ran2: "<<endl<<endl;//s<<endl<<endl;
+  myfile<<"Mean: "<<mu<<endl;
+  myfile<<"Sigm: "<<sigma<<endl;
+  myfile<<"Freq chi: "<<chi_frequency<<endl;
+  myfile<<"Seri chi: "<<chi_serial<<endl;
+  myfile<<"Poke chi: "<<chi_poker<<endl;
+  myfile<<"Gap  chi: "<<chi_gap<<endl<<endl;
 
   delete [] frequency_test;
   delete [] frequency_exp;
@@ -560,6 +577,8 @@ void check_rando2(double len){
   delete [] poker_exp;
   delete [] gap_test;
   delete [] gap_exp;
+
+  myfile.close();
 }
 
 void check_rando3(double len){
@@ -567,6 +586,8 @@ void check_rando3(double len){
     Generates a sequence of digits using ran3 and runs various tests.
   */
 
+  ofstream myfile;
+  myfile.open("benchmarks/ran3_check.txt"); 
   long int seed = 1000;
   double ran = ran3(&seed);
   //cout<<ran<<endl;
@@ -575,32 +596,39 @@ void check_rando3(double len){
 
   while(s.size()<len){
     string temp = to_string(ran);
-    stringstream hold;
-    seed = 0;
-    for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
-      char n = *it;
-      hold<<n;
+    /*if(temp.at(0)=='0'){
+      stringstream hold;
+      for(std::string::iterator it=temp.begin()+2; it!=temp.end(); it++){
+	char n = *it;
+	hold<<n;
+      }
+      hold>>temp;
+      for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
+	stringstream temp1;
+	temp1 << *it;
+	string n;
+	temp1 >> n;
+      }
     }
-    hold>>temp;
-    for(std::string::iterator it=temp.begin(); it!=temp.end(); it++){
-      stringstream temp1;
-      temp1 << *it;
-      string n;
-      temp1 >> n;
-      seed+=atoi(n.c_str())*pow(10,temp.size()-1);
-    }
+    while(temp.size()<6)
+      temp+="0";
     for(int i=0;i<temp.size();i++){
       if(s.size()==len)
 	continue;
       s+=temp.at(i);
-    }
+      }*/
+    if(temp.at(0)=='0')
+      s+=temp.at(2);
+    else
+      s+=temp.at(0);
+
     ran = ran3(&seed);
     //cout<<ran<<endl;
   }
 
   //Run frequency test
-  cout<<"Ran3"<<endl<<endl;
-  cout<<"Frequency"<<endl;
+  myfile<<endl<<"Ran3"<<endl<<endl;
+  myfile<<"Frequency"<<endl;
   int *frequency_test = new int[10];
   for(int i=0;i<10;i++)
     frequency_test[i]=0;
@@ -614,7 +642,7 @@ void check_rando3(double len){
   double chi_frequency = chi2(frequency_test,frequency_exp,10);
 
   //Run serial test
-  cout<<"serial"<<endl;
+  myfile<<"serial"<<endl;
   int *serial_test = new int[100];
   for(int i=0;i<100;i++)
     serial_test[i]=0;
@@ -628,7 +656,7 @@ void check_rando3(double len){
   double chi_serial = chi2(serial_test,serial_exp,100);
 
   //Run poker test
-  cout<<"poker"<<endl;
+  myfile<<"poker"<<endl;
   int *poker_test = new int[7];
   for(int i=0;i<7;i++)
     poker_test[i]=0;
@@ -637,12 +665,12 @@ void check_rando3(double len){
 
   double *poker_exp = new double[7];
   poker_exp[0] = 0.0001*len; poker_exp[1] = 0.0045*len; poker_exp[2] = 0.072*len;
-  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108; poker_exp[6] = 0.3024;
+  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108*len; poker_exp[6] = 0.3024*len;
 
   double chi_poker = chi2(poker_test,poker_exp,7);
 
   //Run gap test
-  cout<<"gap"<<endl;
+  myfile<<"gap"<<endl;
   int *gap_test = new int[19];
   for(int i=0;i<19;i++)
     gap_test[i]=0;
@@ -650,13 +678,11 @@ void check_rando3(double len){
   gap(s,gap_test);
 
   double *gap_exp = new double[19];
-  for(int i=0;i<16;i++)
-    gap_exp[i]=len*pow(9.0/10,i)*1.0/10;
-  gap_exp[16] = len*(1.0/10)*(pow(9.0/10,16)+pow(9.0/10,17)+pow(9.0/10,18)+pow(9.0/10,19)+pow(9.0/10,20));
-  gap_exp[17] = len*(1.0/10)*(pow(9.0/10,21)+pow(9.0/10,22)+pow(9.0/10,23)+pow(9.0/10,24)+pow(9.0/10,25));
-  gap_exp[18]=1;
-  for(int i=0;i<18;i++)
-    gap_exp[18]-=gap_exp[i];
+  gap_exp[0]=len*48.3/5000; gap_exp[1]=len*43.5/5000; gap_exp[2]=len*39.1/5000; gap_exp[3]=len*35.2/5000; 
+  gap_exp[4]=len*31.7/5000;gap_exp[5]=len*28.5/5000; gap_exp[6]=len*25.7/5000; gap_exp[7]=len*23.1/5000;
+  gap_exp[8]=len*20.8/5000; gap_exp[9]=len*18.7/5000; gap_exp[10]=len*16.8/5000; gap_exp[11]=len*15.2/5000;
+  gap_exp[12]=len*13.6/5000; gap_exp[13]=len*12.3/5000; gap_exp[14]=len*11.0/5000; gap_exp[15]=len*9.9/5000; 
+  gap_exp[16]=len*36.7/5000; gap_exp[17]=len*21.6/5000; gap_exp[18]=len*31.2/5000;
 
   double chi_gap = chi2(gap_test,gap_exp,19);
 
@@ -666,13 +692,13 @@ void check_rando3(double len){
   //Compute std dev
   double sigma = std_dev(s,mu);
 
-  cout<<"Ran3: "<<endl<<endl;//s<<endl<<endl;
-  cout<<"Mean: "<<mu<<endl;
-  cout<<"Sigm: "<<sigma<<endl;
-  cout<<"Freq chi: "<<chi_frequency<<endl;
-  cout<<"Seri chi: "<<chi_serial<<endl;
-  cout<<"Poke chi: "<<chi_poker<<endl;
-  cout<<"Gap  chi: "<<chi_gap<<endl<<endl;
+  myfile<<endl<<"Ran3: "<<endl<<endl;//s<<endl<<endl;
+  myfile<<"Mean: "<<mu<<endl;
+  myfile<<"Sigm: "<<sigma<<endl;
+  myfile<<"Freq chi: "<<chi_frequency<<endl;
+  myfile<<"Seri chi: "<<chi_serial<<endl;
+  myfile<<"Poke chi: "<<chi_poker<<endl;
+  myfile<<"Gap  chi: "<<chi_gap<<endl<<endl;
 
   delete [] frequency_test;
   delete [] frequency_exp;
@@ -682,6 +708,8 @@ void check_rando3(double len){
   delete [] poker_exp;
   delete [] gap_test;
   delete [] gap_exp;
+
+  myfile.close();
 }
 
 void check_rando4(double len){
@@ -689,25 +717,28 @@ void check_rando4(double len){
     Generates a sequence of digits using ran4 (C++ random) and runs various tests.
   */
 
+  ofstream myfile;
+  myfile.open("benchmarks/ran4_check.txt"); 
   srand(14);
-  double ran = rand()%1000;
+  double ran = rand()%10;
 
   string s = to_string(ran);
 
   while(s.size()<len){
     string temp = to_string(ran);
-    for(int i=0;i<temp.size();i++){
+    s+=temp;
+    /*for(int i=0;i<temp.size();i++){
       if(s.size()==len)
 	continue;
       s+=temp.at(i);
-    }
-    ran = rand()%1000;
+      }*/
+    ran = rand()%10;
     //cout<<ran<<endl;
   }
 
   //Run frequency test
-  cout<<"Ran4"<<endl<<endl;
-  cout<<"Frequency"<<endl;
+  myfile<<endl<<"Ran4"<<endl<<endl;
+  myfile<<"Frequency"<<endl;
   int *frequency_test = new int[10];
   for(int i=0;i<10;i++)
     frequency_test[i]=0;
@@ -721,7 +752,7 @@ void check_rando4(double len){
   double chi_frequency = chi2(frequency_test,frequency_exp,10);
 
   //Run serial test
-  cout<<"serial"<<endl;
+  myfile<<"serial"<<endl;
   int *serial_test = new int[100];
   for(int i=0;i<100;i++)
     serial_test[i]=0;
@@ -735,7 +766,7 @@ void check_rando4(double len){
   double chi_serial = chi2(serial_test,serial_exp,100);
 
   //Run poker test
-  cout<<"poker"<<endl;
+  myfile<<"poker"<<endl;
   int *poker_test = new int[7];
   for(int i=0;i<7;i++)
     poker_test[i]=0;
@@ -744,12 +775,12 @@ void check_rando4(double len){
 
   double *poker_exp = new double[7];
   poker_exp[0] = 0.0001*len; poker_exp[1] = 0.0045*len; poker_exp[2] = 0.072*len;
-  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108; poker_exp[6] = 0.3024;
+  poker_exp[3] = 0.504*len; poker_exp[4] = 0.009*len; poker_exp[5] = 0.108*len; poker_exp[6] = 0.3024*len;
 
   double chi_poker = chi2(poker_test,poker_exp,7);
 
   //Run gap test
-  cout<<"gap"<<endl;
+  myfile<<"gap"<<endl;
   int *gap_test = new int[19];
   for(int i=0;i<19;i++)
     gap_test[i]=0;
@@ -757,13 +788,11 @@ void check_rando4(double len){
   gap(s,gap_test);
 
   double *gap_exp = new double[19];
-  for(int i=0;i<16;i++)
-    gap_exp[i]=len*pow(9.0/10,i)*1.0/10;
-  gap_exp[16] = len*(1.0/10)*(pow(9.0/10,16)+pow(9.0/10,17)+pow(9.0/10,18)+pow(9.0/10,19)+pow(9.0/10,20));
-  gap_exp[17] = len*(1.0/10)*(pow(9.0/10,21)+pow(9.0/10,22)+pow(9.0/10,23)+pow(9.0/10,24)+pow(9.0/10,25));
-  gap_exp[18]=1;
-  for(int i=0;i<18;i++)
-    gap_exp[18]-=gap_exp[i];
+  gap_exp[0]=len*48.3/5000; gap_exp[1]=len*43.5/5000; gap_exp[2]=len*39.1/5000; gap_exp[3]=len*35.2/5000; 
+  gap_exp[4]=len*31.7/5000;gap_exp[5]=len*28.5/5000; gap_exp[6]=len*25.7/5000; gap_exp[7]=len*23.1/5000;
+  gap_exp[8]=len*20.8/5000; gap_exp[9]=len*18.7/5000; gap_exp[10]=len*16.8/5000; gap_exp[11]=len*15.2/5000;
+  gap_exp[12]=len*13.6/5000; gap_exp[13]=len*12.3/5000; gap_exp[14]=len*11.0/5000; gap_exp[15]=len*9.9/5000; 
+  gap_exp[16]=len*36.7/5000; gap_exp[17]=len*21.6/5000; gap_exp[18]=len*31.2/5000;
 
   double chi_gap = chi2(gap_test,gap_exp,19);
 
@@ -773,13 +802,13 @@ void check_rando4(double len){
   //Compute std dev
   double sigma = std_dev(s,mu);
 
-  cout<<"Ran4: "<<endl<<endl;//s<<endl<<endl;
-  cout<<"Mean: "<<mu<<endl;
-  cout<<"Sigm: "<<sigma<<endl;
-  cout<<"Freq chi: "<<chi_frequency<<endl;
-  cout<<"Seri chi: "<<chi_serial<<endl;
-  cout<<"Poke chi: "<<chi_poker<<endl;
-  cout<<"Gap  chi: "<<chi_gap<<endl<<endl;
+  myfile<<endl<<"Ran4: "<<endl<<endl;//s<<endl<<endl;
+  myfile<<"Mean: "<<mu<<endl;
+  myfile<<"Sigm: "<<sigma<<endl;
+  myfile<<"Freq chi: "<<chi_frequency<<endl;
+  myfile<<"Seri chi: "<<chi_serial<<endl;
+  myfile<<"Poke chi: "<<chi_poker<<endl;
+  myfile<<"Gap  chi: "<<chi_gap<<endl<<endl;
 
   delete [] frequency_test;
   delete [] frequency_exp;
@@ -789,6 +818,8 @@ void check_rando4(double len){
   delete [] poker_exp;
   delete [] gap_test;
   delete [] gap_exp;
+
+  myfile.close();
 }
 
 void check_randos(){

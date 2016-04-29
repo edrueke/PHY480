@@ -1,7 +1,7 @@
 
 # DO NOT DELETE
 
-./project4_C.so: lattice.C lattice.h
+./project4_C.so: lattice.C randos.C randos.h lattice.h
 ./project4_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TGraph.h
 ./project4_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TNamed.h
 ./project4_C.so: /msu/opt/cern/rootSL6/v5.34.12_64/include/TObject.h

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  28 APR 2016 05:03
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  29 APR 2016 05:08
 entering extended mode
 **C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/Report.tex
 (C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/Report.tex
@@ -526,79 +526,79 @@ e/P435/Lecture[]Notes/Magnetism.pdf\OT1/cmr/m/n/12 ,
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
 l.128 $\left<E\right> &
-                        -7.984 \\
+                        -8.000 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
 l.128 $\left<E\right> &
-                        -7.984 \\
+                        -8.000 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
 l.128 $\left<E\right> &
-                        -7.984 \\
+                        -8.000 \\
 ? 
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
 l.129 $\left<\left|M\right|\right> &
-                                     1.999 \\
+                                     4.000 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
 l.129 $\left<\left|M\right|\right> &
-                                     1.999 \\
+                                     4.000 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
 l.129 $\left<\left|M\right|\right> &
-                                     1.999 \\
+                                     4.000 \\
 ? 
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
 l.130 $\left<E^{2}\right> &
-                            31.936 \\
+                            32.000 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
 l.130 $\left<E^{2}\right> &
-                            31.936 \\
+                            32.000 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
 l.130 $\left<E^{2}\right> &
-                            31.936 \\
+                            32.000 \\
 ? 
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
 l.131 $\left<M^{2}\right> &
-                            7.989 \\
+                            16.001 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
 l.131 $\left<M^{2}\right> &
-                            7.989 \\
+                            16.001 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
 l.131 $\left<M^{2}\right> &
-                            7.989 \\
+                            16.001 \\
 ? 
 [4] (C:\Users\Elizabeth\Documents\GitHub\PHY480\Project4\Report\Report.aux) ) 
 Here is how much of TeX's memory you used:
  4351 strings out of 494045
  58928 string characters out of 3148375
- 127883 words of memory out of 3000000
+ 126883 words of memory out of 3000000
  7586 multiletter control sequences out of 15000+200000
  14001 words of font info for 56 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
@@ -616,7 +616,7 @@ mr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb>
 m Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/Mi
 KTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9
 /fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on Report.pdf (4 pages, 158968 bytes).
+Output written on Report.pdf (4 pages, 160408 bytes).
 PDF statistics:
  67 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

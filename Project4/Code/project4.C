@@ -62,6 +62,16 @@ void plots_random(int size,double temp){
     point++;
   }
 
+  for(int i=1000;i<1000000;i+=1000){
+    lattice lat = lattice(size,temp,i);
+    g_meanE->SetPoint(point,i,lat.get_E());
+    g_meanAbsM->SetPoint(point,i,lat.get_absM());
+    g_CV->SetPoint(point,i,lat.get_CV());
+    g_chi->SetPoint(point,i,lat.get_susc());
+    g_acc->SetPoint(point,i,lat.get_accepted());
+    point++;
+  }
+
   TMultiGraph *m_meanE = new TMultiGraph("m_meanE","<E>");
   m_meanE->SetTitle("<E>;MC cycles;<E>");
   m_meanE->Add(g_meanE);
@@ -247,13 +257,13 @@ void project4(){
   plots_random(2,1.0); 
 
   //Look at lattice of size 20 (part c)
-  plots_random(20,1.0);
+  /*plots_random(20,1.0);
   plots_random(20,2.4);
 
   //Look at the dependence of various stat mech quantities on temperature
   parte(20);
   parte(40);
   parte(60);
-  parte(80);
+  parte(80);*/
 }
 
