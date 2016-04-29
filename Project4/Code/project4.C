@@ -91,19 +91,19 @@ void plots_random(int size,double temp){
   TCanvas *can = new TCanvas("can","can",800,720);
   can->SetBorderMode(0);
   can->cd();
-  m_meanE->Draw("AC*");
+  m_meanE->Draw("AC");
   can->SaveAs(("plots/plots_random_meanE_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
   can->SaveAs(("plots/plots_random_meanE_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_meanAbsM->Draw("AC*");
+  m_meanAbsM->Draw("AC");
   can->SaveAs(("plots/plots_random_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
   can->SaveAs(("plots/plots_random_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_CV->Draw("AC*");
+  m_CV->Draw("AC");
   can->SaveAs(("plots/plots_random_CV_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
   can->SaveAs(("plots/plots_random_CV_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_chi->Draw("AC*");
+  m_chi->Draw("AC");
   can->SaveAs(("plots/plots_random_chi_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
   can->SaveAs(("plots/plots_random_chi_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_acc->Draw("AC*");
+  m_acc->Draw("AC");
   can->SaveAs(("plots/plots_random_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
   can->SaveAs(("plots/plots_random_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
   

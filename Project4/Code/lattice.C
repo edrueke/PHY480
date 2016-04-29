@@ -49,7 +49,7 @@ lattice::lattice(){
       if(rando == 0)
 	spins[i][j] = -1;
       else
-	spins[i][j] = 0;
+	spins[i][j] = 1;
     }
   }
 
@@ -107,59 +107,6 @@ lattice::~lattice(){
 
 }
 
-//lattice::lattice(int sz, double t, int opt=0){
-  /*
-    Construct a lattice from the temp t and size sz
-  */
-
-/*  size = sz;
-  temp = t;
-  MCcycles = 5;
-  accepted = 0;
-
-  averages = new double[5];
-
-  for(int i=0;i<5;i++)
-    averages[i]=0;
-
-  spins = new double *[size];
-  
-  for(int i=0;i<size;i++){
-    spins[i] = new double[size];
-  }
-
-  //Initialize the lattice with random seeds
-  if(opt==0){
-    srand(time(NULL));
-    for(int i=0;i<size;i++){
-      for(int j=0;j<size;j++){
-	int rando = rand()%2;
-	if(rando == 0)
-	  spins[i][j] = -1;
-	else
-	  spins[i][j] = 0;
-      }
-    }
-  }
-
-  else{
-    for(int i=0;i<size;i++){
-      for(int j=0;j<size;j++){
-	spins[i][j]=opt;
-      }
-    }
-  }
-
-  (*this).calc_stat_quants();
-
-  for(int i=0;i<5;i++)
-    averages[i]=averages[i]/MCcycles;
-
-  CV = (1.0/(1.0*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-  chi = (1.0/(1.0*temp))*(averages[3]-pow(averages[2],2));
-
-  }*/
-
 lattice::lattice(int sz, double t, int MC, int opt){
   /*
     Construct a lattice from the temp t and size sz and number of MC cycles MC
@@ -190,7 +137,7 @@ lattice::lattice(int sz, double t, int MC, int opt){
 	if(rando == 0)
 	  spins[i][j] = -1;
 	else
-	  spins[i][j] = 0;
+	  spins[i][j] = 1;
       }
     }
   }
@@ -252,8 +199,8 @@ void lattice::calc_stat_quants(){
     bool go = true;
     if(deltaE>0){
       double w = exp(-1.0*deltaE/(1.0*temp));
-      //double myrand = (rand()%1000)/1000.0; //HERE: What range? 
-      double myrand = ran0(&seed);
+      double myrand = (rand()%1000)/1000.0; //HERE: What range? 
+      //double myrand = ran0(&seed);
       if(myrand>w){
 	spins[therow][thecol]*=-1;
 	deltaE=0;
