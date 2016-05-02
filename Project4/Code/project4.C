@@ -62,7 +62,7 @@ void plots_random(int size,double temp){
     point++;
   }
 
-  for(int i=1000;i<1000000;i+=1000){
+  for(int i=1000;i<3000000;i+=100000){
     lattice lat = lattice(size,temp,i);
     g_meanE->SetPoint(point,i,lat.get_E());
     g_meanAbsM->SetPoint(point,i,lat.get_absM());
@@ -71,6 +71,10 @@ void plots_random(int size,double temp){
     g_acc->SetPoint(point,i,lat.get_accepted());
     point++;
   }
+
+  lattice lat = lattice(size,temp,3000000);
+  string name = "plots/plots_random_pofE_size"+to_string(size)+"_temp"+to_string(temp*kB);
+  lat.plot_eprobs(name);
 
   TMultiGraph *m_meanE = new TMultiGraph("m_meanE","<E>");
   m_meanE->SetTitle("<E>;MC cycles;<E>");
@@ -91,21 +95,21 @@ void plots_random(int size,double temp){
   TCanvas *can = new TCanvas("can","can",800,720);
   can->SetBorderMode(0);
   can->cd();
-  m_meanE->Draw("AC");
-  can->SaveAs(("plots/plots_random_meanE_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_random_meanE_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_meanAbsM->Draw("AC");
-  can->SaveAs(("plots/plots_random_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_random_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_CV->Draw("AC");
-  can->SaveAs(("plots/plots_random_CV_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_random_CV_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_chi->Draw("AC");
-  can->SaveAs(("plots/plots_random_chi_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_random_chi_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_acc->Draw("AC");
-  can->SaveAs(("plots/plots_random_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_random_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
+  m_meanE->Draw("A*");
+  can->SaveAs(("plots/plots_random_meanE_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_random_meanE_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_meanAbsM->Draw("A*");
+  can->SaveAs(("plots/plots_random_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_random_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_CV->Draw("A*");
+  can->SaveAs(("plots/plots_random_CV_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_random_CV_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_chi->Draw("A*");
+  can->SaveAs(("plots/plots_random_chi_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_random_chi_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_acc->Draw("A*");
+  can->SaveAs(("plots/plots_random_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_random_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
   
   can->Close();
 
@@ -155,6 +159,20 @@ void plots_steady(int size,double temp){
     point++;
   }
 
+  for(int i=1000;i<3000000;i+=100000){
+    lattice lat = lattice(size,temp,i,1);
+    g_meanE->SetPoint(point,i,lat.get_E());
+    g_meanAbsM->SetPoint(point,i,lat.get_absM());
+    g_CV->SetPoint(point,i,lat.get_CV());
+    g_chi->SetPoint(point,i,lat.get_susc());
+    g_acc->SetPoint(point,i,lat.get_accepted());
+    point++;
+  }
+
+  lattice lat = lattice(size,temp,3000000,1);
+  string name = "plots/plots_steady_pofE_size"+to_string(size)+"_temp"+to_string(temp*kB);
+  lat.plot_eprobs(name);
+
   TMultiGraph *m_meanE = new TMultiGraph("m_meanE","<E>");
   m_meanE->SetTitle("<E>;MC cycles;<E>");
   m_meanE->Add(g_meanE);
@@ -174,21 +192,21 @@ void plots_steady(int size,double temp){
   TCanvas *can = new TCanvas("can","can",800,720);
   can->SetBorderMode(0);
   can->cd();
-  m_meanE->Draw("AC*");
-  can->SaveAs(("plots/plots_steady_meanE_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_steady_meanE_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_meanAbsM->Draw("AC*");
-  can->SaveAs(("plots/plots_steady_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_steady_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_CV->Draw("AC*");
-  can->SaveAs(("plots/plots_steady_CV_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_steady_CV_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_chi->Draw("AC*");
-  can->SaveAs(("plots/plots_steady_chi_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_steady_chi_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
-  m_acc->Draw("AC*");
-  can->SaveAs(("plots/plots_steady_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp)+".png").c_str());
-  can->SaveAs(("plots/plots_steady_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp)+".pdf").c_str());
+  m_meanE->Draw("A*");
+  can->SaveAs(("plots/plots_steady_meanE_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_steady_meanE_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_meanAbsM->Draw("A*");
+  can->SaveAs(("plots/plots_steady_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_steady_meanAbsM_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_CV->Draw("A*");
+  can->SaveAs(("plots/plots_steady_CV_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_steady_CV_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_chi->Draw("A*");
+  can->SaveAs(("plots/plots_steady_chi_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_steady_chi_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
+  m_acc->Draw("A*");
+  can->SaveAs(("plots/plots_steady_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp*kB)+".png").c_str());
+  can->SaveAs(("plots/plots_steady_acceptedMC_size"+to_string(size)+"_temp"+to_string(temp*kB)+".pdf").c_str());
   
   can->Close();
 
@@ -206,41 +224,41 @@ void parte(int latsize){
   TGraph *g_chi = new TGraph();
 
   int ct = 0;
-  for(double temp=2.0;temp<=2.4;temp+=0.05){
-    lattice lat = lattice(latsize,temp,100);
+  for(double temp=1.0;temp<=4.0;temp+=0.01){
+    lattice lat = lattice(latsize,temp/kB,3000000,1);
     g_expE->SetPoint(ct,temp,lat.get_E());
     g_expAbsM->SetPoint(ct,temp,lat.get_absM());
     g_CV->SetPoint(ct,temp,lat.get_CV());
-    g_chi->SetPoint(ct,temp,lat.get_susc());
+    g_chi->SetPoint(ct,temp,lat.get_susc_absm());
     ct++;
   }
 
   TMultiGraph *m_expE = new TMultiGraph("m_expE","<E>");
-  m_expE->SetTitle(("<E> for L="+to_string(latsize)+";Temperature ();<E>").c_str());
+  m_expE->SetTitle(("<E> for L="+to_string(latsize)+";Temperature (#frac{1}{k_{B}});<E>").c_str());
   m_expE->Add(g_expE);
   TMultiGraph *m_expAbsM = new TMultiGraph("m_expAbsM","<|M|>");
-  m_expAbsM->SetTitle(("<|M|> for L="+to_string(latsize)+";Temperature ();<|M|>").c_str());
+  m_expAbsM->SetTitle(("<|M|> for L="+to_string(latsize)+";Temperature (#frac{1}{k_{B}});<|M|>").c_str());
   m_expAbsM->Add(g_expAbsM);
   TMultiGraph *m_CV = new TMultiGraph("m_CV","C_V");
-  m_CV->SetTitle(("C_{V} for L="+to_string(latsize)+";Temperature ();C_{V}").c_str());
+  m_CV->SetTitle(("C_{V} for L="+to_string(latsize)+";Temperature (#frac{1}{k_{B}});C_{V}").c_str());
   m_CV->Add(g_CV);
   TMultiGraph *m_chi = new TMultiGraph("m_chi","#Chi");
-  m_chi->SetTitle(("#Chi for L="+to_string(latsize)+";Temperature ();#Chi").c_str());
+  m_chi->SetTitle(("#chi for L="+to_string(latsize)+";Temperature (#frac{1}{k_{B}});#Chi").c_str());
   m_chi->Add(g_chi);
 
   TCanvas *can = new TCanvas("can","can",800,720);
   can->SetBorderMode(0);
   can->cd();
-  m_expE->Draw("AC*");
+  m_expE->Draw("A*");
   can->SaveAs(("plots/expE_latsize"+to_string(latsize)+".png").c_str());
   can->SaveAs(("plots/expE_latsize"+to_string(latsize)+".pdf").c_str());
-  m_expAbsM->Draw("AC*");
+  m_expAbsM->Draw("A*");
   can->SaveAs(("plots/expAbsM_latsize"+to_string(latsize)+".png").c_str());
   can->SaveAs(("plots/expAbsM_latsize"+to_string(latsize)+".pdf").c_str());
-  m_CV->Draw("AC*");
+  m_CV->Draw("A*");
   can->SaveAs(("plots/CV_latsize"+to_string(latsize)+".png").c_str());
   can->SaveAs(("plots/CV_latsize"+to_string(latsize)+".pdf").c_str());
-  m_chi->Draw("AC*");
+  m_chi->Draw("A*");
   can->SaveAs(("plots/susceptibility_latsize"+to_string(latsize)+".png").c_str());
   can->SaveAs(("plots/susceptibility_latsize"+to_string(latsize)+".pdf").c_str());
   can->Close();
@@ -254,16 +272,19 @@ void project4(){
   */
 
   //Look at lattice of size 2 (part b)
-  plots_random(2,1.0); 
+  //plots_random(2,1/kB); 
 
   //Look at lattice of size 20 (part c)
-  /*plots_random(20,1.0);
-  plots_random(20,2.4);
+  //plots_random(20,1.0/kB); plots_steady(20,1.0/kB);
+  //plots_random(20,2.4/kB); plots_steady(20,2.4/kB);
 
   //Look at the dependence of various stat mech quantities on temperature
-  parte(20);
+  /*parte(20);
   parte(40);
   parte(60);
   parte(80);*/
+
+  //Compare different random number generators
+  plots_random(2,1/kB); 
 }
 

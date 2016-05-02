@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  29 APR 2016 13:00
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.23)  2 MAY 2016 19:10
 entering extended mode
 **C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/Report.tex
 (C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/Report.tex
@@ -425,32 +425,52 @@ File: listings.cfg 2015/06/04 1.6 listings configuration
 ))
 Package: listings 2015/06/04 1.6 (Carsten Heinz)
 
+("C:\Program Files\MiKTeX 2.9\tex\latex\subfigure\subfigure.sty"
+Package: subfigure 2002/07/30 v2.1.4 subfigure package
+\subfigtopskip=\skip47
+\subfigcapskip=\skip48
+\subfigcaptopadj=\dimen127
+\subfigbottomskip=\skip49
+\subfigcapmargin=\dimen128
+\subfiglabelskip=\skip50
+\c@subfigure=\count113
+\c@lofdepth=\count114
+\c@subtable=\count115
+\c@lotdepth=\count116
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+("C:\Program Files\MiKTeX 2.9\tex\latex\subfigure\subfigure.cfg")
+\subfig@top=\skip51
+\subfig@bottom=\skip52
+)
 (C:\Users\Elizabeth\Documents\GitHub\PHY480\Project4\Report\Report.aux)
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
 
 ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count113
-\scratchdimen=\dimen127
+\scratchcounter=\count117
+\scratchdimen=\dimen129
 \scratchbox=\box33
-\nofMPsegments=\count114
-\nofMParguments=\count115
+\nofMPsegments=\count118
+\nofMParguments=\count119
 \everyMPshowfont=\toks27
-\MPscratchCnt=\count116
-\MPscratchDim=\dimen128
-\MPnumerator=\count117
-\makeMPintoPDFobject=\count118
+\MPscratchCnt=\count120
+\MPscratchDim=\dimen130
+\MPnumerator=\count121
+\makeMPintoPDFobject=\count122
 \everyMPtoPDFconversion=\toks28
 )
 *geometry* driver: auto-detecting
@@ -487,138 +507,645 @@ LaTeX Font Info:    ... okay on input line 19.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c@lstlisting=\count119
-LaTeX Font Info:    Try loading font information for U+msa on input line 20.
+\c@lstlisting=\count123
+LaTeX Font Info:    Try loading font information for U+msa on input line 21.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 20.
+LaTeX Font Info:    Try loading font information for U+msb on input line 21.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+rsfs on input line 20.
+LaTeX Font Info:    Try loading font information for U+rsfs on input line 21.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\jknappen\ursfs.fd"
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
-Overfull \hbox (3.30032pt too wide) in paragraph at lines 23--24
+Overfull \hbox (3.30032pt too wide) in paragraph at lines 24--25
 []\OT1/cmr/m/n/10.95 Modeling lattice-type struc-tures un-der the ef-fects of m
 ag-ne-ti-za-tion has been achieved
  []
 
 
-Overfull \hbox (101.67949pt too wide) in paragraph at lines 29--30
+Overfull \hbox (101.67949pt too wide) in paragraph at lines 30--31
 \OT1/cmr/m/n/12 magma un-der the earth's crust \OT1/cmr/bx/n/12 http://hyperphy
 sics.phy-astr.gsu.edu/hbase/magnetic/magearth.html\OT1/cmr/m/n/12 ,
  []
 
-
-Overfull \hbox (44.81131pt too wide) in paragraph at lines 30--31
-\OT1/cmr/m/n/12 mag-netism \OT1/cmr/bx/n/12 http://web.hep.uiuc.edu/home/serred
-e/P435/Lecture[]Notes/Magnetism.pdf\OT1/cmr/m/n/12 ,
- []
-
 [1
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3]
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
+<spin_orientations.png, id=20, 595.023pt x 496.7358pt>
+File: spin_orientations.png Graphic file (type png)
+
+<use spin_orientations.png>
+Package pdftex.def Info: spin_orientations.png used on input line 67.
+(pdftex.def)             Requested size: 281.85587pt x 235.30011pt.
+ [3 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/spin_orientatio
+ns.png>]
+Overfull \hbox (2.22105pt too wide) detected at line 120
+\OML/cmm/m/it/12 C[] \OT1/cmr/m/n/12 = [] [] = [] []
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 132.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 132.
+ [4] [5]
+<deltaEs.png, id=34, 618.1494pt x 349.305pt>
+File: deltaEs.png Graphic file (type png)
+ <use deltaEs.png>
+Package pdftex.def Info: deltaEs.png used on input line 188.
+(pdftex.def)             Requested size: 281.85587pt x 159.27513pt.
+ [6 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/deltaEs.png>]
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
-l.128 $\left<E\right> &
-                        -8.000 \\
+l.233 $\left<E\right> &
+                         -7.984 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.128 $\left<E\right> &
-                        -8.000 \\
+l.233 $\left<E\right> &
+                         -7.984 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
-l.128 $\left<E\right> &
-                        -8.000 \\
+l.233 $\left<E\right> &
+                         -7.984 \\
 ? 
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
-l.129 $\left<\left|M\right|\right> &
-                                     4.000 \\
+l.234 $\left<\left|M\right|\right> &
+                                     3.993 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.129 $\left<\left|M\right|\right> &
-                                     4.000 \\
+l.234 $\left<\left|M\right|\right> &
+                                     3.993 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
-l.129 $\left<\left|M\right|\right> &
-                                     4.000 \\
+l.234 $\left<\left|M\right|\right> &
+                                     3.993 \\
 ? 
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
-l.130 $\left<E^{2}\right> &
-                            32.000 \\
+l.235 $\left<E^{2}\right> &
+                            63.871 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.130 $\left<E^{2}\right> &
-                            32.000 \\
+l.235 $\left<E^{2}\right> &
+                            63.871 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
-l.130 $\left<E^{2}\right> &
-                            32.000 \\
+l.235 $\left<E^{2}\right> &
+                            63.871 \\
 ? 
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
-l.131 $\left<M^{2}\right> &
-                            16.001 \\
+l.236 $\left<M^{2}\right> &
+                            15.969 \\
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.131 $\left<M^{2}\right> &
-                            16.001 \\
+l.236 $\left<M^{2}\right> &
+                            15.969 \\
 ? 
 ! Missing } inserted.
 <inserted text> 
                 }
-l.131 $\left<M^{2}\right> &
-                            16.001 \\
+l.236 $\left<M^{2}\right> &
+                            15.969 \\
 ? 
-[4] (C:\Users\Elizabeth\Documents\GitHub\PHY480\Project4\Report\Report.aux) ) 
+
+<benchmarks/plots/plots_random_meanE_size2_temp1.png, id=39, 798.985pt x 694.59
+5pt>
+File: benchmarks/plots/plots_random_meanE_size2_temp1.png Graphic file (type pn
+g)
+ <use benchmarks/plots/plots_random_meanE_size2_temp1.png>
+Package pdftex.def Info: benchmarks/plots/plots_random_meanE_size2_temp1.png us
+ed on input line 249.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<benchmarks/plots/plots_random_meanAbsM_size2_temp1.png, id=40, 798.985pt x 694
+.595pt>
+File: benchmarks/plots/plots_random_meanAbsM_size2_temp1.png Graphic file (type
+ png)
+ <use benchmarks/plots/plots_random_meanAbsM_size2_temp1.png>
+Package pdftex.def Info: benchmarks/plots/plots_random_meanAbsM_size2_temp1.png
+ used on input line 252.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<benchmarks/plots/plots_random_CV_size2_temp1.png, id=41, 798.985pt x 694.595pt
+>
+File: benchmarks/plots/plots_random_CV_size2_temp1.png Graphic file (type png)
+ <use benchmarks/plots/plots_random_CV_size2_temp1.png>
+Package pdftex.def Info: benchmarks/plots/plots_random_CV_size2_temp1.png used 
+on input line 255.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<benchmarks/plots/plots_random_chi_size2_temp1.png, id=42, 798.985pt x 694.595p
+t>
+File: benchmarks/plots/plots_random_chi_size2_temp1.png Graphic file (type png)
+
+ <use benchmarks/plots/plots_random_chi_size2_temp1.png>
+Package pdftex.def Info: benchmarks/plots/plots_random_chi_size2_temp1.png used
+ on input line 258.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+ [7] [8]
+
+LaTeX Warning: Citation `babington' on page 9 undefined on input line 287.
+
+[9 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/benchmarks/plots
+/plots_random_meanE_size2_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY48
+0/Project4/Report/benchmarks/plots/plots_random_meanAbsM_size2_temp1.png> <C:/U
+sers/Elizabeth/Documents/GitHub/PHY480/Project4/Report/benchmarks/plots/plots_r
+andom_CV_size2_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/
+Report/benchmarks/plots/plots_random_chi_size2_temp1.png>]
+! Undefined control sequence.
+l.324 ...$.~\textbf{recipes}  We found that \textt
+                                                  {ran0} behaves fairly well...
+
+? 
+[10]
+Overfull \hbox (12.52998pt too wide) in paragraph at lines 359--360
+[]\OT1/cmr/m/n/12 Claimed to be a "per-fect" ran-dom num-ber gen-er-a-tor (up t
+o float-ing point er-rors) by \OT1/cmr/bx/n/12 recipes\OT1/cmr/m/n/12 ,
+ []
+
+[11] [12]
+<plots/partcandd/plots_random_meanE_size20_temp1.png, id=66, 798.985pt x 694.59
+5pt>
+File: plots/partcandd/plots_random_meanE_size20_temp1.png Graphic file (type pn
+g)
+ <use plots/partcandd/plots_random_meanE_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_random_meanE_size20_temp1.png us
+ed on input line 427.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_random_meanAbsM_size20_temp1.png, id=67, 798.985pt x 694
+.595pt>
+File: plots/partcandd/plots_random_meanAbsM_size20_temp1.png Graphic file (type
+ png)
+ <use plots/partcandd/plots_random_meanAbsM_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_random_meanAbsM_size20_temp1.png
+ used on input line 430.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_random_CV_size20_temp1.png, id=68, 798.985pt x 694.595pt
+>
+File: plots/partcandd/plots_random_CV_size20_temp1.png Graphic file (type png)
+ <use plots/partcandd/plots_random_CV_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_random_CV_size20_temp1.png used 
+on input line 433.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_random_chi_size20_temp1.png, id=69, 798.985pt x 694.595p
+t>
+File: plots/partcandd/plots_random_chi_size20_temp1.png Graphic file (type png)
+
+ <use plots/partcandd/plots_random_chi_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_random_chi_size20_temp1.png used
+ on input line 436.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+<plots/partcandd/plots_steady_meanE_size20_temp1.png, id=70, 798.985pt x 694.59
+5pt>
+File: plots/partcandd/plots_steady_meanE_size20_temp1.png Graphic file (type pn
+g)
+ <use plots/partcandd/plots_steady_meanE_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_meanE_size20_temp1.png us
+ed on input line 448.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_meanAbsM_size20_temp1.png, id=71, 798.985pt x 694
+.595pt>
+File: plots/partcandd/plots_steady_meanAbsM_size20_temp1.png Graphic file (type
+ png)
+ <use plots/partcandd/plots_steady_meanAbsM_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_meanAbsM_size20_temp1.png
+ used on input line 451.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_CV_size20_temp1.png, id=72, 798.985pt x 694.595pt
+>
+File: plots/partcandd/plots_steady_CV_size20_temp1.png Graphic file (type png)
+ <use plots/partcandd/plots_steady_CV_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_CV_size20_temp1.png used 
+on input line 454.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_chi_size20_temp1.png, id=73, 798.985pt x 694.595p
+t>
+File: plots/partcandd/plots_steady_chi_size20_temp1.png Graphic file (type png)
+
+ <use plots/partcandd/plots_steady_chi_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_chi_size20_temp1.png used
+ on input line 457.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[13]
+<plots/partcandd/plots_random_meanE_size20_temp24.png, id=78, 798.985pt x 694.5
+95pt>
+File: plots/partcandd/plots_random_meanE_size20_temp24.png Graphic file (type p
+ng)
+ <use plots/partcandd/plots_random_meanE_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_random_meanE_size20_temp24.png u
+sed on input line 469.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_random_meanAbsM_size20_temp24.png, id=79, 798.985pt x 69
+4.595pt>
+File: plots/partcandd/plots_random_meanAbsM_size20_temp24.png Graphic file (typ
+e png)
+ <use plots/partcandd/plots_random_meanAbsM_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_random_meanAbsM_size20_temp24.pn
+g used on input line 472.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_random_CV_size20_temp24.png, id=80, 798.985pt x 694.595p
+t>
+File: plots/partcandd/plots_random_CV_size20_temp24.png Graphic file (type png)
+
+ <use plots/partcandd/plots_random_CV_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_random_CV_size20_temp24.png used
+ on input line 475.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_random_chi_size20_temp24.png, id=81, 798.985pt x 694.595
+pt>
+File: plots/partcandd/plots_random_chi_size20_temp24.png Graphic file (type png
+)
+ <use plots/partcandd/plots_random_chi_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_random_chi_size20_temp24.png use
+d on input line 478.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+<plots/partcandd/plots_steady_meanE_size20_temp24.png, id=82, 798.985pt x 694.5
+95pt>
+File: plots/partcandd/plots_steady_meanE_size20_temp24.png Graphic file (type p
+ng)
+ <use plots/partcandd/plots_steady_meanE_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_meanE_size20_temp24.png u
+sed on input line 490.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_meanAbsM_size20_temp24.png, id=83, 798.985pt x 69
+4.595pt>
+File: plots/partcandd/plots_steady_meanAbsM_size20_temp24.png Graphic file (typ
+e png)
+ <use plots/partcandd/plots_steady_meanAbsM_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_meanAbsM_size20_temp24.pn
+g used on input line 493.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_CV_size20_temp24.png, id=84, 798.985pt x 694.595p
+t>
+File: plots/partcandd/plots_steady_CV_size20_temp24.png Graphic file (type png)
+
+ <use plots/partcandd/plots_steady_CV_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_CV_size20_temp24.png used
+ on input line 496.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_chi_size20_temp24.png, id=85, 798.985pt x 694.595
+pt>
+File: plots/partcandd/plots_steady_chi_size20_temp24.png Graphic file (type png
+)
+ <use plots/partcandd/plots_steady_chi_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_chi_size20_temp24.png use
+d on input line 499.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+<plots/partcandd/plots_steady_pofE_size20_temp1.png, id=86, 798.985pt x 694.595
+pt>
+File: plots/partcandd/plots_steady_pofE_size20_temp1.png Graphic file (type png
+)
+ <use plots/partcandd/plots_steady_pofE_size20_temp1.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_pofE_size20_temp1.png use
+d on input line 511.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/partcandd/plots_steady_pofE_size20_temp24.png, id=87, 798.985pt x 694.59
+5pt>
+File: plots/partcandd/plots_steady_pofE_size20_temp24.png Graphic file (type pn
+g)
+ <use plots/partcandd/plots_steady_pofE_size20_temp24.png>
+Package pdftex.def Info: plots/partcandd/plots_steady_pofE_size20_temp24.png us
+ed on input line 514.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[14 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd
+/plots_random_meanE_size20_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY4
+80/Project4/Report/plots/partcandd/plots_random_meanAbsM_size20_temp1.png> <C:/
+Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd/plots_r
+andom_CV_size20_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4
+/Report/plots/partcandd/plots_random_chi_size20_temp1.png>] [15 <C:/Users/Eliza
+beth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd/plots_steady_meanE
+_size20_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/
+plots/partcandd/plots_steady_meanAbsM_size20_temp1.png> <C:/Users/Elizabeth/Doc
+uments/GitHub/PHY480/Project4/Report/plots/partcandd/plots_steady_CV_size20_tem
+p1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partc
+andd/plots_steady_chi_size20_temp1.png>]
+<plots/parte/expE_latsize20.png, id=94, 798.985pt x 694.595pt>
+File: plots/parte/expE_latsize20.png Graphic file (type png)
+
+<use plots/parte/expE_latsize20.png>
+Package pdftex.def Info: plots/parte/expE_latsize20.png used on input line 559.
+
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/expAbsM_latsize20.png, id=95, 798.985pt x 694.595pt>
+File: plots/parte/expAbsM_latsize20.png Graphic file (type png)
+
+<use plots/parte/expAbsM_latsize20.png>
+Package pdftex.def Info: plots/parte/expAbsM_latsize20.png used on input line 5
+62.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/CV_latsize20.png, id=96, 798.985pt x 694.595pt>
+File: plots/parte/CV_latsize20.png Graphic file (type png)
+
+<use plots/parte/CV_latsize20.png>
+Package pdftex.def Info: plots/parte/CV_latsize20.png used on input line 565.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/susceptibility_latsize20.png, id=97, 798.985pt x 694.595pt>
+File: plots/parte/susceptibility_latsize20.png Graphic file (type png)
+
+<use plots/parte/susceptibility_latsize20.png>
+Package pdftex.def Info: plots/parte/susceptibility_latsize20.png used on input
+ line 568.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<plots/parte/expE_latsize40.png, id=98, 798.985pt x 694.595pt>
+File: plots/parte/expE_latsize40.png Graphic file (type png)
+
+<use plots/parte/expE_latsize40.png>
+Package pdftex.def Info: plots/parte/expE_latsize40.png used on input line 580.
+
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/expAbsM_latsize40.png, id=99, 798.985pt x 694.595pt>
+File: plots/parte/expAbsM_latsize40.png Graphic file (type png)
+
+<use plots/parte/expAbsM_latsize40.png>
+Package pdftex.def Info: plots/parte/expAbsM_latsize40.png used on input line 5
+83.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/CV_latsize40.png, id=100, 798.985pt x 694.595pt>
+File: plots/parte/CV_latsize40.png Graphic file (type png)
+
+<use plots/parte/CV_latsize40.png>
+Package pdftex.def Info: plots/parte/CV_latsize40.png used on input line 586.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/susceptibility_latsize40.png, id=101, 798.985pt x 694.595pt>
+File: plots/parte/susceptibility_latsize40.png Graphic file (type png)
+
+<use plots/parte/susceptibility_latsize40.png>
+Package pdftex.def Info: plots/parte/susceptibility_latsize40.png used on input
+ line 589.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[16 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd
+/plots_random_meanE_size20_temp24.png> <C:/Users/Elizabeth/Documents/GitHub/PHY
+480/Project4/Report/plots/partcandd/plots_random_meanAbsM_size20_temp24.png> <C
+:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd/plots
+_random_CV_size20_temp24.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Proje
+ct4/Report/plots/partcandd/plots_random_chi_size20_temp24.png>] [17 <C:/Users/E
+lizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd/plots_steady_m
+eanE_size20_temp24.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Re
+port/plots/partcandd/plots_steady_meanAbsM_size20_temp24.png> <C:/Users/Elizabe
+th/Documents/GitHub/PHY480/Project4/Report/plots/partcandd/plots_steady_CV_size
+20_temp24.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plot
+s/partcandd/plots_steady_chi_size20_temp24.png>]
+<plots/parte/expE_latsize60.png, id=108, 798.985pt x 694.595pt>
+File: plots/parte/expE_latsize60.png Graphic file (type png)
+
+<use plots/parte/expE_latsize60.png>
+Package pdftex.def Info: plots/parte/expE_latsize60.png used on input line 628.
+
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/expAbsM_latsize60.png, id=109, 798.985pt x 694.595pt>
+File: plots/parte/expAbsM_latsize60.png Graphic file (type png)
+
+<use plots/parte/expAbsM_latsize60.png>
+Package pdftex.def Info: plots/parte/expAbsM_latsize60.png used on input line 6
+31.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/CV_latsize60.png, id=110, 798.985pt x 694.595pt>
+File: plots/parte/CV_latsize60.png Graphic file (type png)
+
+<use plots/parte/CV_latsize60.png>
+Package pdftex.def Info: plots/parte/CV_latsize60.png used on input line 634.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/susceptibility_latsize60.png, id=111, 798.985pt x 694.595pt>
+File: plots/parte/susceptibility_latsize60.png Graphic file (type png)
+
+<use plots/parte/susceptibility_latsize60.png>
+Package pdftex.def Info: plots/parte/susceptibility_latsize60.png used on input
+ line 637.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<plots/parte/expE_latsize80.png, id=112, 798.985pt x 694.595pt>
+File: plots/parte/expE_latsize80.png Graphic file (type png)
+
+<use plots/parte/expE_latsize80.png>
+Package pdftex.def Info: plots/parte/expE_latsize80.png used on input line 647.
+
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/expAbsM_latsize80.png, id=113, 798.985pt x 694.595pt>
+File: plots/parte/expAbsM_latsize80.png Graphic file (type png)
+
+<use plots/parte/expAbsM_latsize80.png>
+Package pdftex.def Info: plots/parte/expAbsM_latsize80.png used on input line 6
+50.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/CV_latsize80.png, id=114, 798.985pt x 694.595pt>
+File: plots/parte/CV_latsize80.png Graphic file (type png)
+
+<use plots/parte/CV_latsize80.png>
+Package pdftex.def Info: plots/parte/CV_latsize80.png used on input line 653.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<plots/parte/susceptibility_latsize80.png, id=115, 798.985pt x 694.595pt>
+File: plots/parte/susceptibility_latsize80.png Graphic file (type png)
+
+<use plots/parte/susceptibility_latsize80.png>
+Package pdftex.def Info: plots/parte/susceptibility_latsize80.png used on input
+ line 656.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<solveTC1.png, id=116, 304.88907pt x 255.20343pt>
+File: solveTC1.png Graphic file (type png)
+ <use solveTC1.png>
+Package pdftex.def Info: solveTC1.png used on input line 666.
+(pdftex.def)             Requested size: 281.85587pt x 235.93097pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[18 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/partcandd
+/plots_steady_pofE_size20_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY48
+0/Project4/Report/plots/partcandd/plots_steady_pofE_size20_temp24.png>]
+<benchmarks/ran0/plots_random_chi_size2_temp1.png, id=120, 798.985pt x 694.595p
+t>
+File: benchmarks/ran0/plots_random_chi_size2_temp1.png Graphic file (type png)
+ <use benchmarks/ran0/plots_random_chi_size2_temp1.png>
+Package pdftex.def Info: benchmarks/ran0/plots_random_chi_size2_temp1.png used 
+on input line 683.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<benchmarks/ran1/plots_random_chi_size2_temp1.png, id=121, 798.985pt x 694.595p
+t>
+File: benchmarks/ran1/plots_random_chi_size2_temp1.png Graphic file (type png)
+ <use benchmarks/ran1/plots_random_chi_size2_temp1.png>
+Package pdftex.def Info: benchmarks/ran1/plots_random_chi_size2_temp1.png used 
+on input line 686.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<benchmarks/ran2/plots_random_chi_size2_temp1.png, id=122, 798.985pt x 694.595p
+t>
+File: benchmarks/ran2/plots_random_chi_size2_temp1.png Graphic file (type png)
+ <use benchmarks/ran2/plots_random_chi_size2_temp1.png>
+Package pdftex.def Info: benchmarks/ran2/plots_random_chi_size2_temp1.png used 
+on input line 689.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+<benchmarks/ran3/plots_random_chi_size2_temp1.png, id=123, 798.985pt x 694.595p
+t>
+File: benchmarks/ran3/plots_random_chi_size2_temp1.png Graphic file (type png)
+ <use benchmarks/ran3/plots_random_chi_size2_temp1.png>
+Package pdftex.def Info: benchmarks/ran3/plots_random_chi_size2_temp1.png used 
+on input line 692.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+File: benchmarks/plots/plots_random_chi_size2_temp1.png Graphic file (type png)
+
+
+<use benchmarks/plots/plots_random_chi_size2_temp1.png>
+Package pdftex.def Info: benchmarks/plots/plots_random_chi_size2_temp1.png used
+ on input line 695.
+(pdftex.def)             Requested size: 140.92793pt x 122.50983pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[19 <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/parte/exp
+E_latsize20.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/pl
+ots/parte/expAbsM_latsize20.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Pr
+oject4/Report/plots/parte/CV_latsize20.png> <C:/Users/Elizabeth/Documents/GitHu
+b/PHY480/Project4/Report/plots/parte/susceptibility_latsize20.png>] [20 <C:/Use
+rs/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/parte/expE_latsize40
+.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/parte/e
+xpAbsM_latsize40.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Repo
+rt/plots/parte/CV_latsize40.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Pr
+oject4/Report/plots/parte/susceptibility_latsize40.png>] [21 <C:/Users/Elizabet
+h/Documents/GitHub/PHY480/Project4/Report/plots/parte/expE_latsize60.png> <C:/U
+sers/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/parte/expAbsM_lats
+ize60.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/pa
+rte/CV_latsize60.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Repo
+rt/plots/parte/susceptibility_latsize60.png>] [22 <C:/Users/Elizabeth/Documents
+/GitHub/PHY480/Project4/Report/plots/parte/expE_latsize80.png> <C:/Users/Elizab
+eth/Documents/GitHub/PHY480/Project4/Report/plots/parte/expAbsM_latsize80.png> 
+<C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/parte/CV_lats
+ize80.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Report/plots/pa
+rte/susceptibility_latsize80.png>] [23 <C:/Users/Elizabeth/Documents/GitHub/PHY
+480/Project4/Report/solveTC1.png>] [24 <C:/Users/Elizabeth/Documents/GitHub/PHY
+480/Project4/Report/benchmarks/ran0/plots_random_chi_size2_temp1.png> <C:/Users
+/Elizabeth/Documents/GitHub/PHY480/Project4/Report/benchmarks/ran1/plots_random
+_chi_size2_temp1.png> <C:/Users/Elizabeth/Documents/GitHub/PHY480/Project4/Repo
+rt/benchmarks/ran2/plots_random_chi_size2_temp1.png> <C:/Users/Elizabeth/Docume
+nts/GitHub/PHY480/Project4/Report/benchmarks/ran3/plots_random_chi_size2_temp1.
+png>] (C:\Users\Elizabeth\Documents\GitHub\PHY480\Project4\Report\Report.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 4351 strings out of 494045
- 58928 string characters out of 3148375
- 126883 words of memory out of 3000000
- 7586 multiletter control sequences out of 15000+200000
- 14001 words of font info for 56 fonts, out of 3000000 for 9000
+ 4808 strings out of 494045
+ 71772 string characters out of 3148375
+ 134029 words of memory out of 3000000
+ 7982 multiletter control sequences out of 15000+200000
+ 15287 words of font info for 62 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 27i,10n,32p,1054b,240s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C
-:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Progra
-m Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKTeX 2
-.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKTeX 2.9/fonts
-/type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pu
-blic/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsf
-onts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
-mr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Progra
-m Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/Mi
-KTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9
-/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on Report.pdf (4 pages, 159806 bytes).
+ 27i,10n,32p,1300b,311s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts
+/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10
+.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/
+Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program F
+iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
+cmtt12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msb
+m10.pfb>
+Output written on Report.pdf (24 pages, 879706 bytes).
 PDF statistics:
- 67 PDF objects out of 1000 (max. 8388607)
+ 200 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 226 words of extra memory for PDF output out of 10000 (max. 10000000)
 

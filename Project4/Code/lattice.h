@@ -15,6 +15,7 @@ lattice and solves for statistical quantities using the Ising model.
 #include <vector>
 #include <fstream>
 #include <string>
+#include <map>
 
 #include "TGraph.h"
 #include "TCanvas.h"
@@ -39,7 +40,9 @@ class lattice{
   int MCcycles; //# of MC cycles to use in calculations
   double CV; //Specific heat
   double chi; //susceptibility
+  double chi_absm; //susceptibility from <|M|>
   int accepted; //Accepted events in MC simulation
+  map<double,int> e_probs; //Count of number of times an energy appears in the calculation
 
   //Important calculations
   void calc_stat_quants(); //Use Metropolis algorithm to calculate important statistical quantities
@@ -62,10 +65,12 @@ class lattice{
   double get_absM(); //Get expectation value of abs(M)
   double get_CV(); //Get the specific heat
   double get_susc(); //Get the susceptibility
+  double get_susc_absm(); //Get the susceptibility from <|M|>
   int get_accepted(); //Get the accepted # of events in MC simulation
   void set_temp(double t); //Reset the temperature
   void set_MC(int MC); //Reset the number of MC cycles
-  
+  void plot_eprobs(string name); //Plot P(E)
+
 };
 
 double nearest_neighbors(int row, int col, int size, double **spins); //Calculate deltaE from nearest neighbors

@@ -13,6 +13,7 @@ This is the definition file for the lattice class.
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <map>
 
 #include "randos.C"
 
@@ -58,8 +59,9 @@ lattice::lattice(){
     averages[i]=averages[i]/MCcycles;
   }
 
-  CV = (1.0/(1.0*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-  chi = (1.0/(1.0*temp))*(averages[3]-pow(averages[2],2));
+  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+  chi_absm - (1.0/(kB*temp))*(averages[3]-pow(averages[4],2));
 
 }
 
@@ -73,7 +75,13 @@ lattice::lattice(const lattice &p){
   MCcycles = p.MCcycles;
   CV = p.CV;
   chi = p.chi;
+  chi_absm = p.chi_absm;
   accepted = p.accepted;
+
+  /*for(map<double,int>::iterator i=p.e_probs.begin();i!=p.e_probs.end();i++){
+    e_probs[i->first]=i->second;
+    }*/
+  e_probs = p.e_probs;
 
   averages = new double[5];
 
@@ -155,8 +163,9 @@ lattice::lattice(int sz, double t, int MC, int opt){
   for(int i=0;i<5;i++)
     averages[i]=averages[i]/MCcycles;
 
-  CV = (1.0/(1.0*pow(temp,2)))*(averages[1]-pow(averages[0],2));
-  chi = (1.0/(1.0*temp))*(averages[3]-pow(averages[2],2));
+  CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
+  chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
+  chi_absm = (1.0/(kB*temp))*(averages[3]-pow(averages[4],2));
 
 }
 
@@ -172,6 +181,14 @@ void lattice::calc_stat_quants(){
 
   //Initialize energy and magnetization
   double E=0; double M=0;
+  for(int i=0;i<size;i++){
+    for(int j=0;j<size;j++){
+      M+=spins[i][j];
+      E-=spins[i][j]*(spins[(i+size-1)%size][j]+spins[i][(j+size-1)%size]);
+    }
+  }
+
+  e_probs[E]=1;
 
   int mod = size*size;
 
@@ -198,9 +215,9 @@ void lattice::calc_stat_quants(){
     //the new system
     bool go = true;
     if(deltaE>0){
-      double w = exp(-1.0*deltaE/(1.0*temp));
-      double myrand = (rand()%1000)/1000.0; //HERE: What range? 
-      //double myrand = ran0(&seed);
+      double w = exp(-1.0*deltaE/(kB*temp));
+      //double myrand = (rand()%100000)/100000.0; //HERE: What range? 
+      double myrand = ran3(&seed);
       if(myrand>w){
 	spins[therow][thecol]*=-1;
 	deltaE=0;
@@ -213,7 +230,12 @@ void lattice::calc_stat_quants(){
       M+= 2*spins[therow][thecol];
       E+= deltaE;
     }  
-    
+
+    if(e_probs.find(E)==e_probs.end())
+      e_probs[E]=1;
+    else
+      e_probs[E]+=1;
+
     averages[0]+=E;
     averages[1]+=pow(E,2);
     averages[2]+=M;
@@ -358,6 +380,14 @@ double lattice::get_susc(){
   return chi;
 }
 
+double lattice::get_susc_absm(){
+  /*
+    Return susceptibility calculated with <|M|>.
+  */
+
+  return chi_absm;
+}
+
 void lattice::set_temp(double t){
   /*
     Reset the temperature and recalculate everything
@@ -374,6 +404,7 @@ void lattice::set_temp(double t){
     averages[i] = newlat.averages[i];
   CV = newlat.CV;
   chi = newlat.chi;
+  chi_absm = newlat.chi_absm;
 }
 
 void lattice::set_MC(int MC){
@@ -393,6 +424,7 @@ void lattice::set_MC(int MC){
     averages[i] = newlat.averages[i];
   CV = newlat.CV;
   chi = newlat.chi;
+  chi_absm = newlat.chi_absm;
 }
 
 int lattice::get_accepted(){
@@ -401,4 +433,31 @@ int lattice::get_accepted(){
   */
 
   return accepted;
+}
+
+void lattice::plot_eprobs(string name){
+  /*
+    Plot P(E) for every E in the calculation and save plot to name
+  */
+
+  TGraph *myplot = new TGraph();
+
+  int pt = 0;
+  for(map<double,int>::iterator i=e_probs.begin();i!=e_probs.end();i++){
+    myplot->SetPoint(pt,i->first,(i->second)*1.0/(MCcycles+1));
+    pt++;
+  }
+
+  TMultiGraph *m_myplot = new TMultiGraph("m_myplot","P(E)");
+  m_myplot->SetTitle("P(E);Energy;P(E)");
+  m_myplot->Add(myplot);
+
+  TCanvas *can = new TCanvas("can","can",800,720);
+  can->SetBorderMode(0);
+  can->cd();
+
+  m_myplot->Draw("A*");
+  can->SaveAs((name+".png").c_str());
+  can->SaveAs((name+".pdf").c_str());
+  can->Close();
 }
