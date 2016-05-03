@@ -11,6 +11,10 @@
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{subfigure}
+\usepackage[english]{babel}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{natbib}
+\usepackage{amssymb}
 
 \numberwithin{equation}{section}
 
@@ -27,8 +31,8 @@ Modeling lattice-type structures under the effects of magnetization has been ach
 \section{Introduction}
 \label{sec:intro}
 
-To say that magnetism is an important physical phenomenon is a strong understatement.  Magnetism plays a strong role in day to day life on earth.  The earth's magnetic field is perhaps the most stunning example of this.  Caused by the electric fields resulting from the magma under the earth's crust \textbf{http://hyperphysics.phy-astr.gsu.edu/hbase/magnetic/magearth.html}, the earth's magnetic field has been used by explorers for centuries to navigate both on land and sea.  Today, we are still using magnetization to explore the world around us, although in slightly different ways.  For example, magnets are used in some of the largest physics experiments in the world, such as the Large Hadron Collider (LHC), which uses them both as a means of accelerating particles to high energies and as a means of bending charged particles in detectors in an attempt to classify them and thus answer some of the fundamental questions about the universe in which we live.
-\par In general, there are three kinds of magnetism: diamagnetism, paramagnetism, and ferromagnetism, which is the subject of this paper.  The types of magnetism are distinguished by the behavior of the spins of atoms within the material being magnetized.  In paramagnets, the spins align parallel to the magnetic field whereas in diamagnets the spins align opposite to the field.  In ferromagnetic material, however, we have the special situation where the material retains its magnetized state even after the polarizing field has been removed.  In this way, ferromagnets may represent a magnetic history of the fields it has encountered. \textbf{cite Griffiths}.  The simplest theoretical model we have to describe ferromagnetism is the Ising model, described in Section~\ref{sec:theory}.  
+To say that magnetism is an important physical phenomenon is a strong understatement.  Magnetism plays a role in day to day life on earth.  The earth's magnetic field is perhaps the most stunning example of this.  Caused by the electric fields resulting from the magma under the earth's crust~\cite{magma}, the earth's magnetic field has been used by explorers for centuries to navigate both on land and sea.  Today, we are still using magnetization to explore the world around us, although in slightly different ways.  For example, magnets are used in some of the largest physics experiments in the world, such as the Large Hadron Collider (LHC), which uses them both as a means of accelerating particles to high energies and as a means of bending charged particles in detectors in an attempt to classify them and thus answer some of the fundamental questions about the universe in which we live.
+\par In general, there are three kinds of magnetism: diamagnetism, paramagnetism, and ferromagnetism, which is the subject of this paper.  The types of magnetism are distinguished by the behavior of the spins of the atoms within the material being magnetized.  In paramagnets, the spins align parallel to the magnetic field whereas in diamagnets the spins align opposite to the field.  In ferromagnetic material, however, we have the special situation where the material retains its magnetized state even after the polarizing field has been removed.  In this way, ferromagnets may represent a magnetic history of the fields it has encountered~\cite{griffiths}.  The simplest theoretical model we have to describe ferromagnetism is the Ising model, described in Section~\ref{sec:theory}.  
 \par In this paper, we will discuss the Ising model and its importance, and then go into the Monte Carlo algorithm used to do the calculations of various statistical quantities in Section~\ref{sec:algorithm}, taking special note of various benchmarks developed for the case of a $2\times2$ lattice in Section~\ref{subsec:benchmarks}.  Finally, we discuss results of our calculations in Section~\ref{sec:results}.
 
 \section{Theory}
@@ -39,12 +43,12 @@ As mentioned in Section~\ref{sec:intro}, the Ising model is one of the simplest 
 \label{eq:isingenergyfull}
 E = -J\sum_{\left<kl\right>}^{N}s_{k}s_{l}-B\sum_{k}^{N}s_{k},
 \end{equation}
-where $s_{k}=\pm1$ is the spin of the $k^{\text{th}}$ lattice point, $J$ is a coupling constant expressing the strength of the interaction between the neighboring spins, $B$ is the externam magnetic field the material is in, and the first sum is taken over nearest neighbors (ie. lattice points directly above, below, to the left, or to the right of each other, assuming periodic boundary conditions).  Because we are working with ferromagnetic materials, which can retain magnetization in the absence of magnetic fields, we can take $B=0$, and so~\eqref{eq:isingenergyfull} becomes
+where $s_{k}=\pm1$ is the spin of the $k^{\text{th}}$ lattice point, $J$ is a coupling constant expressing the strength of the interaction between the neighboring spins, $B$ is the external magnetic field the material is in, and the first sum is taken over nearest neighbors (ie. lattice points directly above, below, to the left, or to the right of each other, assuming periodic boundary conditions).  Because we are working with ferromagnetic materials, which can retain magnetization in the absence of magnetic fields, we can take $B=0$, and so~\eqref{eq:isingenergyfull} becomes
 \begin{equation}
 \label{eq:isingenergy}
 E = -J\sum_{\left<kl\right>}^{N}s_{k}s_{l}.
 \end{equation}
-\par While~\eqref{eq:isingenergy}~\textbf{cite lecture notes} forms the bulk of the math behind what we will discuss here, it is not the only interesting statistical mechanical quantity we will be interested in.  Thus, before we go too far into things, it may behoove us to discuss briefly concepts such as probabilitiy distributions and specific heat.  Statistical mechanics is a science concerned primarily with the expected behavior exhibited by large groups of interacting objects (spins).  As such, it relies heavily on probability because it quickly becomes unfeasible and, in most cases, impossible, to determine exactly how each individual spin is behaving.  Thus, we are often interested in the expected values of various physical quantities.  In particular, the expected value of some physical quantity $X$ is given by 
+\par While~\eqref{eq:isingenergy}~\cite{lecture} forms the bulk of the math behind what we will discuss here, it is not the only interesting statistical mechanical quantity we will be interested in.  Thus, before we go too far into things, it may behoove us to discuss briefly concepts such as probabilitiy distributions and specific heat.  Statistical mechanics is a science concerned primarily with the expected behavior exhibited by large groups of interacting objects (spins).  As such, it relies heavily on probability because it quickly becomes unfeasible and, in most cases, impossible, to determine exactly how each individual spin is behaving.  Thus, we are often interested in the expected values of various physical quantities.  In particular, the expected value of some physical quantity $X$ is given by 
 \begin{equation}
 \label{eq:expvaldef}
 \left<X\right>=\sum_{i=1}^{N}X_{i}P_{i},
@@ -100,12 +104,12 @@ or, perhaps more enlighteningly,
 \label{eq:cvdef}
 C_{V} = \frac{1}{k_{B}T^{2}}\left(\left<E^{2}\right>-\left<E\right>^{2}\right)
 \end{equation}
-and the susceptibility, given by
+(ie. the variance of the energy of the system multiplied by some constant), and the susceptibility, given by
 \begin{equation}
 \label{eq:chidef}
-\chi = \frac{1}{k_{B}T}\left(\left<M^{2}\right>-\left<M\right>^{2}\right).
+\chi = \frac{1}{k_{B}T}\left(\left<M^{2}\right>-\left<M\right>^{2}\right)
 \end{equation}
-In our $2\times2$ case, we will have
+(ie. the variance of the magnetization of the system multiplied by some constant).  In our $2\times2$ case, we will have
 $$
 \left<E^{2}\right> = \frac{256J^{2}\cosh{\frac{8J}{k_{B}T}}}{Z}
 $$
@@ -133,7 +137,7 @@ For this model, we developed a new class, the \texttt{lattice} class, which dire
 \item \texttt{spins}, a dynamically allocated matrix of the spins in the matrix,
 \item \texttt{temp}, a \texttt{double} which gives the temperature of the matrix,
 \item \texttt{averages}, a dynamically allocated vector of the averages of $E$, $E^{2}$, $M$, $M^{2}$, and $|M|$,
-\item \texttt{MCcycles}, an \texttt{int} which gives the number of Monte Carlo cycles to be used in the calculation,
+\item \texttt{MCcycles}, an \texttt{int} which gives the number of Monte Carlo (MC) cycles to be used in the calculation,
 \item \texttt{CV}, a \texttt{double} of the specific heat,
 \item \texttt{chi}, a \texttt{double} of the susceptibility,
 \item \texttt{chi\_absm}, a \texttt{double} of the susceptibility calculated from $<|M|>$ rather than $<M>$ (that is, $\chi_{|M|}=<M^{2}>-<|M|>^{2}$),
@@ -186,7 +190,7 @@ return deltaE;
 \subfigure[]{
 \includegraphics[width=0.6\textwidth]{deltaEs}
 }
-\caption{The possible values of $\Delta E$ for the $2\times2$ lattice after changing one spin~\textbf{cite lecture notes}.}
+\caption{The possible values of $\Delta E$ for the $2\times2$ lattice after changing one spin~\cite{lecture}.}
 \label{fig:deltaEs}
 \end{center}
 \end{figure}
@@ -209,7 +213,8 @@ return deltaE;
       E+= deltaE;
     }  
 \end{verbatim}
-\par Finally, we update the \texttt{averages} vector and \texttt{e\_probs}.  At every Monte Carlo cycle, we add new value of the various statistical quantities to the appropriate component of \texttt{averages} and, after all of the Monte Carlo cycles are through, we divide by \texttt{MCcycles} to get the average value.  Finally, we can calculate our final statistical mechanical quantities:
+\par Finally, we update the \texttt{averages} vector and \texttt{e\_probs}.  At every Monte Carlo cycle, we add new value of the various statistical quantities to the appropriate component of \texttt{averages} and, after all of the Monte Carlo cycles are through, we divide by \texttt{MCcycles} to get the average value.  Essentially, then, \texttt{cal\_stat\_quants()} runs the Metropolis algorithm, one of the most important algorithms of current times.  The development of the Metropolis algorithm is what first allowed for the calculation of the Ising model to be computed quickly and efficiently~\cite{lecture}.  
+\par Finally, we can calculate our final statistical mechanical quantities:
 \begin{verbatim}
   CV = (1.0/(kB*pow(temp,2)))*(averages[1]-pow(averages[0],2));
   chi = (1.0/(kB*temp))*(averages[3]-pow(averages[2],2));
@@ -219,7 +224,7 @@ return deltaE;
 \subsection{Benchmarks}
 \label{subsec:benchmarks}
 
-To ensure that our algorithm was working properly, we ran a test on the $2\times2$ case discussed in Section~\ref{sec:theory}.  From~\eqref{eq:partition2x2},~\eqref{eq:expe2x2},~\eqref{eq:expm2x2},~\eqref{eq:expabsm2x2},~\eqref{eq:cv2x2}, and~\eqref{eq:chi2x2}, we expect that, for a temperature of $T$ which allows $k_{B}T/J=1$ for coupling $J=1$ (ie. $T=1/k_{B}$), we will have the results listed in Table~\ref{tab:2x2exp}.  The results from the Monte Carlo code are shown in Fig.~\ref{fig:benchmarks} for $<E>$, $<|M|>$, $C_{V}$, and $\chi$.  We see that, in all cases, the simulation models the expected behavior quite well very quickly ($\sim1000$ MC cycles) for $<E>$, $<|M|>$, and $C_{V}$, although it requires significantly more ($\sim200\times10^{3}$) Monte Carlo cycles to achieve a somewhat reliable susceptibility.  For this benchmark, our random number generator used in the Metropolis Algorithm was the standard C++ random number generator seeded with \texttt{time(NULL)} and implemented as
+To ensure that our algorithm was working properly, we ran a test on the $2\times2$ case discussed in Section~\ref{sec:theory}.  From~\eqref{eq:partition2x2},~\eqref{eq:expe2x2},~\eqref{eq:expm2x2},~\eqref{eq:expabsm2x2},~\eqref{eq:cv2x2}, and~\eqref{eq:chi2x2}, we expect that, for a temperature of $T$ which allows $k_{B}T/J=1$ for coupling $J=1$ (ie. $T=1/k_{B}$), we will have the results listed in Table~\ref{tab:2x2exp}.  The results from the Monte Carlo code are shown in Fig.~\ref{fig:benchmarks} for $<E>$, $<|M|>$, $C_{V}$, and $\chi$.  We see that, in all cases, the simulation models the expected behavior quite well very quickly ($\sim1000$ MC cycles) for $<E>$, $<|M|>$, and $C_{V}$, although it requires significantly more ($\sim200\times10^{3}$) Monte Carlo cycles to achieve a somewhat reliable susceptibility.  For this benchmark, the random number generator used in the Metropolis algorithm was the standard C++ random number generator seeded with \texttt{time(NULL)} and implemented as
 \begin{verbatim}
 double myrand = (rand()\%10000)/10000.0;
 \end{verbatim}
@@ -245,32 +250,32 @@ $\chi$ & 16.001
 \begin{figure}[ht]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/plots/plots_random_meanE_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/plots/plots_random_meanE_size2_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/plots/plots_random_meanAbsM_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/plots/plots_random_meanAbsM_size2_temp1}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/plots/plots_random_CV_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/plots/plots_random_CV_size2_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/plots/plots_random_chi_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/plots/plots_random_chi_size2_temp1}
 }
 \caption{The (a) $<E>$, (b) $<|M|>$, (c) $C_{V}$, and (d) $\chi$ for a $2\times2$ lattice at temperature $T=1/k_{B}$.}
 \label{fig:benchmarks}
 \end{center}
 \end{figure}
 
-\par We also will include here a discussion of benchmarks for the random number generator itself.  In particular, all computer-algorithm random number generators are inherently deterministic.  Because a random number sequence is by definition uncorrelated, computer algorithms are incapable of producing sequences of truly random numbers. Instead, they are what are known as pseudorandom number generators.  For this reason, it is important to ensure that the random number generator being used is at least reasonably random.  Kendall and Babington Smith~\textbf{need reference} suggested a series of tests designed to check whether sequences of numbers were actually random: the frequency, serial, poker, and gap tests.  We will focus on the first three of these.\footnote{The entirety of the rest of this discussion can be found in \textbf{drueke}.}  
-\par The frequency test aims to ensure that every digit occurs approximately an equal number of times in the sequence.  That is, we want to ensure that the distribution is uniform.  The frequency test for a sequence $S$ over some interval $[a,b]$ is relatively straightforward: namely, ensuring that every digit occurs in the sequence approximately 10\% of the time, as would be expected of a random sequence of digits.  However, it is important to apply the frequency test over every segment of the sequence used to ensure that there isn't a singularly bad section.  That is, we want to split the sequence into multiple blocks and ensure that, within each block, every digit still occurs about 10\% of the time.~\textbf{odell,gruenberger,drueke}
-\par The serial test is designed to check that no two digits tend to occur in a particular order. This is essentially the frequency test again, but this time ensuring all groupings of two digits occur approximately 1\% of the time within the sequence.~\textbf{odell,gruenberger,drueke}
-\par In the poker test, the digits in the sequence are broken into blocks of some fixed size (eg. 5 each) and then compared with might be expected in a theoretical poker hand.  In~\textbf{odell}, the only possible hands considered were pairs, three of a kind, four of a kind, and five of a kind.  We might also consider occurrences such as full houses and two pairs, as in~\textbf{babington}.  Each of these "hands" has its own likelihood of occurring.  To determine what these probabilities are, we need to determine what kind of deck we are working with.  We note already that, because we can conceivably have five of a kind in a hand, it cannot be the normal 52-card deck in four suits.  In fact, our deck is actually an infinite one, with no suits but 10 unique cards (one for each digit).  For a hand of five cards $H=(a,b,c,d,e)$, we see that each place could be any one of the 10 cards, and so there are 50 possible hands to look at.  However, to be more careful we can also look at the order in which the cards are pulled.  For example, we may have a pair $(a,a,b,c,d)$ of a pair $(a,b,c,a,d)$, and each would count as a separate hand.  So there are actually $10^{5}$ possible hands in our game of poker.  
+\par We also will include here a discussion of benchmarks for the random number generator itself.  In particular, all computer-algorithm random number generators are inherently deterministic.  Because a random number sequence is by definition uncorrelated, computer algorithms are incapable of producing sequences of truly random numbers. Instead, they are what are known as pseudorandom number generators.  For this reason, it is important to ensure that the random number generator being used is at least reasonably random.  Kendall and Babington Smith~\cite{babington} suggested a series of tests designed to check whether sequences of numbers were actually random: the frequency, serial, poker, and gap tests.  We will focus on the first three of these.\footnote{The entirety of the rest of this discussion can be found in~\cite{drueke}.}  
+\par The frequency test aims to ensure that every digit occurs approximately an equal number of times in the sequence.  That is, we want to ensure that the distribution is uniform.  The frequency test for a sequence $S$ over some interval $[a,b]$ is relatively straightforward: namely, ensuring that every digit occurs in the sequence approximately 10\% of the time, as would be expected of a random sequence of digits.  However, it is important to apply the frequency test over every segment of the sequence used to ensure that there isn't a singularly bad section.  That is, we want to split the sequence into multiple blocks and ensure that, within each block, every digit still occurs about 10\% of the time~\cite{odell,gruenberger,drueke}.
+\par The serial test is designed to check that no two digits tend to occur in a particular order. This is essentially the frequency test again, but this time ensuring all groupings of two digits occur approximately 1\% of the time within the sequence~\cite{odell,gruenberger,drueke}.
+\par In the poker test, the digits in the sequence are broken into blocks of some fixed size (eg. 5 each) and then compared with might be expected in a theoretical poker hand.  In~\cite{odell}, the only possible hands considered were pairs, three of a kind, four of a kind, and five of a kind.  We might also consider occurrences such as full houses and two pairs, as in~\cite{babington}.  Each of these "hands" has its own likelihood of occurring.  To determine what these probabilities are, we need to determine what kind of deck we are working with.  We note already that, because we can conceivably have five of a kind in a hand, it cannot be the normal 52-card deck in four suits.  In fact, our deck is actually an infinite one, with no suits but 10 unique cards (one for each digit).  For a hand of five cards $H=(a,b,c,d,e)$, we see that each place could be any one of the 10 cards, and so there are 50 possible hands to look at.  However, to be more careful we can also look at the order in which the cards are pulled.  For example, we may have a pair $(a,a,b,c,d)$ of a pair $(a,b,c,a,d)$, and each would count as a separate hand.  So there are actually $10^{5}$ possible hands in our game of poker.  
 \par How might we calculate the probability of one of the special kinds of hands of occurring?  We will now present a couple of examples.  The accepted probabilities of each of the hands is given in Table~\ref{tab:pokeracc}.  The simplest example would be five of a kind, which must always take the form $(a,a,a,a,a)$ for some $a\in\mathbb{Z}_{n}$\footnote{Here, $\mathbb{Z}_{n}=\{x\in\mathbb{Z}:0\leq x < n\}$.}.  As there are only 10 such values of $a$, there are only 10 such hands in the total of $10^{5}$ hands, and so 5 of a kind should occur with a frequency of 0.01\%.
 \par Perhaps a more enlightening example is the case of four of a kind.  Here, there are 5 possible hand combinations: $(a,a,a,a,b)$, $(a,a,a,b,a)$, $(a,a,a,b,a)$, $(a,a,b,a,a)$, $(a,b,a,a,a)$, and $(b,a,a,a,a)$.  Now $a$ can represent any of the 10 digits in $\mathbb{Z}_{n}$, and $b$ can be any of those 10 digits except $a$, so there are 9 possible values of $b$ for every $a$.  As a result, we have a probability of four of a kind equal to 
 $$
 P(\text{4 of a kind}) = \frac{5\times10\times9}{10^{5}} = 0.45\%.
 $$
-Continuing in this manner (determining the number of possible hand types which will give the desired hand and multiplying by the number of possible values for each variable), we can get the results of Table~\ref{tab:pokeracc}.~\textbf{drueke}
+Continuing in this manner (determining the number of possible hand types which will give the desired hand and multiplying by the number of possible values for each variable), we can get the results of Table~\ref{tab:pokeracc}~\cite{drueke}.
 
 \begin{table}[ht]
 \begin{center}
@@ -289,18 +294,18 @@ Continuing in this manner (determining the number of possible hand types which w
 \end{center}
 \end{table}
 
-\par To determine how well the output of the random number generator fits the expected values of the frequency, series, poker, and gap tests, we perform a $\chi^{2}$-test to determine the level of agreement.  This test is designed to determine whether there is any correlation between two variables $x$ and $y$.  To perform the $\chi^{2}$-test, we first compute $\chi^{2}$, which is given by
+\par To determine how well the output of the random number generator fits the expected values of the frequency, series, and poker tests, we perform a $\chi^{2}$-test to check the agreement.  This test is designed to determine whether there is any correlation between two variables $x$ and $y$.  To perform the $\chi^{2}$-test, we first compute $\chi^{2}$, which is given by
 \begin{equation}
 \label{eq:chi2}
 \chi^{2}=\sum\frac{\left(v-v_{e}\right)^{2}}{v},
 \end{equation}
-where $v$ is the value observed and $v_{e}$ is the value expected~\textbf{babington}.  
+where $v$ is the value observed and $v_{e}$ is the value expected~\cite{babington}.  
 \par Next, we determine the number of degrees of freedom of the problem, which is given by 
 \begin{equation}
 \label{eq:degfree}
 DF = (n_{x}-1)*(n_{y}-1),
 \end{equation}
-where $n_{x}$ is the number of levels of variable $x$ and $n_{y}$ is the number of levels of variable $y$~\textbf{chi}.  It is important, therefore, to note the degrees of freedom in each of the three tests used in this analysis, as shown in Table~\ref{tab:degfree}.
+where $n_{x}$ is the number of levels of variable $x$ and $n_{y}$ is the number of levels of variable $y$~\cite{chi}.  It is important, therefore, to note the degrees of freedom in each of the three tests used in this analysis, as shown in Table~\ref{tab:degfree}.
 
 \begin{table}[ht]
 \begin{center}
@@ -310,18 +315,18 @@ where $n_{x}$ is the number of levels of variable $x$ and $n_{y}$ is the number 
      Serial Test & 90 \\
      Poker Test & 4 \\ \hline
 \end{tabular}
-\caption{The degrees of freedom of the various tests used in this analysis~\textbf{babington}.}
+\caption{The degrees of freedom of the various tests used in this analysis~\cite{babington}.}
 \label{tab:degfree}
 \end{center}
 \end{table}
 
-\par The final step in the $\chi^{2}$-test is to consult a $\chi^{2}$ table (or, in our case, an online $p$-value calculator~\textbf{graphpad}) to determine the $p$-value given the number of degrees of freedom and the computation of $\chi^{2}$.  This $p$-value gives the likelihood that differences in the observed and expected values is due to statistical fluctuations rather than a more fundamental error in the generation of the sequence.  In particular, we look for $p$ to be above a certain significance level, which we take to be 0.1 (although values of 0.01 and 0.05 are also common).~\textbf{drueke}
-\par The five random number generators tested here are \texttt{ran0}, \texttt{ran1}, \texttt{ran2}, and \texttt{ran3} from ~\textbf{recipes}, and \texttt{rand()}, the default C++ random number generator.  \texttt{ran0} is what is known as the Minimal Standard Generator, which is a multiplicative congruential generator.  That is, it depends on the recurrence relation
+\par The final step in the $\chi^{2}$-test is to consult a $\chi^{2}$ table (or, in our case, an online $p$-value calculator~\cite{graphpad}) to determine the $p$-value given the number of degrees of freedom and the computation of $\chi^{2}$.  This $p$-value gives the likelihood that differences in the observed and expected values is due to statistical fluctuations rather than a more fundamental error in the generation of the sequence.  In particular, we look for $p$ to be above a certain significance level, which we take to be 0.1 (although values of 0.01 and 0.05 are also common)~\cite{drueke}.
+\par The five random number generators tested here are \texttt{ran0}, \texttt{ran1}, \texttt{ran2}, and \texttt{ran3} from ~\cite{recipes}, and \texttt{rand()}, the default C++ random number generator.  \texttt{ran0} is what is known as the Minimal Standard Generator, which is a multiplicative congruential generator.  That is, it depends on the recurrence relation
 \begin{equation}
 \label{eq:ran0recur}
 I_{j+1}=aI_{j}\mod m
 \end{equation}
-\texttt{ran0} specifically was proposed by Park and Miller with the settings $a=7^{5}=16807$ and $m=2^{31}-1=2147483647$.  The period of \texttt{ran0} is expected to be $2^{31}-1=2.1\times10^{9}$.~\textbf{recipes}  We found that \textt{ran0} behaves fairly well.  It passes the frequency and serial tests without much of a problem.  The only test which is does not appear to pass is the poker test.  Here, the $p$-value is $\sim0.04$, which is far below our significance threshold.  
+\texttt{ran0} specifically was proposed by Park and Miller with the settings $a=7^{5}=16807$ and $m=2^{31}-1=2147483647$.  The period of \texttt{ran0} is expected to be $2^{31}-1=2.1\times10^{9}$~\cte{recipes}.  We found that \textt{ran0} behaves fairly well.  It passes the frequency and serial tests without much of a problem.  The only test which is does not appear to pass is the poker test.  Here, the $p$-value is $\sim0.04$, which is far below our significance threshold.  
 
 \begin{table}[ht]
 \begin{center}
@@ -338,7 +343,7 @@ $\chi^{2}$ (Poker Test) & 10.0296 & 0.0399 \\ \hline
 \end{center}
 \end{table}
 
-\par \texttt{ran1} uses \texttt{ran0} for its random variable but also uses a shuffling algorithm developed by Bays and Durham to remove lower-order correlations.  In this shuffling, a randomly generated element of the sequence, $I_{j}$, is chosen to be output as some other element of the sequence (typically $I_{j+32}$).  According to~\textbf{recipes}, \texttt{ran1} passes all known statistical tests excepting when it is called somewhere on the order of its period ($\sim10^{8}$).~\textbf{recipes}
+\par \texttt{ran1} uses \texttt{ran0} for its random variable but also uses a shuffling algorithm developed by Bays and Durham to remove lower-order correlations.  In this shuffling, a randomly generated element of the sequence, $I_{j}$, is chosen to be output as some other element of the sequence (typically $I_{j+32}$).  According to~\cite{recipes}, \texttt{ran1} passes all known statistical tests excepting when it is called somewhere on the order of its period ($\sim10^{8}$)~\cite{recipes}.
 \par We found that this algorithm passes the frequency and poker tests, but not the serial test.  This is an interesting result as \texttt{ran1} is designed to help rid \texttt{ran0} of correlations, and \texttt{ran0} passed the serial test without a problem.  
 
 \begin{table}[ht]
@@ -356,7 +361,7 @@ $\chi^{2}$ (Poker Test) & 5.22794 & 0.2647\\ \hline
 \end{center}
 \end{table}
 
-\par Claimed to be a "perfect" random number generator (up to floating point errors) by~\textbf{recipes}, \texttt{ran2} adds another level of shuffling to further remove the correlations existing in \texttt{ran1}, as well as other randomness checks originally proposed by L'Ecuyer.  One such check is combining \texttt{ran0} and \texttt{ran1} such that the period of the sequence generated is the least common multiple of the periods of the first two algorithms.  This is done by adding the two sequences produced by these algorithms modulo the modulus $m$ of either of them.  In this way, \texttt{ran2} is designed to have a very long period ($>10^{8}$).~\textbf{recipes}
+\par Claimed to be a "perfect" random number generator (up to floating point errors) by~\cite{recipes}, \texttt{ran2} adds another level of shuffling to further remove the correlations existing in \texttt{ran1}, as well as other randomness checks originally proposed by L'Ecuyer.  One such check is combining \texttt{ran0} and \texttt{ran1} such that the period of the sequence generated is the least common multiple of the periods of the first two algorithms.  This is done by adding the two sequences produced by these algorithms modulo the modulus $m$ of either of them.  In this way, \texttt{ran2} is designed to have a very long period ($>10^{8}$)~\cite{recipes}.
 \par We found that this algorithm readily passed all of the frequency, serial, and poker tests.  In particular, it also has the lowest percent difference between the observed and expected average and standard deviation of any of the three algorithms discussed up until this point.
 
 \begin{table}[ht]
@@ -379,7 +384,7 @@ $\chi^{2}$ (Poker Test) & 5.28678 & 0.2591\\ \hline
 \label{eq:fibgen}
 x_{k}=x_{k-a}-x_{k-b}
 \end{equation}
-for some fixed $a,b\in\mathbb{Z}$ known as lags.  Fibonacci generators are typically very efficient and pass most randomness tests thrown at them, although they do require more storage than linear congruential algorithms.~\textbf{fib}
+for some fixed $a,b\in\mathbb{Z}$ known as lags.  Fibonacci generators are typically very efficient and pass most randomness tests thrown at them, although they do require more storage than linear congruential algorithms~\cite{fib} (of which \texttt{ran0}, \texttt{ran1}, and \texttt{ran2} are special cases).
 \par We found that, indeed, \texttt{ran3} passed all three of the frequency, serial, and poker tests, just as did \texttt{ran2}.  However, this algorithm had much lower $p$-values for the serial and poker tests than did \texttt{ran2}, indicating that perhaps this is not the stronger of the two.
 
 \begin{table}[ht]
@@ -423,16 +428,16 @@ To test our algorithm, we looked first at a $20\times20$ lattice to determine ho
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_meanE_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_meanE_size20_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_meanAbsM_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_meanAbsM_size20_temp1}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_CV_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_CV_size20_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_chi_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_chi_size20_temp1}
 }
 \caption{Statistical quantities for a $20\times20$ lattice at a temperature $T=1/k_{B}$ with an initial state of a random selection of spins.}
 \label{fig:size20temp1rando}
@@ -444,16 +449,16 @@ To test our algorithm, we looked first at a $20\times20$ lattice to determine ho
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_meanE_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_meanE_size20_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_meanAbsM_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_meanAbsM_size20_temp1}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_CV_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_CV_size20_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_chi_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_chi_size20_temp1}
 }
 \caption{Statistical quantities for a $20\times20$ lattice at a temperature $T=1/k_{B}$ with a steady-state initial state.}
 \label{fig:size20temp1steady}
@@ -465,16 +470,16 @@ To test our algorithm, we looked first at a $20\times20$ lattice to determine ho
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_meanE_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_meanE_size20_temp24}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_meanAbsM_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_meanAbsM_size20_temp24}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_CV_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_CV_size20_temp24}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_random_chi_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_random_chi_size20_temp24}
 }
 \caption{Statistical quantities for a $20\times20$ lattice at a temperature $T=2.4/k_{B}$ with an initial state of a random selection of spins.}
 \label{fig:size20temp24rando}
@@ -486,16 +491,16 @@ To test our algorithm, we looked first at a $20\times20$ lattice to determine ho
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_meanE_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_meanE_size20_temp24}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_meanAbsM_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_meanAbsM_size20_temp24}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_CV_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_CV_size20_temp24}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_chi_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_chi_size20_temp24}
 }
 \caption{Statistical quantities for a $20\times20$ lattice at a temperature $T=2.4/k_{B}$ with a steady-state initial state.}
 \label{fig:size20temp24steady}
@@ -507,10 +512,10 @@ To test our algorithm, we looked first at a $20\times20$ lattice to determine ho
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_pofE_size20_temp1}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_pofE_size20_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/partcandd/plots_steady_pofE_size20_temp24}
+\includegraphics[width=0.37\textwidth]{plots/partcandd/plots_steady_pofE_size20_temp24}
 } 
 \caption{$P(E)$ for a $20\times20$ lattice at a temperature of (a) $T=1/k_{B}$ and (b) $T=2.4/k_{B}$.}
 \label{fig:size20pofE}
@@ -537,13 +542,13 @@ In addition, with the introduction of $T_{C}$, we can introduce the correlation 
 \label{eq:tccorr}
 \xi(T)\sim|T_{C}-T|^{-\nu}
 \end{equation}
-for $T$ near $T_{C}$ because near $T_{C}$ the spins begin to correlate more and more~\textbf{lecture notes}.
+for $T$ near $T_{C}$ because near $T_{C}$ the spins begin to correlate more and more~\cite{lecture}.
 \par At a second-order phase transition, we expect $\xi$ to span the whole system.  This becomes a problem because we are restricted to finite-sized lattices.  However, this means that $\xi$ will scale with the size of the lattice, and so we can use a finite lattice to approximate an infinite system.  In particular, the critical temperature will scale as
 \begin{equation}
 \label{eq:tcscale}
-T_{C}(L=n)-T_{C}(L=\infty)=an^{\frac{1}{\nu}}
+T_{C}(L)-T_{C}(L=\infty)=aL^{\frac{1}{\nu}}
 \end{equation}
-for some constant $a$ for a lattice of size $L=n$.  By setting $T=T_{C}$, we can then see that~\eqref{eq:tcmag},~\eqref{eq:tccv}, and~\eqref{eq:tcchi} become~\textbf{lecture notes}
+for some constant $a$ for a lattice of size $L$.  By setting $T=T_{C}$, we can then see that~\eqref{eq:tcmag},~\eqref{eq:tccv}, and~\eqref{eq:tcchi} become~\cite{lecture}
 \begin{align}
 \label{eq:tcquants}
 <M(T)> & \sim  (T-T_{C})^{\frac{1}{8}} \rightarrow  L^{\frac{1}{8\nu}} \\
@@ -555,16 +560,16 @@ C_{V}(T) & \sim  |T_{C}-T|^{-\frac{7}{4}} \rightarrow  L^{0} \\
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expE_latsize20}
+\includegraphics[width=0.37\textwidth]{plots/parte/expE_latsize20}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expAbsM_latsize20}
+\includegraphics[width=0.37\textwidth]{plots/parte/expAbsM_latsize20}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/CV_latsize20}
+\includegraphics[width=0.37\textwidth]{plots/parte/CV_latsize20}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/susceptibility_latsize20}
+\includegraphics[width=0.37\textwidth]{plots/parte/susceptibility_latsize20}
 }
 \caption{Statistical quantities for a $20\times20$ lattice with a steady initial state plotted against the temperature.}
 \label{fig:latsize20}
@@ -576,23 +581,23 @@ C_{V}(T) & \sim  |T_{C}-T|^{-\frac{7}{4}} \rightarrow  L^{0} \\
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expE_latsize40}
+\includegraphics[width=0.37\textwidth]{plots/parte/expE_latsize40}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expAbsM_latsize40}
+\includegraphics[width=0.37\textwidth]{plots/parte/expAbsM_latsize40}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/CV_latsize40}
+\includegraphics[width=0.37\textwidth]{plots/parte/CV_latsize40}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/susceptibility_latsize40}
+\includegraphics[width=0.37\textwidth]{plots/parte/susceptibility_latsize40}
 }
 \caption{Statistical quantities for a $40\times40$ lattice with a steady initial state plotted against the temperature.}
 \label{fig:latsize40}
 \end{center}
 \end{figure}
 
-\par We wish to use these results to determine $T_{C}$ in the limit $L\rightarrow\infty$, using $\nu=1$.  The accepted value is given by $T_{C}=2.269/k_{B}$~\textbf{lecture}.    We can use~\eqref{eq:tcscale} to calculate $T_{C}(L=\infty)$ from our plots.  To do this, we need the information of $T_{C}(L)$.  This is found in Table~\ref{tab:tcl}. 
+\par We wish to use these results to determine $T_{C}$ in the limit $L\rightarrow\infty$, using $\nu=1$.  The accepted value is given by $T_{C}=2.269/k_{B}$~\cite{lecture}.    We can use~\eqref{eq:tcscale} to calculate $T_{C}(L=\infty)$ from our plots.  To do this, we need the information of $T_{C}(L)$.  This is found in Table~\ref{tab:tcl}. 
 
 \begin{table}[ht]
 \begin{center}
@@ -619,21 +624,21 @@ T_{C}(L=\infty) & = \frac{2.33}{k_{B}}-\frac{a}{40} \\
 T_{C}(L=\infty) & = \frac{2.38}{k_{B}}-\frac{a}{60} \\
 T_{C}(L=\infty) & = \frac{2.43}{k_{B}}-\frac{a}{80}.
 \end{align*}
-\par Because~\eqref{eq:tcscale} gives us to equations in 2 unknowns, and there we are looking at four different lattice sizes, we can get any number of 8 possible solutions for $T_{C}$ and $a$.  After performing these calculations in Mathematica~\textbf{need reference}, we see get the possible solutions shown in Fig.~\ref{fig:tcsolve}.  That is, we have $\frac{2.35}{k_{B}}\leq T_{C}\leq\frac{2.575}{k_{B}}$.  This is an error of anywhere between $3.57\%\leq\sigma\leq13.49\%$ compared with the accepted result of $2.269/k_{B}$~\textbf{lectures}.  Given that our values for $T_{C}(L)$ were estimated by eye from the graphs, this is a very reasonable result.
+\par Because~\eqref{eq:tcscale} gives us to equations in 2 unknowns, and there we are looking at four different lattice sizes, we can get any number of 8 possible solutions for $T_{C}$ and $a$.  After performing these calculations in Mathematica~\cite{mathematica}, we see get the possible solutions shown in Fig.~\ref{fig:tcsolve}.  That is, we have $\frac{2.35}{k_{B}}\leq T_{C}\leq\frac{2.575}{k_{B}}$.  This is an error of anywhere between $3.57\%\leq\sigma\leq13.49\%$ compared with the accepted result of $2.269/k_{B}$~\cite{lecture}.  Given that our values for $T_{C}(L)$ were estimated by eye from the graphs, this is a very reasonable result.
 
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expE_latsize60}
+\includegraphics[width=0.37\textwidth]{plots/parte/expE_latsize60}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expAbsM_latsize60}
+\includegraphics[width=0.37\textwidth]{plots/parte/expAbsM_latsize60}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/CV_latsize60}
+\includegraphics[width=0.37\textwidth]{plots/parte/CV_latsize60}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/susceptibility_latsize60}
+\includegraphics[width=0.37\textwidth]{plots/parte/susceptibility_latsize60}
 }
 \caption{Statistical quantities for a $60\times60$ lattice with a steady initial state plotted against the temperature.}
 \label{fig:latsize60}
@@ -643,16 +648,16 @@ T_{C}(L=\infty) & = \frac{2.43}{k_{B}}-\frac{a}{80}.
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expE_latsize80}
+\includegraphics[width=0.37\textwidth]{plots/parte/expE_latsize80}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/expAbsM_latsize80}
+\includegraphics[width=0.37\textwidth]{plots/parte/expAbsM_latsize80}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/CV_latsize80}
+\includegraphics[width=0.37\textwidth]{plots/parte/CV_latsize80}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{plots/parte/susceptibility_latsize80}
+\includegraphics[width=0.37\textwidth]{plots/parte/susceptibility_latsize80}
 }
 \caption{Statistical quantities for a $80\times80$ lattice with a steady initial state plotted against the temperature.}
 \label{fig:latsize80}
@@ -664,7 +669,7 @@ T_{C}(L=\infty) & = \frac{2.43}{k_{B}}-\frac{a}{80}.
 \subfigure[]{
 \includegraphics[width=0.6\textwidth]{solveTC1}
 }
-\caption{Using Mathematica~\textbf{need citation} to solve for the possible values of $T_{C}(L=\infty)$ given the data from Table~\ref{tab:tcl} and~\eqref{eq:tcscale}.}
+\caption{Using Mathematica~\cite{mathematica} to solve for the possible values of $T_{C}(L=\infty)$ given the data from Table~\ref{tab:tcl} and~\eqref{eq:tcscale}.}
 \label{fig:tcsolve}
 \end{center}
 \end{figure}
@@ -674,24 +679,24 @@ T_{C}(L=\infty) & = \frac{2.43}{k_{B}}-\frac{a}{80}.
 
 As discussed in Section~\ref{subsec:benchmarks}, we are interested particularly in looking at the effect of random number generators on our results, looking particularly at \texttt{ran0}, \texttt{ran1}, \texttt{ran2}, \texttt{ran3}, and \texttt{rand()}, the standard C++ random number generator, with which all of the data in Section~\ref{sec:results} was created.  Overall, we find that the choice of random number generator didn't have major contributions to the results determined.  However, small differences were observed.\footnote{Throughout this discussion, we are working with the generation of a $2\times2$ lattice with an initial random configuration at a temperature of $T=1/k_{B}$.}  For example, it was observed that, if we plotted the number of accepted MC against the total number of MC cycles used in the calculation, the slopes were slightly different.   In particular, \texttt{ran1}, \texttt{ran3}, and \texttt{rand()} have more accepted MC than do \texttt{ran0} or \texttt{ran2}.  
 \par But what is really important is whether or not changing the random number generator would effect the physics.  As an example, see Fig.~\ref{fig:randoschi}, where we have plotted the magnetic susceptibility $\chi$ as a function of the total number of MC cycles.  Recall from Section~\ref{sec:results} that it appeared that $\chi$ was the most unstable of the statistical quantities being observed.  In fact, it does appear that the variation -- or the number of MC cycles needed to get to the equilibrium value -- may depend on the random number generator used.  In particular, the more random the generator (according the number of tests passed as discussed in Section~\ref{subsec:benchmarks} and the significance of the associated $\chi^{2}$ tests), the more MC cycles were required before the susceptibility approached a constant value.  Still, regardless of the random number generator used, the final value of $\chi$ was the same.  
-\par Because no effect was more pronounced than that on $\chi$, we assume that it is safe to use any of the five random number generators tested.  It is expected, however, that, as the number of MC cycles increases, this will no longer be true.  This is because the period of the random number generators will eventually play a roll in the calculations, which is an undesired result (at that point the numbers can be considered correlated and thus, by definition, no longer random).  Statistical biases in the form of patterns may begin to creep up in the data when the number of MC cycles nears the period of the random number generator being used, and so it is important to find a generator with a remarkably long period (such as the Mersenne Twister, which has a period of roughly $2^{19937}$~\textbf{lecture}).
+\par Because no effect was more pronounced than that on $\chi$, we assume that it is safe to use any of the five random number generators tested.  It is expected, however, that, as the number of MC cycles increases, this will no longer be true.  This is because the period of the random number generators will eventually play a roll in the calculations, which is an undesired result (at that point the numbers can be considered correlated and thus, by definition, no longer random).  Statistical biases in the form of patterns may begin to creep up in the data when the number of MC cycles nears the period of the random number generator being used, and so it is important to find a generator with a remarkably long period (such as the Mersenne Twister, which has a period of roughly $2^{19937}$~\cite{lecture}).
 
 \begin{figure}[h]
 \begin{center}
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/ran0/plots_random_chi_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/ran0/plots_random_chi_size2_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/ran1/plots_random_chi_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/ran1/plots_random_chi_size2_temp1}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/ran2/plots_random_chi_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/ran2/plots_random_chi_size2_temp1}
 }
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/ran3/plots_random_chi_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/ran3/plots_random_chi_size2_temp1}
 } \\
 \subfigure[]{
-\includegraphics[width=0.3\textwidth]{benchmarks/plots/plots_random_chi_size2_temp1}
+\includegraphics[width=0.37\textwidth]{benchmarks/plots/plots_random_chi_size2_temp1}
 }
 \caption{Magnetic susceptibility $\chi$ as a function of the number of MC cycles used in the calculation for (a) \texttt{ran0}, (b) \texttt{ran1}, (c) \texttt{ran2}, (d) \texttt{ran3}, and (e) \texttt{rand()}.}
 \label{fig:randoschi}
@@ -702,9 +707,9 @@ As discussed in Section~\ref{subsec:benchmarks}, we are interested particularly 
 \label{sec:conc}
 
 The Ising model in two dimensions is an immensely useful tool in statistical mechanics as a means by which to calculate expected values (such as that of the energy and magnetization), as well as fundamental properties of matter (such as the heat capacity and magnetic susceptibility).  From these quantities, it is possible to determine the critical temperature, $T_{C}$, at which phase transitions occur.  We were able (see Section~\ref{sec:results}) to do this calculation for an infinite lattice to within $14\%$ accuracy by estimating the $T_{C}$ from plots generated of $\chi$ and $C_{V}$ of various sized lattices.
-\par In addition to its physical importance, the Ising model proves to be an excellent introduction to Monte Carlo generation.  We were able to develop a code to implement Monte Carlo under the guise of the Metropolis Algorithm~\textbf{need citation; also make sure I mentioned this somewhere earlier} within a new \texttt{lattice} class, which performed the calculations of our various important statistical mechanical quantities for us.  Because random number generation is key in any Monte Carlo simulation, we were also able to run some benchmark tests on five common random number generators to ensure that they were, indeed, random, and that the physics produced was not effected by the random number generator chosen.
-\par \textbf{in conclusion...}
+\par In addition to its physical importance, the Ising model proves to be an excellent introduction to Monte Carlo generation.  We were able to develop a code to implement Monte Carlo under the guise of the Metropolis Algorithm~cite{lecture} within a new \texttt{lattice} class, which performed the calculations of our various important statistical mechanical quantities for us.  Because random number generation is key in any Monte Carlo simulation, we were also able to run some benchmark tests on five common random number generators to ensure that they were, indeed, random, and that the physics produced was not affected by the random number generator chosen.  Overall, the results of this project followed what was expected.
 
-
+\bibliographystyle{abbrv}
+\bibliography{mybib}
 
 \end{document}
