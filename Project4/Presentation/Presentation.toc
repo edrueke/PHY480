@@ -1,0 +1,8 @@
+\beamer@endinputifotherversion {3.36pt}
+\select@language {english}
+\beamer@sectionintoc {1}{Theory}{3}{0}{1}
+\beamer@sectionintoc {2}{The Algorithm}{12}{0}{2}
+\beamer@sectionintoc {3}{Benchmarks}{18}{0}{3}
+\beamer@sectionintoc {4}{Results}{21}{0}{4}
+\beamer@sectionintoc {5}{Testing Random Numer Generators}{37}{0}{5}
+\beamer@sectionintoc {6}{Conclusions}{54}{0}{6}

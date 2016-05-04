@@ -1,0 +1,51 @@
+\begin{thebibliography}{10}
+
+\bibitem{chi}
+Chi-square test for independence.
+\newblock web, 2016.
+
+\bibitem{graphpad}
+P value calculator.
+\newblock web, 2016.
+
+\bibitem{drueke}
+E.~Drueke.
+\newblock Pseudorandom sequences and random number generators.
+\newblock April 2016.
+
+\bibitem{gruenberger}
+F.~Gruenberger.
+\newblock Notes.
+\newblock {\em Mathematics of Computation}, 4:244--245, 1950.
+
+\bibitem{lecture}
+M.~Hjorth-Jensen.
+\newblock Computational physics lecture notes fall 2015, August 2015.
+
+\bibitem{mathematica}
+W.~R. Inc.
+\newblock {\em Mathematica 8.0}, 2010.
+
+\bibitem{fib}
+D.~Kahaner, C.~Moler, and S.~Nash.
+\newblock {\em Numerical Methods and Software}.
+\newblock Prentice Hall, 1989.
+
+\bibitem{babington}
+M.~G. Kendall and B.~B. Smith.
+\newblock Randomness and random sampling numbers.
+\newblock {\em Journal of the Royal Statistical Society}, 101(1):147--166,
+  1938.
+
+\bibitem{odell}
+T.~G. Newman and P.~L. Odell.
+\newblock {\em The Generation of Random Variates}, volume~29 of {\em Griffin's
+  Statistical Monographs and Courses}.
+\newblock Hafner Publishing Company, 42 Drury Lane, London, WC2B 5RX, 1971.
+
+\bibitem{recipes}
+W.~H. Press, S.~A. Teukolsky, W.~T. Vetterling, and B.~P. Flannery.
+\newblock {\em Numerical Recipes: The Art of Scientific Computing}.
+\newblock Cambridge University Press, 3 edition, September 2007.
+
+\end{thebibliography}
